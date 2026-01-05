@@ -1182,14 +1182,14 @@ PLAYER_PATTERN:
 	.byte	1
 	.byte	0
 	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
 	.byte	1
 	.byte	1
-	.byte	0
-	.byte	0
-	.byte	0
+	.byte	1
+	.byte	1
+	.byte	1
+	.byte	1
+	.byte	1
+	.byte	1
 	.byte	0
 	.byte	0
 	.byte	1
@@ -1319,13 +1319,13 @@ ball_y:
 	.type	ball_vx, @object
 	.size	ball_vx, 4
 ball_vx:
-	.word	3
+	.word	5
 	.globl	ball_vy
 	.align	2
 	.type	ball_vy, @object
 	.size	ball_vy, 4
 ball_vy:
-	.word	2
+	.word	3
 	.globl	score_p1
 	.section	.bss
 	.align	2
@@ -1413,13 +1413,13 @@ sq_ball_y:
 	.type	sq_ball_vx, @object
 	.size	sq_ball_vx, 4
 sq_ball_vx:
-	.word	3
+	.word	5
 	.globl	sq_ball_vy
 	.align	2
 	.type	sq_ball_vy, @object
 	.size	sq_ball_vy, 4
 sq_ball_vy:
-	.word	2
+	.word	3
 	.globl	sq_score
 	.section	.bss
 	.align	2
@@ -1447,16 +1447,108 @@ sq_turn:
 	.size	sq_rally, 4
 sq_rally:
 	.space	4
+	.globl	sq_p1_score
+	.align	2
+	.type	sq_p1_score, @object
+	.size	sq_p1_score, 4
+sq_p1_score:
+	.space	4
+	.globl	sq_p2_score
+	.align	2
+	.type	sq_p2_score, @object
+	.size	sq_p2_score, 4
+sq_p2_score:
+	.space	4
+	.globl	soccer_p1_x
+	.data
+	.align	2
+	.type	soccer_p1_x, @object
+	.size	soccer_p1_x, 4
+soccer_p1_x:
+	.word	10
+	.globl	soccer_p1_y
+	.align	2
+	.type	soccer_p1_y, @object
+	.size	soccer_p1_y, 4
+soccer_p1_y:
+	.word	24
+	.globl	soccer_p2_x
+	.align	2
+	.type	soccer_p2_x, @object
+	.size	soccer_p2_x, 4
+soccer_p2_x:
+	.word	78
+	.globl	soccer_p2_y
+	.align	2
+	.type	soccer_p2_y, @object
+	.size	soccer_p2_y, 4
+soccer_p2_y:
+	.word	24
+	.globl	soccer_ball_x
+	.align	2
+	.type	soccer_ball_x, @object
+	.size	soccer_ball_x, 4
+soccer_ball_x:
+	.word	44
+	.globl	soccer_ball_y
+	.align	2
+	.type	soccer_ball_y, @object
+	.size	soccer_ball_y, 4
+soccer_ball_y:
+	.word	24
+	.globl	soccer_ball_vx
+	.section	.bss
+	.align	2
+	.type	soccer_ball_vx, @object
+	.size	soccer_ball_vx, 4
+soccer_ball_vx:
+	.space	4
+	.globl	soccer_ball_vy
+	.align	2
+	.type	soccer_ball_vy, @object
+	.size	soccer_ball_vy, 4
+soccer_ball_vy:
+	.space	4
+	.globl	soccer_ball_flying
+	.align	2
+	.type	soccer_ball_flying, @object
+	.size	soccer_ball_flying, 4
+soccer_ball_flying:
+	.space	4
+	.globl	soccer_ball_owner
+	.align	2
+	.type	soccer_ball_owner, @object
+	.size	soccer_ball_owner, 4
+soccer_ball_owner:
+	.space	4
+	.globl	soccer_p1_score
+	.align	2
+	.type	soccer_p1_score, @object
+	.size	soccer_p1_score, 4
+soccer_p1_score:
+	.space	4
+	.globl	soccer_p2_score
+	.align	2
+	.type	soccer_p2_score, @object
+	.size	soccer_p2_score, 4
+soccer_p2_score:
+	.space	4
+	.globl	soccer_invincible_timer
+	.align	2
+	.type	soccer_invincible_timer, @object
+	.size	soccer_invincible_timer, 4
+soccer_invincible_timer:
+	.space	4
 	.rdata
 	.align	2
 $LC0:
 	.ascii	"TENNIS MODE\000"
 	.align	2
 $LC1:
-	.ascii	"SQUASH 1P\000"
+	.ascii	"SQUASH MODE\000"
 	.align	2
 $LC2:
-	.ascii	"SQUASH 2P\000"
+	.ascii	"SOCCER MODE\000"
 	.align	2
 $LC3:
 	.ascii	"PRESS 0\000"
@@ -1650,6 +1742,12 @@ $L22:
 	nop
 
 $L24:
+	lui	$2,%hi(game_mode)
+	lw	$3,%lo(game_mode)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L23
+	nop
+
 	lw	$2,32($fp)
 	nop
 	sw	$2,20($sp)
@@ -2098,10 +2196,10 @@ $L40:
 	li	$3,26			# 0x1a
 	sw	$3,%lo(ball_y)($2)
 	lui	$2,%hi(ball_vx)
-	li	$3,3			# 0x3
+	li	$3,5			# 0x5
 	sw	$3,%lo(ball_vx)($2)
 	lui	$2,%hi(ball_vy)
-	li	$3,2			# 0x2
+	li	$3,3			# 0x3
 	sw	$3,%lo(ball_vy)($2)
 	li	$4,13			# 0xd
 	jal	buzzer_play
@@ -2131,10 +2229,10 @@ $L41:
 	li	$3,26			# 0x1a
 	sw	$3,%lo(ball_y)($2)
 	lui	$2,%hi(ball_vx)
-	li	$3,-3			# 0xfffffffffffffffd
+	li	$3,-5			# 0xfffffffffffffffb
 	sw	$3,%lo(ball_vx)($2)
 	lui	$2,%hi(ball_vy)
-	li	$3,2			# 0x2
+	li	$3,3			# 0x3
 	sw	$3,%lo(ball_vy)($2)
 	li	$4,13			# 0xd
 	jal	buzzer_play
@@ -2170,7 +2268,26 @@ $L44:
 	nop
 
 $L28:
+	lui	$2,%hi(game_mode)
+	lw	$3,%lo(game_mode)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L46
+	nop
+
 	jal	squash_update
+	nop
+
+	b	$L17
+	nop
+
+$L46:
+	lui	$2,%hi(game_mode)
+	lw	$3,%lo(game_mode)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L17
+	nop
+
+	jal	soccer_update
 	nop
 
 	b	$L17
@@ -2186,7 +2303,7 @@ $L27:
 	lui	$2,%hi(game_mode)
 	lw	$2,%lo(game_mode)($2)
 	nop
-	bne	$2,$0,$L46
+	bne	$2,$0,$L47
 	nop
 
 	jal	lcd_clear_vbuf
@@ -2212,7 +2329,7 @@ $L27:
 
 	lw	$2,36($fp)
 	nop
-	beq	$2,$0,$L47
+	beq	$2,$0,$L48
 	nop
 
 	sw	$0,20($sp)
@@ -2225,10 +2342,10 @@ $L27:
 	jal	lcd_puts_color
 	nop
 
-	b	$L48
+	b	$L49
 	nop
 
-$L47:
+$L48:
 	li	$2,255			# 0xff
 	sw	$2,20($sp)
 	li	$2,255			# 0xff
@@ -2241,7 +2358,7 @@ $L47:
 	jal	lcd_puts_color
 	nop
 
-$L48:
+$L49:
 	li	$2,255			# 0xff
 	sw	$2,20($sp)
 	li	$2,255			# 0xff
@@ -2260,7 +2377,7 @@ $L48:
 	lw	$2,%lo(score_p2)($2)
 	nop
 	slt	$2,$2,$3
-	beq	$2,$0,$L49
+	beq	$2,$0,$L50
 	nop
 
 	sw	$0,20($sp)
@@ -2274,10 +2391,10 @@ $L48:
 	jal	lcd_puts_color
 	nop
 
-	b	$L50
+	b	$L51
 	nop
 
-$L49:
+$L50:
 	sw	$0,20($sp)
 	li	$2,128			# 0x80
 	sw	$2,16($sp)
@@ -2289,7 +2406,7 @@ $L49:
 	jal	lcd_puts_color
 	nop
 
-$L50:
+$L51:
 	li	$2,83			# 0x53
 	sb	$2,44($fp)
 	li	$2,67			# 0x43
@@ -2349,12 +2466,41 @@ $L50:
 	b	$L17
 	nop
 
-$L46:
-	lui	$2,%hi(sq_score)
-	lw	$2,%lo(sq_score)($2)
+$L47:
+	lui	$2,%hi(game_mode)
+	lw	$3,%lo(game_mode)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L52
 	nop
-	move	$4,$2
-	jal	draw_result_squash
+
+	lui	$2,%hi(sq_p1_score)
+	lw	$3,%lo(sq_p1_score)($2)
+	lui	$2,%hi(sq_p2_score)
+	lw	$2,%lo(sq_p2_score)($2)
+	nop
+	move	$5,$2
+	move	$4,$3
+	jal	draw_result_squash_2p
+	nop
+
+	b	$L17
+	nop
+
+$L52:
+	lui	$2,%hi(game_mode)
+	lw	$3,%lo(game_mode)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L17
+	nop
+
+	lui	$2,%hi(soccer_p1_score)
+	lw	$3,%lo(soccer_p1_score)($2)
+	lui	$2,%hi(soccer_p2_score)
+	lw	$2,%lo(soccer_p2_score)($2)
+	nop
+	move	$5,$2
+	move	$4,$3
+	jal	draw_result_soccer
 	nop
 
 $L17:
@@ -2392,79 +2538,47 @@ main:
 	li	$2,65300			# 0xff14
 	sw	$2,20($fp)
 	lw	$2,20($fp)
+	li	$3,1			# 0x1
+	sw	$3,0($2)
+	li	$2,458752			# 0x70000
+	ori	$4,$2,0xa120
+	jal	lcd_wait
+	nop
+
+	lw	$2,20($fp)
+	li	$3,2			# 0x2
+	sw	$3,0($2)
+	li	$2,458752			# 0x70000
+	ori	$4,$2,0xa120
+	jal	lcd_wait
+	nop
+
+	lw	$2,20($fp)
+	li	$3,3			# 0x3
+	sw	$3,0($2)
+	li	$2,458752			# 0x70000
+	ori	$4,$2,0xa120
+	jal	lcd_wait
+	nop
+
+	lw	$2,20($fp)
+	li	$3,4			# 0x4
+	sw	$3,0($2)
+	li	$2,458752			# 0x70000
+	ori	$4,$2,0xa120
+	jal	lcd_wait
+	nop
+
+	lw	$2,20($fp)
 	li	$3,5			# 0x5
 	sw	$3,0($2)
-	li	$2,65536			# 0x10000
-	ori	$4,$2,0x86a0
+	li	$2,458752			# 0x70000
+	ori	$4,$2,0xa120
 	jal	lcd_wait
 	nop
 
 	lw	$2,20($fp)
-	li	$3,8			# 0x8
-	sw	$3,0($2)
-	li	$2,131072			# 0x20000
-	ori	$4,$2,0x49f0
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	li	$3,10			# 0xa
-	sw	$3,0($2)
-	li	$2,196608			# 0x30000
-	ori	$4,$2,0xd40
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	li	$3,13			# 0xd
-	sw	$3,0($2)
-	li	$2,262144			# 0x40000
-	ori	$4,$2,0x93e0
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	nop
-	sw	$0,0($2)
-	li	$2,196608			# 0x30000
-	ori	$4,$2,0xd40
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	li	$3,8			# 0x8
-	sw	$3,0($2)
-	li	$2,131072			# 0x20000
-	ori	$4,$2,0x49f0
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	li	$3,10			# 0xa
-	sw	$3,0($2)
-	li	$2,131072			# 0x20000
-	ori	$4,$2,0x49f0
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	li	$3,12			# 0xc
-	sw	$3,0($2)
-	li	$2,262144			# 0x40000
-	ori	$4,$2,0x93e0
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	nop
-	sw	$0,0($2)
-	li	$2,65536			# 0x10000
-	ori	$4,$2,0x86a0
-	jal	lcd_wait
-	nop
-
-	lw	$2,20($fp)
-	li	$3,13			# 0xd
+	li	$3,6			# 0x6
 	sw	$3,0($2)
 	li	$2,458752			# 0x70000
 	ori	$4,$2,0xa120
@@ -2474,16 +2588,16 @@ main:
 	lw	$2,20($fp)
 	nop
 	sw	$0,0($2)
-	li	$2,65536			# 0x10000
-	ori	$4,$2,0x86a0
+	li	$2,458752			# 0x70000
+	ori	$4,$2,0xa120
 	jal	lcd_wait
 	nop
 
-$L70:
+$L73:
 	lui	$2,%hi(game_state)
 	lw	$2,%lo(game_state)($2)
 	nop
-	bne	$2,$0,$L52
+	bne	$2,$0,$L54
 	nop
 
 	jal	lcd_init
@@ -2500,14 +2614,14 @@ $L70:
 	move	$3,$2
 	lui	$2,%hi(rotary_prev)
 	sw	$3,%lo(rotary_prev)($2)
-	b	$L70
+	b	$L73
 	nop
 
-$L52:
+$L54:
 	lui	$2,%hi(game_state)
 	lw	$3,%lo(game_state)($2)
 	li	$2,1			# 0x1
-	bne	$3,$2,$L54
+	bne	$3,$2,$L56
 	nop
 
 	jal	btn_check_3
@@ -2524,19 +2638,19 @@ $L52:
 	sw	$2,48($fp)
 	lw	$2,40($fp)
 	nop
-	beq	$2,$0,$L55
+	beq	$2,$0,$L57
 	nop
 
 	lui	$2,%hi(btn3_prev)
 	lw	$2,%lo(btn3_prev)($2)
 	nop
-	bne	$2,$0,$L55
+	bne	$2,$0,$L57
 	nop
 
 	lui	$2,%hi(cursor)
 	lw	$2,%lo(cursor)($2)
 	nop
-	blez	$2,$L55
+	blez	$2,$L57
 	nop
 
 	lui	$2,%hi(cursor)
@@ -2548,23 +2662,23 @@ $L52:
 	jal	led_blink
 	nop
 
-$L55:
+$L57:
 	lw	$2,44($fp)
 	nop
-	beq	$2,$0,$L56
+	beq	$2,$0,$L58
 	nop
 
 	lui	$2,%hi(btn2_prev)
 	lw	$2,%lo(btn2_prev)($2)
 	nop
-	bne	$2,$0,$L56
+	bne	$2,$0,$L58
 	nop
 
 	lui	$2,%hi(cursor)
 	lw	$2,%lo(cursor)($2)
 	nop
 	slt	$2,$2,2
-	beq	$2,$0,$L56
+	beq	$2,$0,$L58
 	nop
 
 	lui	$2,%hi(cursor)
@@ -2576,7 +2690,7 @@ $L55:
 	jal	led_blink
 	nop
 
-$L56:
+$L58:
 	jal	rotary_read
 	nop
 
@@ -2590,41 +2704,41 @@ $L56:
 	lw	$2,16($fp)
 	nop
 	slt	$2,$2,129
-	bne	$2,$0,$L57
+	bne	$2,$0,$L59
 	nop
 
 	lw	$2,16($fp)
 	nop
 	addiu	$2,$2,-256
 	sw	$2,16($fp)
-	b	$L58
+	b	$L60
 	nop
 
-$L57:
+$L59:
 	lw	$2,16($fp)
 	nop
 	slt	$2,$2,-128
-	beq	$2,$0,$L58
+	beq	$2,$0,$L60
 	nop
 
 	lw	$2,16($fp)
 	nop
 	addiu	$2,$2,256
 	sw	$2,16($fp)
-$L58:
+$L60:
 	lui	$2,%hi(rotary_threshold)
 	lw	$2,%lo(rotary_threshold)($2)
 	lw	$3,16($fp)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L59
+	bne	$2,$0,$L61
 	nop
 
 	lui	$2,%hi(cursor)
 	lw	$2,%lo(cursor)($2)
 	nop
 	slt	$2,$2,2
-	beq	$2,$0,$L60
+	beq	$2,$0,$L62
 	nop
 
 	lui	$2,%hi(cursor)
@@ -2636,15 +2750,15 @@ $L58:
 	jal	led_blink
 	nop
 
-$L60:
+$L62:
 	lui	$2,%hi(rotary_prev)
 	lw	$3,52($fp)
 	nop
 	sw	$3,%lo(rotary_prev)($2)
-	b	$L61
+	b	$L63
 	nop
 
-$L59:
+$L61:
 	lui	$2,%hi(rotary_threshold)
 	lw	$2,%lo(rotary_threshold)($2)
 	nop
@@ -2652,13 +2766,13 @@ $L59:
 	lw	$3,16($fp)
 	nop
 	slt	$2,$2,$3
-	bne	$2,$0,$L61
+	bne	$2,$0,$L63
 	nop
 
 	lui	$2,%hi(cursor)
 	lw	$2,%lo(cursor)($2)
 	nop
-	blez	$2,$L62
+	blez	$2,$L64
 	nop
 
 	lui	$2,%hi(cursor)
@@ -2670,21 +2784,21 @@ $L59:
 	jal	led_blink
 	nop
 
-$L62:
+$L64:
 	lui	$2,%hi(rotary_prev)
 	lw	$3,52($fp)
 	nop
 	sw	$3,%lo(rotary_prev)($2)
-$L61:
+$L63:
 	lw	$2,48($fp)
 	nop
-	beq	$2,$0,$L63
+	beq	$2,$0,$L65
 	nop
 
 	lui	$2,%hi(btn0_prev)
 	lw	$2,%lo(btn0_prev)($2)
 	nop
-	bne	$2,$0,$L63
+	bne	$2,$0,$L65
 	nop
 
 	lui	$2,%hi(cursor)
@@ -2697,7 +2811,7 @@ $L61:
 	jal	led_blink
 	nop
 
-$L63:
+$L65:
 	lui	$2,%hi(btn0_prev)
 	lw	$3,48($fp)
 	nop
@@ -2710,14 +2824,14 @@ $L63:
 	lw	$3,40($fp)
 	nop
 	sw	$3,%lo(btn3_prev)($2)
-	b	$L70
+	b	$L73
 	nop
 
-$L54:
+$L56:
 	lui	$2,%hi(game_state)
 	lw	$3,%lo(game_state)($2)
 	li	$2,2			# 0x2
-	bne	$3,$2,$L64
+	bne	$3,$2,$L66
 	nop
 
 	jal	btn_check_0
@@ -2730,12 +2844,12 @@ $L54:
 	sw	$2,36($fp)
 	lw	$2,32($fp)
 	nop
-	beq	$2,$0,$L65
+	beq	$2,$0,$L67
 	nop
 
 	lw	$2,36($fp)
 	nop
-	beq	$2,$0,$L65
+	beq	$2,$0,$L67
 	nop
 
 	lui	$2,%hi(game_state)
@@ -2749,25 +2863,25 @@ $L54:
 	move	$3,$2
 	lui	$2,%hi(rotary_prev)
 	sw	$3,%lo(rotary_prev)($2)
-	b	$L66
+	b	$L68
 	nop
 
-$L65:
+$L67:
 	lw	$2,32($fp)
 	nop
-	beq	$2,$0,$L66
+	beq	$2,$0,$L68
 	nop
 
 	lui	$2,%hi(btn0_prev)
 	lw	$2,%lo(btn0_prev)($2)
 	nop
-	bne	$2,$0,$L66
+	bne	$2,$0,$L68
 	nop
 
 	lui	$2,%hi(game_mode)
 	lw	$2,%lo(game_mode)($2)
 	nop
-	bne	$2,$0,$L67
+	bne	$2,$0,$L69
 	nop
 
 	lui	$2,%hi(p1_x)
@@ -2789,19 +2903,25 @@ $L65:
 	li	$3,30			# 0x1e
 	sw	$3,%lo(ball_y)($2)
 	lui	$2,%hi(ball_vx)
-	li	$3,3			# 0x3
+	li	$3,5			# 0x5
 	sw	$3,%lo(ball_vx)($2)
 	lui	$2,%hi(ball_vy)
-	li	$3,2			# 0x2
+	li	$3,3			# 0x3
 	sw	$3,%lo(ball_vy)($2)
 	lui	$2,%hi(score_p1)
 	sw	$0,%lo(score_p1)($2)
 	lui	$2,%hi(score_p2)
 	sw	$0,%lo(score_p2)($2)
-	b	$L68
+	b	$L70
 	nop
 
-$L67:
+$L69:
+	lui	$2,%hi(game_mode)
+	lw	$3,%lo(game_mode)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L71
+	nop
+
 	lui	$2,%hi(sq_p1_x)
 	li	$3,2			# 0x2
 	sw	$3,%lo(sq_p1_x)($2)
@@ -2821,10 +2941,10 @@ $L67:
 	li	$3,26			# 0x1a
 	sw	$3,%lo(sq_ball_y)($2)
 	lui	$2,%hi(sq_ball_vx)
-	li	$3,3			# 0x3
+	li	$3,5			# 0x5
 	sw	$3,%lo(sq_ball_vx)($2)
 	lui	$2,%hi(sq_ball_vy)
-	li	$3,2			# 0x2
+	li	$3,3			# 0x3
 	sw	$3,%lo(sq_ball_vy)($2)
 	lui	$2,%hi(sq_score)
 	sw	$0,%lo(sq_score)($2)
@@ -2835,26 +2955,72 @@ $L67:
 	sw	$0,%lo(sq_turn)($2)
 	lui	$2,%hi(sq_rally)
 	sw	$0,%lo(sq_rally)($2)
-$L68:
+	lui	$2,%hi(sq_p1_score)
+	sw	$0,%lo(sq_p1_score)($2)
+	lui	$2,%hi(sq_p2_score)
+	sw	$0,%lo(sq_p2_score)($2)
+	b	$L70
+	nop
+
+$L71:
+	lui	$2,%hi(game_mode)
+	lw	$3,%lo(game_mode)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L70
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	li	$3,10			# 0xa
+	sw	$3,%lo(soccer_p1_x)($2)
+	lui	$2,%hi(soccer_p1_y)
+	li	$3,24			# 0x18
+	sw	$3,%lo(soccer_p1_y)($2)
+	lui	$2,%hi(soccer_p2_x)
+	li	$3,78			# 0x4e
+	sw	$3,%lo(soccer_p2_x)($2)
+	lui	$2,%hi(soccer_p2_y)
+	li	$3,24			# 0x18
+	sw	$3,%lo(soccer_p2_y)($2)
+	lui	$2,%hi(soccer_ball_x)
+	li	$3,44			# 0x2c
+	sw	$3,%lo(soccer_ball_x)($2)
+	lui	$2,%hi(soccer_ball_y)
+	li	$3,24			# 0x18
+	sw	$3,%lo(soccer_ball_y)($2)
+	lui	$2,%hi(soccer_ball_vx)
+	sw	$0,%lo(soccer_ball_vx)($2)
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$0,%lo(soccer_ball_vy)($2)
+	lui	$2,%hi(soccer_ball_flying)
+	sw	$0,%lo(soccer_ball_flying)($2)
+	lui	$2,%hi(soccer_ball_owner)
+	sw	$0,%lo(soccer_ball_owner)($2)
+	lui	$2,%hi(soccer_p1_score)
+	sw	$0,%lo(soccer_p1_score)($2)
+	lui	$2,%hi(soccer_p2_score)
+	sw	$0,%lo(soccer_p2_score)($2)
+	lui	$2,%hi(soccer_invincible_timer)
+	sw	$0,%lo(soccer_invincible_timer)($2)
+$L70:
 	lui	$2,%hi(game_state)
 	li	$3,3			# 0x3
 	sw	$3,%lo(game_state)($2)
 	jal	led_blink
 	nop
 
-$L66:
+$L68:
 	lui	$2,%hi(btn0_prev)
 	lw	$3,32($fp)
 	nop
 	sw	$3,%lo(btn0_prev)($2)
-	b	$L70
+	b	$L73
 	nop
 
-$L64:
+$L66:
 	lui	$2,%hi(game_state)
 	lw	$3,%lo(game_state)($2)
 	li	$2,3			# 0x3
-	bne	$3,$2,$L69
+	bne	$3,$2,$L72
 	nop
 
 	lui	$2,%hi(input_p2_dir)
@@ -2876,14 +3042,14 @@ $L64:
 	move	$3,$2
 	lui	$2,%hi(input_btn1)
 	sw	$3,%lo(input_btn1)($2)
-	b	$L70
+	b	$L73
 	nop
 
-$L69:
+$L72:
 	lui	$2,%hi(game_state)
 	lw	$3,%lo(game_state)($2)
 	li	$2,4			# 0x4
-	bne	$3,$2,$L70
+	bne	$3,$2,$L73
 	nop
 
 	jal	btn_check_0
@@ -2896,12 +3062,12 @@ $L69:
 	sw	$2,28($fp)
 	lw	$2,24($fp)
 	nop
-	beq	$2,$0,$L70
+	beq	$2,$0,$L73
 	nop
 
 	lw	$2,28($fp)
 	nop
-	beq	$2,$0,$L70
+	beq	$2,$0,$L73
 	nop
 
 	lui	$2,%hi(game_state)
@@ -2915,7 +3081,7 @@ $L69:
 	move	$3,$2
 	lui	$2,%hi(rotary_prev)
 	sw	$3,%lo(rotary_prev)($2)
-	b	$L70
+	b	$L73
 	nop
 
 	.set	macro
@@ -2934,21 +3100,18 @@ $LC12:
 	.ascii	"  TENNIS    \000"
 	.align	2
 $LC13:
-	.ascii	"> SQUASH 1P<\000"
+	.ascii	"> SQUASH   <\000"
 	.align	2
 $LC14:
-	.ascii	"  SQUASH 1P \000"
+	.ascii	"  SQUASH    \000"
 	.align	2
 $LC15:
-	.ascii	"> SQUASH 2P<\000"
+	.ascii	"> SOCCER   <\000"
 	.align	2
 $LC16:
-	.ascii	"  SQUASH 2P \000"
+	.ascii	"  SOCCER    \000"
 	.align	2
 $LC17:
-	.ascii	"ROTARY/3/2\000"
-	.align	2
-$LC18:
 	.ascii	"0:DECIDE\000"
 	.text
 	.align	2
@@ -2986,14 +3149,14 @@ draw_mode_select:
 	lw	$2,36($fp)
 	nop
 	sltu	$2,$2,6
-	beq	$2,$0,$L72
+	beq	$2,$0,$L75
 	nop
 
 	lw	$2,36($fp)
 	nop
 	sll	$3,$2,2
-	lui	$2,%hi($L74)
-	addiu	$2,$2,%lo($L74)
+	lui	$2,%hi($L77)
+	addiu	$2,$2,%lo($L77)
 	addu	$2,$3,$2
 	lw	$2,0($2)
 	nop
@@ -3003,20 +3166,63 @@ draw_mode_select:
 	.rdata
 	.align	2
 	.align	2
-$L74:
-	.word	$L73
-	.word	$L75
+$L77:
 	.word	$L76
-	.word	$L77
 	.word	$L78
 	.word	$L79
+	.word	$L80
+	.word	$L81
+	.word	$L82
 	.text
-$L73:
+$L76:
 	li	$2,255			# 0xff
 	sw	$2,24($fp)
 	sw	$0,28($fp)
 	sw	$0,32($fp)
-	b	$L80
+	b	$L83
+	nop
+
+$L78:
+	li	$2,255			# 0xff
+	sw	$2,24($fp)
+	li	$2,255			# 0xff
+	sw	$2,28($fp)
+	sw	$0,32($fp)
+	b	$L83
+	nop
+
+$L79:
+	sw	$0,24($fp)
+	li	$2,255			# 0xff
+	sw	$2,28($fp)
+	sw	$0,32($fp)
+	b	$L83
+	nop
+
+$L80:
+	sw	$0,24($fp)
+	li	$2,255			# 0xff
+	sw	$2,28($fp)
+	li	$2,255			# 0xff
+	sw	$2,32($fp)
+	b	$L83
+	nop
+
+$L81:
+	sw	$0,24($fp)
+	sw	$0,28($fp)
+	li	$2,255			# 0xff
+	sw	$2,32($fp)
+	b	$L83
+	nop
+
+$L82:
+	li	$2,255			# 0xff
+	sw	$2,24($fp)
+	sw	$0,28($fp)
+	li	$2,255			# 0xff
+	sw	$2,32($fp)
+	b	$L83
 	nop
 
 $L75:
@@ -3024,53 +3230,10 @@ $L75:
 	sw	$2,24($fp)
 	li	$2,255			# 0xff
 	sw	$2,28($fp)
-	sw	$0,32($fp)
-	b	$L80
-	nop
-
-$L76:
-	sw	$0,24($fp)
-	li	$2,255			# 0xff
-	sw	$2,28($fp)
-	sw	$0,32($fp)
-	b	$L80
-	nop
-
-$L77:
-	sw	$0,24($fp)
-	li	$2,255			# 0xff
-	sw	$2,28($fp)
-	li	$2,255			# 0xff
-	sw	$2,32($fp)
-	b	$L80
-	nop
-
-$L78:
-	sw	$0,24($fp)
-	sw	$0,28($fp)
-	li	$2,255			# 0xff
-	sw	$2,32($fp)
-	b	$L80
-	nop
-
-$L79:
-	li	$2,255			# 0xff
-	sw	$2,24($fp)
-	sw	$0,28($fp)
-	li	$2,255			# 0xff
-	sw	$2,32($fp)
-	b	$L80
-	nop
-
-$L72:
-	li	$2,255			# 0xff
-	sw	$2,24($fp)
-	li	$2,255			# 0xff
-	sw	$2,28($fp)
 	li	$2,255			# 0xff
 	sw	$2,32($fp)
 	nop
-$L80:
+$L83:
 	lw	$2,32($fp)
 	nop
 	sw	$2,20($sp)
@@ -3101,21 +3264,21 @@ $L80:
 	sw	$2,44($fp)
 	lw	$2,40($fp)
 	nop
-	beq	$2,$0,$L81
+	beq	$2,$0,$L84
 	nop
 
 	li	$2,255			# 0xff
-	b	$L82
+	b	$L85
 	nop
 
-$L81:
+$L84:
 	move	$2,$0
-$L82:
+$L85:
 	sw	$2,48($fp)
 	sw	$0,52($fp)
 	lw	$2,64($fp)
 	nop
-	bne	$2,$0,$L83
+	bne	$2,$0,$L86
 	nop
 
 	lw	$2,52($fp)
@@ -3132,10 +3295,10 @@ $L82:
 	jal	lcd_puts_color
 	nop
 
-	b	$L84
+	b	$L87
 	nop
 
-$L83:
+$L86:
 	li	$2,255			# 0xff
 	sw	$2,20($sp)
 	sw	$0,16($sp)
@@ -3147,10 +3310,10 @@ $L83:
 	jal	lcd_puts_color
 	nop
 
-$L84:
+$L87:
 	lw	$3,64($fp)
 	li	$2,1			# 0x1
-	bne	$3,$2,$L85
+	bne	$3,$2,$L88
 	nop
 
 	lw	$2,52($fp)
@@ -3167,10 +3330,10 @@ $L84:
 	jal	lcd_puts_color
 	nop
 
-	b	$L86
+	b	$L89
 	nop
 
-$L85:
+$L88:
 	li	$2,255			# 0xff
 	sw	$2,20($sp)
 	sw	$0,16($sp)
@@ -3182,10 +3345,10 @@ $L85:
 	jal	lcd_puts_color
 	nop
 
-$L86:
+$L89:
 	lw	$3,64($fp)
 	li	$2,2			# 0x2
-	bne	$3,$2,$L87
+	bne	$3,$2,$L90
 	nop
 
 	lw	$2,52($fp)
@@ -3202,10 +3365,10 @@ $L86:
 	jal	lcd_puts_color
 	nop
 
-	b	$L88
+	b	$L91
 	nop
 
-$L87:
+$L90:
 	li	$2,255			# 0xff
 	sw	$2,20($sp)
 	sw	$0,16($sp)
@@ -3217,25 +3380,13 @@ $L87:
 	jal	lcd_puts_color
 	nop
 
-$L88:
-	li	$2,255			# 0xff
-	sw	$2,20($sp)
-	li	$2,255			# 0xff
-	sw	$2,16($sp)
-	move	$7,$0
-	lui	$2,%hi($LC17)
-	addiu	$6,$2,%lo($LC17)
-	move	$5,$0
-	li	$4,6			# 0x6
-	jal	lcd_puts_color
-	nop
-
+$L91:
 	li	$2,255			# 0xff
 	sw	$2,20($sp)
 	sw	$0,16($sp)
 	li	$7,255			# 0xff
-	lui	$2,%hi($LC18)
-	addiu	$6,$2,%lo($LC18)
+	lui	$2,%hi($LC17)
+	addiu	$6,$2,%lo($LC17)
 	move	$5,$0
 	li	$4,7			# 0x7
 	jal	lcd_puts_color
@@ -3442,20 +3593,20 @@ tiny_wait:
 	move	$fp,$sp
 	sw	$4,16($fp)
 	sw	$0,0($fp)
-	b	$L100
+	b	$L103
 	nop
 
-$L101:
+$L104:
 	lw	$2,0($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,0($fp)
-$L100:
+$L103:
 	lw	$2,0($fp)
 	lw	$3,16($fp)
 	nop
 	slt	$2,$2,$3
-	bne	$2,$0,$L101
+	bne	$2,$0,$L104
 	nop
 
 	nop
@@ -3501,47 +3652,47 @@ kypd_scan:
 	sb	$2,20($fp)
 	lb	$2,20($fp)
 	nop
-	bltz	$2,$L103
+	bltz	$2,$L106
 	nop
 
 	li	$2,1			# 0x1
-	b	$L104
-	nop
-
-$L103:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x40
-	bne	$2,$0,$L105
-	nop
-
-	li	$2,4			# 0x4
-	b	$L104
-	nop
-
-$L105:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x20
-	bne	$2,$0,$L106
-	nop
-
-	li	$2,7			# 0x7
-	b	$L104
+	b	$L107
 	nop
 
 $L106:
 	lbu	$2,20($fp)
 	nop
+	andi	$2,$2,0x40
+	bne	$2,$0,$L108
+	nop
+
+	li	$2,4			# 0x4
+	b	$L107
+	nop
+
+$L108:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x20
+	bne	$2,$0,$L109
+	nop
+
+	li	$2,7			# 0x7
+	b	$L107
+	nop
+
+$L109:
+	lbu	$2,20($fp)
+	nop
 	andi	$2,$2,0x10
-	bne	$2,$0,$L107
+	bne	$2,$0,$L110
 	nop
 
 	move	$2,$0
-	b	$L104
+	b	$L107
 	nop
 
-$L107:
+$L110:
 	lw	$2,16($fp)
 	li	$3,11			# 0xb
 	sw	$3,0($2)
@@ -3556,47 +3707,47 @@ $L107:
 	sb	$2,20($fp)
 	lb	$2,20($fp)
 	nop
-	bltz	$2,$L108
+	bltz	$2,$L111
 	nop
 
 	li	$2,2			# 0x2
-	b	$L104
-	nop
-
-$L108:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x40
-	bne	$2,$0,$L109
-	nop
-
-	li	$2,5			# 0x5
-	b	$L104
-	nop
-
-$L109:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x20
-	bne	$2,$0,$L110
-	nop
-
-	li	$2,8			# 0x8
-	b	$L104
-	nop
-
-$L110:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x10
-	bne	$2,$0,$L111
-	nop
-
-	li	$2,15			# 0xf
-	b	$L104
+	b	$L107
 	nop
 
 $L111:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x40
+	bne	$2,$0,$L112
+	nop
+
+	li	$2,5			# 0x5
+	b	$L107
+	nop
+
+$L112:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x20
+	bne	$2,$0,$L113
+	nop
+
+	li	$2,8			# 0x8
+	b	$L107
+	nop
+
+$L113:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x10
+	bne	$2,$0,$L114
+	nop
+
+	li	$2,15			# 0xf
+	b	$L107
+	nop
+
+$L114:
 	lw	$2,16($fp)
 	li	$3,13			# 0xd
 	sw	$3,0($2)
@@ -3611,47 +3762,47 @@ $L111:
 	sb	$2,20($fp)
 	lb	$2,20($fp)
 	nop
-	bltz	$2,$L112
+	bltz	$2,$L115
 	nop
 
 	li	$2,3			# 0x3
-	b	$L104
-	nop
-
-$L112:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x40
-	bne	$2,$0,$L113
-	nop
-
-	li	$2,6			# 0x6
-	b	$L104
-	nop
-
-$L113:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x20
-	bne	$2,$0,$L114
-	nop
-
-	li	$2,9			# 0x9
-	b	$L104
-	nop
-
-$L114:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x10
-	bne	$2,$0,$L115
-	nop
-
-	li	$2,14			# 0xe
-	b	$L104
+	b	$L107
 	nop
 
 $L115:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x40
+	bne	$2,$0,$L116
+	nop
+
+	li	$2,6			# 0x6
+	b	$L107
+	nop
+
+$L116:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x20
+	bne	$2,$0,$L117
+	nop
+
+	li	$2,9			# 0x9
+	b	$L107
+	nop
+
+$L117:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x10
+	bne	$2,$0,$L118
+	nop
+
+	li	$2,14			# 0xe
+	b	$L107
+	nop
+
+$L118:
 	lw	$2,16($fp)
 	li	$3,14			# 0xe
 	sw	$3,0($2)
@@ -3666,49 +3817,49 @@ $L115:
 	sb	$2,20($fp)
 	lb	$2,20($fp)
 	nop
-	bltz	$2,$L116
+	bltz	$2,$L119
 	nop
 
 	li	$2,10			# 0xa
-	b	$L104
-	nop
-
-$L116:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x40
-	bne	$2,$0,$L117
-	nop
-
-	li	$2,11			# 0xb
-	b	$L104
-	nop
-
-$L117:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x20
-	bne	$2,$0,$L118
-	nop
-
-	li	$2,12			# 0xc
-	b	$L104
-	nop
-
-$L118:
-	lbu	$2,20($fp)
-	nop
-	andi	$2,$2,0x10
-	bne	$2,$0,$L119
-	nop
-
-	li	$2,13			# 0xd
-	b	$L104
+	b	$L107
 	nop
 
 $L119:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x40
+	bne	$2,$0,$L120
+	nop
+
+	li	$2,11			# 0xb
+	b	$L107
+	nop
+
+$L120:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x20
+	bne	$2,$0,$L121
+	nop
+
+	li	$2,12			# 0xc
+	b	$L107
+	nop
+
+$L121:
+	lbu	$2,20($fp)
+	nop
+	andi	$2,$2,0x10
+	bne	$2,$0,$L122
+	nop
+
+	li	$2,13			# 0xd
+	b	$L107
+	nop
+
+$L122:
 	li	$2,-1			# 0xffffffffffffffff
-$L104:
+$L107:
 	move	$sp,$fp
 	lw	$31,28($sp)
 	lw	$fp,24($sp)
@@ -3758,30 +3909,30 @@ kypd_scan_both:
 	sb	$2,28($fp)
 	lb	$2,28($fp)
 	nop
-	bltz	$2,$L121
+	bltz	$2,$L124
 	nop
 
 	li	$2,1			# 0x1
 	sw	$2,16($fp)
-$L121:
+$L124:
 	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
-	bne	$2,$0,$L122
+	bne	$2,$0,$L125
 	nop
 
 	li	$2,4			# 0x4
 	sw	$2,16($fp)
-$L122:
+$L125:
 	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x20
-	bne	$2,$0,$L123
+	bne	$2,$0,$L126
 	nop
 
 	li	$2,7			# 0x7
 	sw	$2,16($fp)
-$L123:
+$L126:
 	lw	$2,24($fp)
 	li	$3,11			# 0xb
 	sw	$3,0($2)
@@ -3797,12 +3948,21 @@ $L123:
 	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
-	bne	$2,$0,$L124
+	bne	$2,$0,$L127
 	nop
 
 	li	$2,5			# 0x5
 	sw	$2,16($fp)
-$L124:
+$L127:
+	lbu	$2,28($fp)
+	nop
+	andi	$2,$2,0x20
+	bne	$2,$0,$L128
+	nop
+
+	li	$2,8			# 0x8
+	sw	$2,16($fp)
+$L128:
 	lw	$2,24($fp)
 	li	$3,13			# 0xd
 	sw	$3,0($2)
@@ -3815,15 +3975,23 @@ $L124:
 	lw	$2,0($2)
 	nop
 	sb	$2,28($fp)
+	lb	$2,28($fp)
+	nop
+	bltz	$2,$L129
+	nop
+
+	li	$2,3			# 0x3
+	sw	$2,20($fp)
+$L129:
 	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
-	bne	$2,$0,$L125
+	bne	$2,$0,$L130
 	nop
 
 	li	$2,6			# 0x6
 	sw	$2,20($fp)
-$L125:
+$L130:
 	lw	$2,24($fp)
 	li	$3,14			# 0xe
 	sw	$3,0($2)
@@ -3838,30 +4006,30 @@ $L125:
 	sb	$2,28($fp)
 	lb	$2,28($fp)
 	nop
-	bltz	$2,$L126
+	bltz	$2,$L131
 	nop
 
 	li	$2,10			# 0xa
 	sw	$2,20($fp)
-$L126:
+$L131:
 	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
-	bne	$2,$0,$L127
+	bne	$2,$0,$L132
 	nop
 
 	li	$2,11			# 0xb
 	sw	$2,20($fp)
-$L127:
+$L132:
 	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x20
-	bne	$2,$0,$L128
+	bne	$2,$0,$L133
 	nop
 
 	li	$2,12			# 0xc
 	sw	$2,20($fp)
-$L128:
+$L133:
 	lw	$2,40($fp)
 	lw	$3,16($fp)
 	nop
@@ -3940,20 +4108,20 @@ led_blink:
 	nop
 
 	sw	$0,16($fp)
-	b	$L131
+	b	$L136
 	nop
 
-$L132:
+$L137:
 	lw	$2,16($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,16($fp)
-$L131:
+$L136:
 	lw	$3,16($fp)
 	li	$2,65536			# 0x10000
 	ori	$2,$2,0x86a0
 	slt	$2,$3,$2
-	bne	$2,$0,$L132
+	bne	$2,$0,$L137
 	nop
 
 	move	$4,$0
@@ -4055,20 +4223,20 @@ lcd_wait:
 	move	$fp,$sp
 	sw	$4,16($fp)
 	sw	$0,0($fp)
-	b	$L136
+	b	$L141
 	nop
 
-$L137:
+$L142:
 	lw	$2,0($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,0($fp)
-$L136:
+$L141:
 	lw	$3,0($fp)
 	lw	$2,16($fp)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L137
+	bne	$2,$0,$L142
 	nop
 
 	nop
@@ -4361,15 +4529,15 @@ lcd_clear_vbuf:
 	sw	$fp,12($sp)
 	move	$fp,$sp
 	sw	$0,0($fp)
-	b	$L144
+	b	$L149
 	nop
 
-$L147:
+$L152:
 	sw	$0,4($fp)
-	b	$L145
+	b	$L150
 	nop
 
-$L146:
+$L151:
 	lui	$4,%hi(lcd_vbuf)
 	lw	$3,0($fp)
 	nop
@@ -4387,22 +4555,22 @@ $L146:
 	nop
 	addiu	$2,$2,1
 	sw	$2,4($fp)
-$L145:
+$L150:
 	lw	$2,4($fp)
 	nop
 	slt	$2,$2,96
-	bne	$2,$0,$L146
+	bne	$2,$0,$L151
 	nop
 
 	lw	$2,0($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,0($fp)
-$L144:
+$L149:
 	lw	$2,0($fp)
 	nop
 	slt	$2,$2,64
-	bne	$2,$0,$L147
+	bne	$2,$0,$L152
 	nop
 
 	nop
@@ -4433,15 +4601,15 @@ lcd_sync_vbuf:
 	sw	$fp,24($sp)
 	move	$fp,$sp
 	sw	$0,16($fp)
-	b	$L149
+	b	$L154
 	nop
 
-$L152:
+$L157:
 	sw	$0,20($fp)
-	b	$L150
+	b	$L155
 	nop
 
-$L151:
+$L156:
 	lui	$4,%hi(lcd_vbuf)
 	lw	$3,16($fp)
 	nop
@@ -4464,22 +4632,22 @@ $L151:
 	nop
 	addiu	$2,$2,1
 	sw	$2,20($fp)
-$L150:
+$L155:
 	lw	$2,20($fp)
 	nop
 	slt	$2,$2,96
-	bne	$2,$0,$L151
+	bne	$2,$0,$L156
 	nop
 
 	lw	$2,16($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,16($fp)
-$L149:
+$L154:
 	lw	$2,16($fp)
 	nop
 	slt	$2,$2,64
-	bne	$2,$0,$L152
+	bne	$2,$0,$L157
 	nop
 
 	nop
@@ -4514,15 +4682,15 @@ lcd_putc:
 	sw	$5,44($fp)
 	sw	$6,48($fp)
 	sw	$0,24($fp)
-	b	$L154
+	b	$L159
 	nop
 
-$L158:
+$L163:
 	sw	$0,28($fp)
-	b	$L155
+	b	$L160
 	nop
 
-$L157:
+$L162:
 	lw	$2,48($fp)
 	nop
 	addiu	$2,$2,-32
@@ -4540,7 +4708,7 @@ $L157:
 	nop
 	sra	$2,$3,$2
 	andi	$2,$2,0x1
-	beq	$2,$0,$L156
+	beq	$2,$0,$L161
 	nop
 
 	lw	$2,40($fp)
@@ -4562,27 +4730,27 @@ $L157:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-$L156:
+$L161:
 	lw	$2,28($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L155:
+$L160:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L157
+	bne	$2,$0,$L162
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L154:
+$L159:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L158
+	bne	$2,$0,$L163
 	nop
 
 	nop
@@ -4617,10 +4785,10 @@ lcd_puts:
 	sw	$5,36($fp)
 	sw	$6,40($fp)
 	sw	$0,16($fp)
-	b	$L160
+	b	$L165
 	nop
 
-$L163:
+$L168:
 	lw	$2,16($fp)
 	lw	$3,40($fp)
 	nop
@@ -4628,7 +4796,7 @@ $L163:
 	lb	$2,0($2)
 	nop
 	slt	$2,$2,32
-	bne	$2,$0,$L161
+	bne	$2,$0,$L166
 	nop
 
 	lw	$3,36($fp)
@@ -4647,19 +4815,19 @@ $L163:
 	jal	lcd_putc
 	nop
 
-$L161:
+$L166:
 	lw	$2,16($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,16($fp)
-$L160:
+$L165:
 	lw	$2,16($fp)
 	lw	$3,40($fp)
 	nop
 	addu	$2,$3,$2
 	lb	$2,0($2)
 	nop
-	beq	$2,$0,$L164
+	beq	$2,$0,$L169
 	nop
 
 	lw	$3,36($fp)
@@ -4667,10 +4835,10 @@ $L160:
 	nop
 	addu	$2,$3,$2
 	slt	$2,$2,12
-	bne	$2,$0,$L163
+	bne	$2,$0,$L168
 	nop
 
-$L164:
+$L169:
 	nop
 	move	$sp,$fp
 	lw	$31,28($sp)
@@ -4704,15 +4872,15 @@ lcd_putc_color:
 	sw	$6,48($fp)
 	sw	$7,52($fp)
 	sw	$0,24($fp)
-	b	$L166
+	b	$L171
 	nop
 
-$L170:
+$L175:
 	sw	$0,28($fp)
-	b	$L167
+	b	$L172
 	nop
 
-$L169:
+$L174:
 	lw	$2,48($fp)
 	nop
 	addiu	$2,$2,-32
@@ -4730,7 +4898,7 @@ $L169:
 	nop
 	sra	$2,$3,$2
 	andi	$2,$2,0x1
-	beq	$2,$0,$L168
+	beq	$2,$0,$L173
 	nop
 
 	lw	$2,40($fp)
@@ -4754,27 +4922,27 @@ $L169:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-$L168:
+$L173:
 	lw	$2,28($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L167:
+$L172:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L169
+	bne	$2,$0,$L174
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L166:
+$L171:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L170
+	bne	$2,$0,$L175
 	nop
 
 	nop
@@ -4810,10 +4978,10 @@ lcd_puts_color:
 	sw	$6,48($fp)
 	sw	$7,52($fp)
 	sw	$0,24($fp)
-	b	$L172
+	b	$L177
 	nop
 
-$L175:
+$L180:
 	lw	$2,24($fp)
 	lw	$3,48($fp)
 	nop
@@ -4821,7 +4989,7 @@ $L175:
 	lb	$2,0($2)
 	nop
 	slt	$2,$2,32
-	bne	$2,$0,$L173
+	bne	$2,$0,$L178
 	nop
 
 	lw	$3,44($fp)
@@ -4848,19 +5016,19 @@ $L175:
 	jal	lcd_putc_color
 	nop
 
-$L173:
+$L178:
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L172:
+$L177:
 	lw	$2,24($fp)
 	lw	$3,48($fp)
 	nop
 	addu	$2,$3,$2
 	lb	$2,0($2)
 	nop
-	beq	$2,$0,$L176
+	beq	$2,$0,$L181
 	nop
 
 	lw	$3,44($fp)
@@ -4868,10 +5036,10 @@ $L172:
 	nop
 	addu	$2,$3,$2
 	slt	$2,$2,12
-	bne	$2,$0,$L175
+	bne	$2,$0,$L180
 	nop
 
-$L176:
+$L181:
 	nop
 	move	$sp,$fp
 	lw	$31,36($sp)
@@ -4902,10 +5070,10 @@ draw_court_lines:
 	move	$fp,$sp
 	li	$2,4			# 0x4
 	sw	$2,24($fp)
-	b	$L178
+	b	$L183
 	nop
 
-$L179:
+$L184:
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,255			# 0xff
@@ -4928,19 +5096,19 @@ $L179:
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L178:
+$L183:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,92
-	bne	$2,$0,$L179
+	bne	$2,$0,$L184
 	nop
 
 	li	$2,4			# 0x4
 	sw	$2,28($fp)
-	b	$L180
+	b	$L185
 	nop
 
-$L181:
+$L186:
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,255			# 0xff
@@ -4963,19 +5131,19 @@ $L181:
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L180:
+$L185:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,60
-	bne	$2,$0,$L181
+	bne	$2,$0,$L186
 	nop
 
 	li	$2,16			# 0x10
 	sw	$2,32($fp)
-	b	$L182
+	b	$L187
 	nop
 
-$L183:
+$L188:
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,255			# 0xff
@@ -4998,19 +5166,19 @@ $L183:
 	nop
 	addiu	$2,$2,1
 	sw	$2,32($fp)
-$L182:
+$L187:
 	lw	$2,32($fp)
 	nop
 	slt	$2,$2,48
-	bne	$2,$0,$L183
+	bne	$2,$0,$L188
 	nop
 
 	li	$2,24			# 0x18
 	sw	$2,36($fp)
-	b	$L184
+	b	$L189
 	nop
 
-$L185:
+$L190:
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,255			# 0xff
@@ -5024,19 +5192,19 @@ $L185:
 	nop
 	addiu	$2,$2,2
 	sw	$2,36($fp)
-$L184:
+$L189:
 	lw	$2,36($fp)
 	nop
 	slt	$2,$2,72
-	bne	$2,$0,$L185
+	bne	$2,$0,$L190
 	nop
 
 	li	$2,2			# 0x2
 	sw	$2,40($fp)
-	b	$L186
+	b	$L191
 	nop
 
-$L187:
+$L192:
 	li	$2,180			# 0xb4
 	sw	$2,16($sp)
 	li	$7,180			# 0xb4
@@ -5050,11 +5218,11 @@ $L187:
 	nop
 	addiu	$2,$2,2
 	sw	$2,40($fp)
-$L186:
+$L191:
 	lw	$2,40($fp)
 	nop
 	slt	$2,$2,62
-	bne	$2,$0,$L187
+	bne	$2,$0,$L192
 	nop
 
 	nop
@@ -5090,15 +5258,15 @@ draw_racket:
 	sw	$6,64($fp)
 	sw	$7,68($fp)
 	sw	$0,24($fp)
-	b	$L189
+	b	$L194
 	nop
 
-$L194:
+$L199:
 	sw	$0,28($fp)
-	b	$L190
+	b	$L195
 	nop
 
-$L193:
+$L198:
 	lw	$3,60($fp)
 	lw	$2,24($fp)
 	nop
@@ -5111,24 +5279,24 @@ $L193:
 	sw	$2,36($fp)
 	lw	$2,36($fp)
 	nop
-	bltz	$2,$L191
+	bltz	$2,$L196
 	nop
 
 	lw	$2,36($fp)
 	nop
 	slt	$2,$2,96
-	beq	$2,$0,$L191
+	beq	$2,$0,$L196
 	nop
 
 	lw	$2,32($fp)
 	nop
-	bltz	$2,$L191
+	bltz	$2,$L196
 	nop
 
 	lw	$2,32($fp)
 	nop
 	slt	$2,$2,64
-	beq	$2,$0,$L191
+	beq	$2,$0,$L196
 	nop
 
 	lui	$2,%hi(RACKET_PATTERN)
@@ -5145,7 +5313,7 @@ $L193:
 	sw	$2,40($fp)
 	lw	$3,40($fp)
 	li	$2,1			# 0x1
-	bne	$3,$2,$L192
+	bne	$3,$2,$L197
 	nop
 
 	lw	$2,72($fp)
@@ -5158,13 +5326,13 @@ $L193:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-	b	$L191
+	b	$L196
 	nop
 
-$L192:
+$L197:
 	lw	$3,40($fp)
 	li	$2,2			# 0x2
-	bne	$3,$2,$L191
+	bne	$3,$2,$L196
 	nop
 
 	li	$2,100			# 0x64
@@ -5176,27 +5344,27 @@ $L192:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-$L191:
+$L196:
 	lw	$2,28($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L190:
+$L195:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L193
+	bne	$2,$0,$L198
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L189:
+$L194:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,12
-	bne	$2,$0,$L194
+	bne	$2,$0,$L199
 	nop
 
 	nop
@@ -5230,15 +5398,15 @@ draw_ball:
 	sw	$4,48($fp)
 	sw	$5,52($fp)
 	sw	$0,24($fp)
-	b	$L196
+	b	$L201
 	nop
 
-$L200:
+$L205:
 	sw	$0,28($fp)
-	b	$L197
+	b	$L202
 	nop
 
-$L199:
+$L204:
 	lw	$3,52($fp)
 	lw	$2,24($fp)
 	nop
@@ -5251,24 +5419,24 @@ $L199:
 	sw	$2,36($fp)
 	lw	$2,36($fp)
 	nop
-	bltz	$2,$L198
+	bltz	$2,$L203
 	nop
 
 	lw	$2,36($fp)
 	nop
 	slt	$2,$2,96
-	beq	$2,$0,$L198
+	beq	$2,$0,$L203
 	nop
 
 	lw	$2,32($fp)
 	nop
-	bltz	$2,$L198
+	bltz	$2,$L203
 	nop
 
 	lw	$2,32($fp)
 	nop
 	slt	$2,$2,64
-	beq	$2,$0,$L198
+	beq	$2,$0,$L203
 	nop
 
 	sw	$0,16($sp)
@@ -5279,27 +5447,27 @@ $L199:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-$L198:
+$L203:
 	lw	$2,28($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L197:
+$L202:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,4
-	bne	$2,$0,$L199
+	bne	$2,$0,$L204
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L196:
+$L201:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,4
-	bne	$2,$0,$L200
+	bne	$2,$0,$L205
 	nop
 
 	nop
@@ -5334,15 +5502,15 @@ draw_tennis_game:
 	nop
 
 	sw	$0,24($fp)
-	b	$L202
+	b	$L207
 	nop
 
-$L205:
+$L210:
 	sw	$0,28($fp)
-	b	$L203
+	b	$L208
 	nop
 
-$L204:
+$L209:
 	sw	$0,16($sp)
 	li	$7,100			# 0x64
 	move	$6,$0
@@ -5355,22 +5523,22 @@ $L204:
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L203:
+$L208:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,96
-	bne	$2,$0,$L204
+	bne	$2,$0,$L209
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L202:
+$L207:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,64
-	bne	$2,$0,$L205
+	bne	$2,$0,$L210
 	nop
 
 	jal	draw_court_lines
@@ -5472,75 +5640,6 @@ draw_squash_background:
 	sw	$fp,32($sp)
 	move	$fp,$sp
 	sw	$0,24($fp)
-	b	$L207
-	nop
-
-$L210:
-	sw	$0,28($fp)
-	b	$L208
-	nop
-
-$L209:
-	li	$2,60			# 0x3c
-	sw	$2,16($sp)
-	li	$7,40			# 0x28
-	move	$6,$0
-	lw	$5,28($fp)
-	lw	$4,24($fp)
-	jal	lcd_set_vbuf_pixel
-	nop
-
-	lw	$2,28($fp)
-	nop
-	addiu	$2,$2,1
-	sw	$2,28($fp)
-$L208:
-	lw	$2,28($fp)
-	nop
-	slt	$2,$2,96
-	bne	$2,$0,$L209
-	nop
-
-	lw	$2,24($fp)
-	nop
-	addiu	$2,$2,1
-	sw	$2,24($fp)
-$L207:
-	lw	$2,24($fp)
-	nop
-	slt	$2,$2,56
-	bne	$2,$0,$L210
-	nop
-
-	nop
-	move	$sp,$fp
-	lw	$31,36($sp)
-	lw	$fp,32($sp)
-	addiu	$sp,$sp,40
-	jr	$31
-	nop
-
-	.set	macro
-	.set	reorder
-	.end	draw_squash_background
-	.size	draw_squash_background, .-draw_squash_background
-	.align	2
-	.globl	draw_squash_walls
-	.set	nomips16
-	.set	nomicromips
-	.ent	draw_squash_walls
-	.type	draw_squash_walls, @function
-draw_squash_walls:
-	.frame	$fp,56,$31		# vars= 24, regs= 2/0, args= 24, gp= 0
-	.mask	0xc0000000,-4
-	.fmask	0x00000000,0
-	.set	noreorder
-	.set	nomacro
-	addiu	$sp,$sp,-56
-	sw	$31,52($sp)
-	sw	$fp,48($sp)
-	move	$fp,$sp
-	sw	$0,24($fp)
 	b	$L212
 	nop
 
@@ -5550,9 +5649,9 @@ $L215:
 	nop
 
 $L214:
-	li	$2,255			# 0xff
+	li	$2,60			# 0x3c
 	sw	$2,16($sp)
-	li	$7,180			# 0xb4
+	li	$7,40			# 0x28
 	move	$6,$0
 	lw	$5,28($fp)
 	lw	$4,24($fp)
@@ -5577,21 +5676,90 @@ $L213:
 $L212:
 	lw	$2,24($fp)
 	nop
-	slt	$2,$2,4
+	slt	$2,$2,56
 	bne	$2,$0,$L215
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,36($sp)
+	lw	$fp,32($sp)
+	addiu	$sp,$sp,40
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	draw_squash_background
+	.size	draw_squash_background, .-draw_squash_background
+	.align	2
+	.globl	draw_squash_walls
+	.set	nomips16
+	.set	nomicromips
+	.ent	draw_squash_walls
+	.type	draw_squash_walls, @function
+draw_squash_walls:
+	.frame	$fp,64,$31		# vars= 32, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-64
+	sw	$31,60($sp)
+	sw	$fp,56($sp)
+	move	$fp,$sp
+	sw	$0,24($fp)
+	b	$L217
+	nop
+
+$L220:
+	sw	$0,28($fp)
+	b	$L218
+	nop
+
+$L219:
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,180			# 0xb4
+	move	$6,$0
+	lw	$5,28($fp)
+	lw	$4,24($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,28($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,28($fp)
+$L218:
+	lw	$2,28($fp)
+	nop
+	slt	$2,$2,96
+	bne	$2,$0,$L219
+	nop
+
+	lw	$2,24($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,24($fp)
+$L217:
+	lw	$2,24($fp)
+	nop
+	slt	$2,$2,4
+	bne	$2,$0,$L220
 	nop
 
 	li	$2,52			# 0x34
 	sw	$2,32($fp)
-	b	$L216
+	b	$L221
 	nop
 
-$L219:
+$L224:
 	sw	$0,36($fp)
-	b	$L217
+	b	$L222
 	nop
 
-$L218:
+$L223:
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,180			# 0xb4
@@ -5605,35 +5773,35 @@ $L218:
 	nop
 	addiu	$2,$2,1
 	sw	$2,36($fp)
-$L217:
+$L222:
 	lw	$2,36($fp)
 	nop
 	slt	$2,$2,96
-	bne	$2,$0,$L218
+	bne	$2,$0,$L223
 	nop
 
 	lw	$2,32($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,32($fp)
-$L216:
+$L221:
 	lw	$2,32($fp)
 	nop
 	slt	$2,$2,56
-	bne	$2,$0,$L219
+	bne	$2,$0,$L224
 	nop
 
 	sw	$0,40($fp)
-	b	$L220
+	b	$L225
 	nop
 
-$L223:
+$L228:
 	li	$2,92			# 0x5c
 	sw	$2,44($fp)
-	b	$L221
+	b	$L226
 	nop
 
-$L222:
+$L227:
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,180			# 0xb4
@@ -5647,29 +5815,80 @@ $L222:
 	nop
 	addiu	$2,$2,1
 	sw	$2,44($fp)
-$L221:
+$L226:
 	lw	$2,44($fp)
 	nop
 	slt	$2,$2,96
-	bne	$2,$0,$L222
+	bne	$2,$0,$L227
 	nop
 
 	lw	$2,40($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,40($fp)
-$L220:
+$L225:
 	lw	$2,40($fp)
 	nop
 	slt	$2,$2,56
-	bne	$2,$0,$L223
+	bne	$2,$0,$L228
+	nop
+
+	li	$2,4			# 0x4
+	sw	$2,48($fp)
+	b	$L229
+	nop
+
+$L230:
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	li	$5,46			# 0x2e
+	lw	$4,48($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,48($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,48($fp)
+$L229:
+	lw	$2,48($fp)
+	nop
+	slt	$2,$2,52
+	bne	$2,$0,$L230
+	nop
+
+	sw	$0,52($fp)
+	b	$L231
+	nop
+
+$L232:
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	lw	$5,52($fp)
+	li	$4,28			# 0x1c
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,52($fp)
+	nop
+	addiu	$2,$2,2
+	sw	$2,52($fp)
+$L231:
+	lw	$2,52($fp)
+	nop
+	slt	$2,$2,92
+	bne	$2,$0,$L232
 	nop
 
 	nop
 	move	$sp,$fp
-	lw	$31,52($sp)
-	lw	$fp,48($sp)
-	addiu	$sp,$sp,56
+	lw	$31,60($sp)
+	lw	$fp,56($sp)
+	addiu	$sp,$sp,64
 	jr	$31
 	nop
 
@@ -5698,15 +5917,15 @@ draw_squash_racket:
 	sw	$6,64($fp)
 	sw	$7,68($fp)
 	sw	$0,24($fp)
-	b	$L225
+	b	$L234
 	nop
 
-$L230:
+$L239:
 	sw	$0,28($fp)
-	b	$L226
+	b	$L235
 	nop
 
-$L229:
+$L238:
 	lw	$3,60($fp)
 	lw	$2,24($fp)
 	nop
@@ -5719,24 +5938,24 @@ $L229:
 	sw	$2,36($fp)
 	lw	$2,36($fp)
 	nop
-	bltz	$2,$L227
+	bltz	$2,$L236
 	nop
 
 	lw	$2,36($fp)
 	nop
 	slt	$2,$2,96
-	beq	$2,$0,$L227
+	beq	$2,$0,$L236
 	nop
 
 	lw	$2,32($fp)
 	nop
-	bltz	$2,$L227
+	bltz	$2,$L236
 	nop
 
 	lw	$2,32($fp)
 	nop
 	slt	$2,$2,56
-	beq	$2,$0,$L227
+	beq	$2,$0,$L236
 	nop
 
 	lui	$2,%hi(RACKET_PATTERN)
@@ -5753,7 +5972,7 @@ $L229:
 	sw	$2,40($fp)
 	lw	$3,40($fp)
 	li	$2,1			# 0x1
-	bne	$3,$2,$L228
+	bne	$3,$2,$L237
 	nop
 
 	lw	$2,72($fp)
@@ -5766,13 +5985,13 @@ $L229:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-	b	$L227
+	b	$L236
 	nop
 
-$L228:
+$L237:
 	lw	$3,40($fp)
 	li	$2,2			# 0x2
-	bne	$3,$2,$L227
+	bne	$3,$2,$L236
 	nop
 
 	li	$2,100			# 0x64
@@ -5784,27 +6003,27 @@ $L228:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-$L227:
+$L236:
 	lw	$2,28($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L226:
+$L235:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,8
-	bne	$2,$0,$L229
+	bne	$2,$0,$L238
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L225:
+$L234:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,12
-	bne	$2,$0,$L230
+	bne	$2,$0,$L239
 	nop
 
 	nop
@@ -5838,15 +6057,15 @@ draw_squash_ball:
 	sw	$4,48($fp)
 	sw	$5,52($fp)
 	sw	$0,24($fp)
-	b	$L232
+	b	$L241
 	nop
 
-$L236:
+$L245:
 	sw	$0,28($fp)
-	b	$L233
+	b	$L242
 	nop
 
-$L235:
+$L244:
 	lw	$3,48($fp)
 	lw	$2,28($fp)
 	nop
@@ -5859,24 +6078,24 @@ $L235:
 	sw	$2,36($fp)
 	lw	$2,32($fp)
 	nop
-	bltz	$2,$L234
+	bltz	$2,$L243
 	nop
 
 	lw	$2,32($fp)
 	nop
 	slt	$2,$2,96
-	beq	$2,$0,$L234
+	beq	$2,$0,$L243
 	nop
 
 	lw	$2,36($fp)
 	nop
-	bltz	$2,$L234
+	bltz	$2,$L243
 	nop
 
 	lw	$2,36($fp)
 	nop
 	slt	$2,$2,56
-	beq	$2,$0,$L234
+	beq	$2,$0,$L243
 	nop
 
 	li	$2,255			# 0xff
@@ -5888,27 +6107,27 @@ $L235:
 	jal	lcd_set_vbuf_pixel
 	nop
 
-$L234:
+$L243:
 	lw	$2,28($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,28($fp)
-$L233:
+$L242:
 	lw	$2,28($fp)
 	nop
 	slt	$2,$2,4
-	bne	$2,$0,$L235
+	bne	$2,$0,$L244
 	nop
 
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L232:
+$L241:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,4
-	bne	$2,$0,$L236
+	bne	$2,$0,$L245
 	nop
 
 	nop
@@ -6083,15 +6302,15 @@ draw_lives:
 	nop
 
 	sw	$0,24($fp)
-	b	$L239
+	b	$L248
 	nop
 
-$L242:
+$L251:
 	lw	$3,24($fp)
 	lw	$2,40($fp)
 	nop
 	slt	$2,$3,$2
-	beq	$2,$0,$L240
+	beq	$2,$0,$L249
 	nop
 
 	lw	$2,24($fp)
@@ -6106,10 +6325,10 @@ $L242:
 	jal	lcd_putc_color
 	nop
 
-	b	$L241
+	b	$L250
 	nop
 
-$L240:
+$L249:
 	lw	$2,24($fp)
 	nop
 	addiu	$3,$2,8
@@ -6124,16 +6343,16 @@ $L240:
 	jal	lcd_putc_color
 	nop
 
-$L241:
+$L250:
 	lw	$2,24($fp)
 	nop
 	addiu	$2,$2,1
 	sw	$2,24($fp)
-$L239:
+$L248:
 	lw	$2,24($fp)
 	nop
 	slt	$2,$2,3
-	bne	$2,$0,$L242
+	bne	$2,$0,$L251
 	nop
 
 	nop
@@ -6150,13 +6369,110 @@ $L239:
 	.size	draw_lives, .-draw_lives
 	.rdata
 	.align	2
+$LC18:
+	.ascii	"P1:\000"
+	.align	2
 $LC19:
-	.ascii	"P1\000"
+	.ascii	"P2:\000"
+	.text
+	.align	2
+	.globl	draw_squash_2p_score
+	.set	nomips16
+	.set	nomicromips
+	.ent	draw_squash_2p_score
+	.type	draw_squash_2p_score, @function
+draw_squash_2p_score:
+	.frame	$fp,32,$31		# vars= 0, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-32
+	sw	$31,28($sp)
+	sw	$fp,24($sp)
+	move	$fp,$sp
+	sw	$4,32($fp)
+	sw	$5,36($fp)
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC18)
+	addiu	$6,$2,%lo($LC18)
+	move	$5,$0
+	li	$4,7			# 0x7
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,32($fp)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	move	$6,$3
+	li	$5,3			# 0x3
+	li	$4,7			# 0x7
+	jal	lcd_putc_color
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,45			# 0x2d
+	li	$5,4			# 0x4
+	li	$4,7			# 0x7
+	jal	lcd_putc_color
+	nop
+
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC19)
+	addiu	$6,$2,%lo($LC19)
+	li	$5,5			# 0x5
+	li	$4,7			# 0x7
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	move	$6,$3
+	li	$5,8			# 0x8
+	li	$4,7			# 0x7
+	jal	lcd_putc_color
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,28($sp)
+	lw	$fp,24($sp)
+	addiu	$sp,$sp,32
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	draw_squash_2p_score
+	.size	draw_squash_2p_score, .-draw_squash_2p_score
+	.rdata
 	.align	2
 $LC20:
-	.ascii	" <\000"
+	.ascii	"P1\000"
 	.align	2
 $LC21:
+	.ascii	" <\000"
+	.align	2
+$LC22:
 	.ascii	"P2\000"
 	.text
 	.align	2
@@ -6189,111 +6505,111 @@ draw_turn_indicator:
 	li	$2,-2147483648			# 0xffffffff80000000
 	ori	$2,$2,0x1
 	and	$2,$3,$2
-	bgez	$2,$L244
+	bgez	$2,$L254
 	nop
 
 	addiu	$2,$2,-1
 	li	$3,-2			# 0xfffffffffffffffe
 	or	$2,$2,$3
 	addiu	$2,$2,1
-$L244:
+$L254:
 	sw	$2,24($fp)
 	lw	$2,40($fp)
 	nop
-	bne	$2,$0,$L245
+	bne	$2,$0,$L255
 	nop
 
 	lw	$2,24($fp)
 	nop
-	beq	$2,$0,$L246
+	beq	$2,$0,$L256
 	nop
 
 	sw	$0,20($sp)
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	move	$7,$0
-	lui	$2,%hi($LC19)
-	addiu	$6,$2,%lo($LC19)
+	lui	$2,%hi($LC20)
+	addiu	$6,$2,%lo($LC20)
 	move	$5,$0
 	move	$4,$0
 	jal	lcd_puts_color
 	nop
 
-	b	$L247
+	b	$L257
 	nop
 
-$L246:
-	sw	$0,20($sp)
-	li	$2,255			# 0xff
-	sw	$2,16($sp)
-	li	$7,255			# 0xff
-	lui	$2,%hi($LC19)
-	addiu	$6,$2,%lo($LC19)
-	move	$5,$0
-	move	$4,$0
-	jal	lcd_puts_color
-	nop
-
-$L247:
+$L256:
 	sw	$0,20($sp)
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,255			# 0xff
 	lui	$2,%hi($LC20)
 	addiu	$6,$2,%lo($LC20)
+	move	$5,$0
+	move	$4,$0
+	jal	lcd_puts_color
+	nop
+
+$L257:
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC21)
+	addiu	$6,$2,%lo($LC21)
 	li	$5,2			# 0x2
 	move	$4,$0
 	jal	lcd_puts_color
 	nop
 
-	b	$L251
+	b	$L261
 	nop
 
-$L245:
+$L255:
 	lw	$2,24($fp)
 	nop
-	beq	$2,$0,$L249
+	beq	$2,$0,$L259
 	nop
 
 	sw	$0,20($sp)
 	li	$2,128			# 0x80
 	sw	$2,16($sp)
 	li	$7,255			# 0xff
-	lui	$2,%hi($LC21)
-	addiu	$6,$2,%lo($LC21)
+	lui	$2,%hi($LC22)
+	addiu	$6,$2,%lo($LC22)
 	move	$5,$0
 	move	$4,$0
 	jal	lcd_puts_color
 	nop
 
-	b	$L250
+	b	$L260
 	nop
 
-$L249:
+$L259:
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC22)
+	addiu	$6,$2,%lo($LC22)
+	move	$5,$0
+	move	$4,$0
+	jal	lcd_puts_color
+	nop
+
+$L260:
 	sw	$0,20($sp)
 	li	$2,255			# 0xff
 	sw	$2,16($sp)
 	li	$7,255			# 0xff
 	lui	$2,%hi($LC21)
 	addiu	$6,$2,%lo($LC21)
-	move	$5,$0
-	move	$4,$0
-	jal	lcd_puts_color
-	nop
-
-$L250:
-	sw	$0,20($sp)
-	li	$2,255			# 0xff
-	sw	$2,16($sp)
-	li	$7,255			# 0xff
-	lui	$2,%hi($LC20)
-	addiu	$6,$2,%lo($LC20)
 	li	$5,2			# 0x2
 	move	$4,$0
 	jal	lcd_puts_color
 	nop
 
-$L251:
+$L261:
 	nop
 	move	$sp,$fp
 	lw	$31,36($sp)
@@ -6334,7 +6650,7 @@ draw_squash_game:
 	lui	$2,%hi(sq_turn)
 	lw	$2,%lo(sq_turn)($2)
 	nop
-	bne	$2,$0,$L253
+	bne	$2,$0,$L263
 	nop
 
 	lui	$2,%hi(sq_p1_x)
@@ -6349,12 +6665,6 @@ draw_squash_game:
 	jal	draw_squash_racket
 	nop
 
-	lui	$2,%hi(game_mode)
-	lw	$3,%lo(game_mode)($2)
-	li	$2,2			# 0x2
-	bne	$3,$2,$L255
-	nop
-
 	lui	$2,%hi(sq_p2_x)
 	lw	$3,%lo(sq_p2_x)($2)
 	lui	$2,%hi(sq_p2_y)
@@ -6367,10 +6677,10 @@ draw_squash_game:
 	jal	draw_squash_racket
 	nop
 
-	b	$L255
+	b	$L264
 	nop
 
-$L253:
+$L263:
 	lui	$2,%hi(sq_p1_x)
 	lw	$3,%lo(sq_p1_x)($2)
 	lui	$2,%hi(sq_p1_y)
@@ -6381,12 +6691,6 @@ $L253:
 	move	$5,$2
 	move	$4,$3
 	jal	draw_squash_racket
-	nop
-
-	lui	$2,%hi(game_mode)
-	lw	$3,%lo(game_mode)($2)
-	li	$2,2			# 0x2
-	bne	$3,$2,$L255
 	nop
 
 	lui	$2,%hi(sq_p2_x)
@@ -6401,7 +6705,7 @@ $L253:
 	jal	draw_squash_racket
 	nop
 
-$L255:
+$L264:
 	lui	$2,%hi(sq_ball_x)
 	lw	$3,%lo(sq_ball_x)($2)
 	lui	$2,%hi(sq_ball_y)
@@ -6412,35 +6716,14 @@ $L255:
 	jal	draw_squash_ball
 	nop
 
-	lui	$2,%hi(game_mode)
-	lw	$3,%lo(game_mode)($2)
-	li	$2,2			# 0x2
-	bne	$3,$2,$L256
-	nop
-
-	lui	$2,%hi(sq_turn)
-	lw	$3,%lo(sq_turn)($2)
-	lui	$2,%hi(frame_counter)
-	lw	$2,%lo(frame_counter)($2)
+	lui	$2,%hi(sq_p1_score)
+	lw	$3,%lo(sq_p1_score)($2)
+	lui	$2,%hi(sq_p2_score)
+	lw	$2,%lo(sq_p2_score)($2)
 	nop
 	move	$5,$2
 	move	$4,$3
-	jal	draw_turn_indicator
-	nop
-
-$L256:
-	lui	$2,%hi(sq_score)
-	lw	$2,%lo(sq_score)($2)
-	nop
-	move	$4,$2
-	jal	draw_squash_score
-	nop
-
-	lui	$2,%hi(sq_lives)
-	lw	$2,%lo(sq_lives)($2)
-	nop
-	move	$4,$2
-	jal	draw_lives
+	jal	draw_squash_2p_score
 	nop
 
 	nop
@@ -6494,7 +6777,7 @@ squash_update:
 	lw	$2,%lo(sq_ball_y)($2)
 	nop
 	slt	$2,$2,5
-	beq	$2,$0,$L258
+	beq	$2,$0,$L266
 	nop
 
 	lui	$2,%hi(sq_ball_y)
@@ -6506,19 +6789,12 @@ squash_update:
 	subu	$3,$0,$2
 	lui	$2,%hi(sq_ball_vy)
 	sw	$3,%lo(sq_ball_vy)($2)
-	li	$4,8			# 0x8
-	jal	buzzer_play
-	nop
-
-	lui	$2,%hi(buzzer_timer)
-	li	$3,2			# 0x2
-	sw	$3,%lo(buzzer_timer)($2)
-$L258:
+$L266:
 	lui	$2,%hi(sq_ball_y)
 	lw	$2,%lo(sq_ball_y)($2)
 	nop
 	slt	$2,$2,48
-	bne	$2,$0,$L259
+	bne	$2,$0,$L267
 	nop
 
 	lui	$2,%hi(sq_ball_y)
@@ -6530,19 +6806,12 @@ $L258:
 	subu	$3,$0,$2
 	lui	$2,%hi(sq_ball_vy)
 	sw	$3,%lo(sq_ball_vy)($2)
-	li	$4,8			# 0x8
-	jal	buzzer_play
-	nop
-
-	lui	$2,%hi(buzzer_timer)
-	li	$3,2			# 0x2
-	sw	$3,%lo(buzzer_timer)($2)
-$L259:
+$L267:
 	lui	$2,%hi(sq_ball_x)
 	lw	$2,%lo(sq_ball_x)($2)
 	nop
 	slt	$2,$2,88
-	bne	$2,$0,$L260
+	bne	$2,$0,$L268
 	nop
 
 	lui	$2,%hi(sq_ball_x)
@@ -6554,18 +6823,17 @@ $L259:
 	subu	$3,$0,$2
 	lui	$2,%hi(sq_ball_vx)
 	sw	$3,%lo(sq_ball_vx)($2)
-	li	$4,8			# 0x8
-	jal	buzzer_play
-	nop
-
-	lui	$2,%hi(buzzer_timer)
-	li	$3,2			# 0x2
-	sw	$3,%lo(buzzer_timer)($2)
-$L260:
+$L268:
 	lui	$2,%hi(sq_ball_vx)
 	lw	$2,%lo(sq_ball_vx)($2)
 	nop
-	bgez	$2,$L261
+	bgez	$2,$L269
+	nop
+
+	lui	$2,%hi(sq_turn)
+	lw	$2,%lo(sq_turn)($2)
+	nop
+	bne	$2,$0,$L269
 	nop
 
 	lui	$2,%hi(sq_p1_x)
@@ -6576,7 +6844,7 @@ $L260:
 	lw	$2,%lo(sq_ball_x)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L261
+	bne	$2,$0,$L269
 	nop
 
 	lui	$2,%hi(sq_ball_x)
@@ -6587,7 +6855,7 @@ $L260:
 	lw	$2,%lo(sq_p1_x)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L261
+	bne	$2,$0,$L269
 	nop
 
 	lui	$2,%hi(sq_ball_y)
@@ -6598,7 +6866,7 @@ $L260:
 	lw	$2,%lo(sq_p1_y)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L261
+	bne	$2,$0,$L269
 	nop
 
 	lui	$2,%hi(sq_p1_y)
@@ -6609,7 +6877,7 @@ $L260:
 	lw	$2,%lo(sq_ball_y)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L261
+	bne	$2,$0,$L269
 	nop
 
 	lui	$2,%hi(sq_p1_x)
@@ -6636,16 +6904,9 @@ $L260:
 	addiu	$3,$2,1
 	lui	$2,%hi(sq_rally)
 	sw	$3,%lo(sq_rally)($2)
-	lui	$2,%hi(game_mode)
-	lw	$3,%lo(game_mode)($2)
-	li	$2,2			# 0x2
-	bne	$3,$2,$L262
-	nop
-
 	lui	$2,%hi(sq_turn)
 	li	$3,1			# 0x1
 	sw	$3,%lo(sq_turn)($2)
-$L262:
 	li	$4,8			# 0x8
 	jal	buzzer_play
 	nop
@@ -6653,17 +6914,17 @@ $L262:
 	lui	$2,%hi(buzzer_timer)
 	li	$3,2			# 0x2
 	sw	$3,%lo(buzzer_timer)($2)
-$L261:
-	lui	$2,%hi(game_mode)
-	lw	$3,%lo(game_mode)($2)
-	li	$2,2			# 0x2
-	bne	$3,$2,$L263
-	nop
-
+$L269:
 	lui	$2,%hi(sq_ball_vx)
 	lw	$2,%lo(sq_ball_vx)($2)
 	nop
-	bgez	$2,$L263
+	bgez	$2,$L270
+	nop
+
+	lui	$2,%hi(sq_turn)
+	lw	$3,%lo(sq_turn)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L270
 	nop
 
 	lui	$2,%hi(sq_p2_x)
@@ -6674,7 +6935,7 @@ $L261:
 	lw	$2,%lo(sq_ball_x)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L263
+	bne	$2,$0,$L270
 	nop
 
 	lui	$2,%hi(sq_ball_x)
@@ -6685,7 +6946,7 @@ $L261:
 	lw	$2,%lo(sq_p2_x)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L263
+	bne	$2,$0,$L270
 	nop
 
 	lui	$2,%hi(sq_ball_y)
@@ -6696,7 +6957,7 @@ $L261:
 	lw	$2,%lo(sq_p2_y)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L263
+	bne	$2,$0,$L270
 	nop
 
 	lui	$2,%hi(sq_p2_y)
@@ -6707,7 +6968,7 @@ $L261:
 	lw	$2,%lo(sq_ball_y)($2)
 	nop
 	slt	$2,$3,$2
-	bne	$2,$0,$L263
+	bne	$2,$0,$L270
 	nop
 
 	lui	$2,%hi(sq_p2_x)
@@ -6743,32 +7004,58 @@ $L261:
 	lui	$2,%hi(buzzer_timer)
 	li	$3,2			# 0x2
 	sw	$3,%lo(buzzer_timer)($2)
-$L263:
+$L270:
 	lui	$2,%hi(sq_ball_x)
 	lw	$2,%lo(sq_ball_x)($2)
 	nop
-	bgez	$2,$L264
+	bgez	$2,$L271
 	nop
 
-	lui	$2,%hi(sq_lives)
-	lw	$2,%lo(sq_lives)($2)
+	lui	$2,%hi(sq_turn)
+	lw	$2,%lo(sq_turn)($2)
 	nop
-	addiu	$3,$2,-1
-	lui	$2,%hi(sq_lives)
-	sw	$3,%lo(sq_lives)($2)
-	lui	$2,%hi(sq_lives)
-	lw	$2,%lo(sq_lives)($2)
-	nop
-	bgtz	$2,$L265
+	bne	$2,$0,$L272
 	nop
 
+	lui	$2,%hi(sq_p2_score)
+	lw	$2,%lo(sq_p2_score)($2)
+	nop
+	addiu	$3,$2,1
+	lui	$2,%hi(sq_p2_score)
+	sw	$3,%lo(sq_p2_score)($2)
+	b	$L273
+	nop
+
+$L272:
+	lui	$2,%hi(sq_p1_score)
+	lw	$2,%lo(sq_p1_score)($2)
+	nop
+	addiu	$3,$2,1
+	lui	$2,%hi(sq_p1_score)
+	sw	$3,%lo(sq_p1_score)($2)
+$L273:
+	lui	$2,%hi(sq_p1_score)
+	lw	$2,%lo(sq_p1_score)($2)
+	nop
+	slt	$2,$2,5
+	beq	$2,$0,$L274
+	nop
+
+	lui	$2,%hi(sq_p2_score)
+	lw	$2,%lo(sq_p2_score)($2)
+	nop
+	slt	$2,$2,5
+	bne	$2,$0,$L275
+	nop
+
+$L274:
 	lui	$2,%hi(game_state)
 	li	$3,4			# 0x4
 	sw	$3,%lo(game_state)($2)
-	b	$L266
+	b	$L276
 	nop
 
-$L265:
+$L275:
 	lui	$2,%hi(sq_ball_x)
 	li	$3,20			# 0x14
 	sw	$3,%lo(sq_ball_x)($2)
@@ -6776,16 +7063,16 @@ $L265:
 	li	$3,26			# 0x1a
 	sw	$3,%lo(sq_ball_y)($2)
 	lui	$2,%hi(sq_ball_vx)
-	li	$3,3			# 0x3
+	li	$3,5			# 0x5
 	sw	$3,%lo(sq_ball_vx)($2)
 	lui	$2,%hi(sq_ball_vy)
-	li	$3,2			# 0x2
+	li	$3,3			# 0x3
 	sw	$3,%lo(sq_ball_vy)($2)
 	lui	$2,%hi(sq_rally)
 	sw	$0,%lo(sq_rally)($2)
 	lui	$2,%hi(sq_turn)
 	sw	$0,%lo(sq_turn)($2)
-$L266:
+$L276:
 	li	$4,13			# 0xd
 	jal	buzzer_play
 	nop
@@ -6793,7 +7080,7 @@ $L266:
 	lui	$2,%hi(buzzer_timer)
 	li	$3,5			# 0x5
 	sw	$3,%lo(buzzer_timer)($2)
-$L264:
+$L271:
 	jal	draw_squash_game
 	nop
 
@@ -6829,14 +7116,14 @@ squash_move_players:
 	lui	$2,%hi(input_p1_dir)
 	lw	$3,%lo(input_p1_dir)($2)
 	li	$2,1			# 0x1
-	bne	$3,$2,$L268
+	bne	$3,$2,$L278
 	nop
 
 	lui	$2,%hi(sq_p1_y)
 	lw	$2,%lo(sq_p1_y)($2)
 	nop
 	slt	$2,$2,5
-	bne	$2,$0,$L268
+	bne	$2,$0,$L278
 	nop
 
 	lui	$2,%hi(sq_p1_y)
@@ -6846,18 +7133,18 @@ squash_move_players:
 	subu	$3,$3,$2
 	lui	$2,%hi(sq_p1_y)
 	sw	$3,%lo(sq_p1_y)($2)
-$L268:
+$L278:
 	lui	$2,%hi(input_p1_dir)
 	lw	$3,%lo(input_p1_dir)($2)
 	li	$2,7			# 0x7
-	bne	$3,$2,$L269
+	bne	$3,$2,$L279
 	nop
 
 	lui	$2,%hi(sq_p1_y)
 	lw	$2,%lo(sq_p1_y)($2)
 	nop
 	slt	$2,$2,40
-	beq	$2,$0,$L269
+	beq	$2,$0,$L279
 	nop
 
 	lui	$2,%hi(sq_p1_y)
@@ -6867,17 +7154,17 @@ $L268:
 	addu	$3,$3,$2
 	lui	$2,%hi(sq_p1_y)
 	sw	$3,%lo(sq_p1_y)($2)
-$L269:
+$L279:
 	lui	$2,%hi(input_p1_dir)
 	lw	$3,%lo(input_p1_dir)($2)
 	li	$2,4			# 0x4
-	bne	$3,$2,$L270
+	bne	$3,$2,$L280
 	nop
 
 	lui	$2,%hi(sq_p1_x)
 	lw	$2,%lo(sq_p1_x)($2)
 	nop
-	blez	$2,$L270
+	blez	$2,$L280
 	nop
 
 	lui	$2,%hi(sq_p1_x)
@@ -6887,18 +7174,18 @@ $L269:
 	subu	$3,$3,$2
 	lui	$2,%hi(sq_p1_x)
 	sw	$3,%lo(sq_p1_x)($2)
-$L270:
+$L280:
 	lui	$2,%hi(input_p1_dir)
 	lw	$3,%lo(input_p1_dir)($2)
 	li	$2,5			# 0x5
-	bne	$3,$2,$L271
+	bne	$3,$2,$L281
 	nop
 
 	lui	$2,%hi(sq_p1_x)
 	lw	$2,%lo(sq_p1_x)($2)
 	nop
 	slt	$2,$2,80
-	beq	$2,$0,$L271
+	beq	$2,$0,$L281
 	nop
 
 	lui	$2,%hi(sq_p1_x)
@@ -6908,24 +7195,18 @@ $L270:
 	addu	$3,$3,$2
 	lui	$2,%hi(sq_p1_x)
 	sw	$3,%lo(sq_p1_x)($2)
-$L271:
-	lui	$2,%hi(game_mode)
-	lw	$3,%lo(game_mode)($2)
-	li	$2,2			# 0x2
-	bne	$3,$2,$L276
-	nop
-
+$L281:
 	lui	$2,%hi(input_p2_dir)
 	lw	$3,%lo(input_p2_dir)($2)
 	li	$2,10			# 0xa
-	bne	$3,$2,$L273
+	bne	$3,$2,$L282
 	nop
 
 	lui	$2,%hi(sq_p2_y)
 	lw	$2,%lo(sq_p2_y)($2)
 	nop
 	slt	$2,$2,5
-	bne	$2,$0,$L273
+	bne	$2,$0,$L282
 	nop
 
 	lui	$2,%hi(sq_p2_y)
@@ -6935,18 +7216,18 @@ $L271:
 	subu	$3,$3,$2
 	lui	$2,%hi(sq_p2_y)
 	sw	$3,%lo(sq_p2_y)($2)
-$L273:
+$L282:
 	lui	$2,%hi(input_p2_dir)
 	lw	$3,%lo(input_p2_dir)($2)
 	li	$2,12			# 0xc
-	bne	$3,$2,$L274
+	bne	$3,$2,$L283
 	nop
 
 	lui	$2,%hi(sq_p2_y)
 	lw	$2,%lo(sq_p2_y)($2)
 	nop
 	slt	$2,$2,40
-	beq	$2,$0,$L274
+	beq	$2,$0,$L283
 	nop
 
 	lui	$2,%hi(sq_p2_y)
@@ -6956,17 +7237,17 @@ $L273:
 	addu	$3,$3,$2
 	lui	$2,%hi(sq_p2_y)
 	sw	$3,%lo(sq_p2_y)($2)
-$L274:
+$L283:
 	lui	$2,%hi(input_p2_dir)
 	lw	$3,%lo(input_p2_dir)($2)
 	li	$2,6			# 0x6
-	bne	$3,$2,$L275
+	bne	$3,$2,$L284
 	nop
 
 	lui	$2,%hi(sq_p2_x)
 	lw	$2,%lo(sq_p2_x)($2)
 	nop
-	blez	$2,$L275
+	blez	$2,$L284
 	nop
 
 	lui	$2,%hi(sq_p2_x)
@@ -6976,18 +7257,18 @@ $L274:
 	subu	$3,$3,$2
 	lui	$2,%hi(sq_p2_x)
 	sw	$3,%lo(sq_p2_x)($2)
-$L275:
+$L284:
 	lui	$2,%hi(input_p2_dir)
 	lw	$3,%lo(input_p2_dir)($2)
 	li	$2,11			# 0xb
-	bne	$3,$2,$L276
+	bne	$3,$2,$L286
 	nop
 
 	lui	$2,%hi(sq_p2_x)
 	lw	$2,%lo(sq_p2_x)($2)
 	nop
 	slt	$2,$2,80
-	beq	$2,$0,$L276
+	beq	$2,$0,$L286
 	nop
 
 	lui	$2,%hi(sq_p2_x)
@@ -6997,7 +7278,7 @@ $L275:
 	addu	$3,$3,$2
 	lui	$2,%hi(sq_p2_x)
 	sw	$3,%lo(sq_p2_x)($2)
-$L276:
+$L286:
 	nop
 	move	$sp,$fp
 	lw	$fp,12($sp)
@@ -7222,4 +7503,2355 @@ draw_result_squash:
 	.set	reorder
 	.end	draw_result_squash
 	.size	draw_result_squash, .-draw_result_squash
+	.rdata
+	.align	2
+$LC23:
+	.ascii	" P1  WIN! \000"
+	.align	2
+$LC24:
+	.ascii	" P2  WIN! \000"
+	.text
+	.align	2
+	.globl	draw_result_squash_2p
+	.set	nomips16
+	.set	nomicromips
+	.ent	draw_result_squash_2p
+	.type	draw_result_squash_2p, @function
+draw_result_squash_2p:
+	.frame	$fp,32,$31		# vars= 0, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-32
+	sw	$31,28($sp)
+	sw	$fp,24($sp)
+	move	$fp,$sp
+	sw	$4,32($fp)
+	sw	$5,36($fp)
+	jal	lcd_clear_vbuf
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC5)
+	addiu	$6,$2,%lo($LC5)
+	move	$5,$0
+	move	$4,$0
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,5
+	bne	$2,$0,$L289
+	nop
+
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC23)
+	addiu	$6,$2,%lo($LC23)
+	li	$5,1			# 0x1
+	li	$4,2			# 0x2
+	jal	lcd_puts_color
+	nop
+
+	b	$L290
+	nop
+
+$L289:
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC24)
+	addiu	$6,$2,%lo($LC24)
+	li	$5,1			# 0x1
+	li	$4,2			# 0x2
+	jal	lcd_puts_color
+	nop
+
+$L290:
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC5)
+	addiu	$6,$2,%lo($LC5)
+	move	$5,$0
+	li	$4,3			# 0x3
+	jal	lcd_puts_color
+	nop
+
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC18)
+	addiu	$6,$2,%lo($LC18)
+	li	$5,1			# 0x1
+	li	$4,5			# 0x5
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,32($fp)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	move	$6,$3
+	li	$5,4			# 0x4
+	li	$4,5			# 0x5
+	jal	lcd_putc_color
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,45			# 0x2d
+	li	$5,5			# 0x5
+	li	$4,5			# 0x5
+	jal	lcd_putc_color
+	nop
+
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC19)
+	addiu	$6,$2,%lo($LC19)
+	li	$5,6			# 0x6
+	li	$4,5			# 0x5
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	move	$6,$3
+	li	$5,9			# 0x9
+	li	$4,5			# 0x5
+	jal	lcd_putc_color
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC9)
+	addiu	$6,$2,%lo($LC9)
+	move	$5,$0
+	li	$4,7			# 0x7
+	jal	lcd_puts_color
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,28($sp)
+	lw	$fp,24($sp)
+	addiu	$sp,$sp,32
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	draw_result_squash_2p
+	.size	draw_result_squash_2p, .-draw_result_squash_2p
+	.align	2
+	.globl	draw_soccer_player
+	.set	nomips16
+	.set	nomicromips
+	.ent	draw_soccer_player
+	.type	draw_soccer_player, @function
+draw_soccer_player:
+	.frame	$fp,56,$31		# vars= 24, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-56
+	sw	$31,52($sp)
+	sw	$fp,48($sp)
+	move	$fp,$sp
+	sw	$4,56($fp)
+	sw	$5,60($fp)
+	sw	$6,64($fp)
+	sw	$7,68($fp)
+	lw	$2,76($fp)
+	nop
+	beq	$2,$0,$L292
+	nop
+
+	lui	$2,%hi(frame_counter)
+	lw	$2,%lo(frame_counter)($2)
+	nop
+	andi	$2,$2,0x1
+	beq	$2,$0,$L299
+	nop
+
+$L292:
+	sw	$0,24($fp)
+	b	$L294
+	nop
+
+$L298:
+	sw	$0,28($fp)
+	b	$L295
+	nop
+
+$L297:
+	lw	$3,60($fp)
+	lw	$2,24($fp)
+	nop
+	addu	$2,$3,$2
+	sw	$2,32($fp)
+	lw	$3,56($fp)
+	lw	$2,28($fp)
+	nop
+	addu	$2,$3,$2
+	sw	$2,36($fp)
+	lw	$2,36($fp)
+	nop
+	bltz	$2,$L296
+	nop
+
+	lw	$2,36($fp)
+	nop
+	slt	$2,$2,96
+	beq	$2,$0,$L296
+	nop
+
+	lw	$2,32($fp)
+	nop
+	bltz	$2,$L296
+	nop
+
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,56
+	beq	$2,$0,$L296
+	nop
+
+	lui	$2,%hi(PLAYER_PATTERN)
+	lw	$3,24($fp)
+	nop
+	sll	$3,$3,3
+	addiu	$2,$2,%lo(PLAYER_PATTERN)
+	addu	$3,$3,$2
+	lw	$2,28($fp)
+	nop
+	addu	$2,$3,$2
+	lbu	$2,0($2)
+	nop
+	sw	$2,40($fp)
+	lw	$3,40($fp)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L296
+	nop
+
+	lw	$2,72($fp)
+	nop
+	sw	$2,16($sp)
+	lw	$7,68($fp)
+	lw	$6,64($fp)
+	lw	$5,36($fp)
+	lw	$4,32($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L296:
+	lw	$2,28($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,28($fp)
+$L295:
+	lw	$2,28($fp)
+	nop
+	slt	$2,$2,8
+	bne	$2,$0,$L297
+	nop
+
+	lw	$2,24($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,24($fp)
+$L294:
+	lw	$2,24($fp)
+	nop
+	slt	$2,$2,8
+	bne	$2,$0,$L298
+	nop
+
+	b	$L291
+	nop
+
+$L299:
+	nop
+$L291:
+	move	$sp,$fp
+	lw	$31,52($sp)
+	lw	$fp,48($sp)
+	addiu	$sp,$sp,56
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	draw_soccer_player
+	.size	draw_soccer_player, .-draw_soccer_player
+	.align	2
+	.globl	draw_soccer_ball
+	.set	nomips16
+	.set	nomicromips
+	.ent	draw_soccer_ball
+	.type	draw_soccer_ball, @function
+draw_soccer_ball:
+	.frame	$fp,48,$31		# vars= 16, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-48
+	sw	$31,44($sp)
+	sw	$fp,40($sp)
+	move	$fp,$sp
+	sw	$4,48($fp)
+	sw	$5,52($fp)
+	sw	$0,24($fp)
+	b	$L301
+	nop
+
+$L305:
+	sw	$0,28($fp)
+	b	$L302
+	nop
+
+$L304:
+	lw	$3,52($fp)
+	lw	$2,24($fp)
+	nop
+	addu	$2,$3,$2
+	sw	$2,32($fp)
+	lw	$3,48($fp)
+	lw	$2,28($fp)
+	nop
+	addu	$2,$3,$2
+	sw	$2,36($fp)
+	lw	$2,36($fp)
+	nop
+	bltz	$2,$L303
+	nop
+
+	lw	$2,36($fp)
+	nop
+	slt	$2,$2,96
+	beq	$2,$0,$L303
+	nop
+
+	lw	$2,32($fp)
+	nop
+	bltz	$2,$L303
+	nop
+
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,56
+	beq	$2,$0,$L303
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	lw	$5,36($fp)
+	lw	$4,32($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L303:
+	lw	$2,28($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,28($fp)
+$L302:
+	lw	$2,28($fp)
+	nop
+	slt	$2,$2,4
+	bne	$2,$0,$L304
+	nop
+
+	lw	$2,24($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,24($fp)
+$L301:
+	lw	$2,24($fp)
+	nop
+	slt	$2,$2,4
+	bne	$2,$0,$L305
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,44($sp)
+	lw	$fp,40($sp)
+	addiu	$sp,$sp,48
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	draw_soccer_ball
+	.size	draw_soccer_ball, .-draw_soccer_ball
+	.align	2
+	.globl	draw_soccer_game
+	.set	nomips16
+	.set	nomicromips
+	.ent	draw_soccer_game
+	.type	draw_soccer_game, @function
+draw_soccer_game:
+	.frame	$fp,80,$31		# vars= 48, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-80
+	sw	$31,76($sp)
+	sw	$fp,72($sp)
+	move	$fp,$sp
+	jal	lcd_clear_vbuf
+	nop
+
+	sw	$0,24($fp)
+	b	$L307
+	nop
+
+$L310:
+	sw	$0,28($fp)
+	b	$L308
+	nop
+
+$L309:
+	sw	$0,16($sp)
+	li	$7,80			# 0x50
+	move	$6,$0
+	lw	$5,28($fp)
+	lw	$4,24($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,28($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,28($fp)
+$L308:
+	lw	$2,28($fp)
+	nop
+	slt	$2,$2,96
+	bne	$2,$0,$L309
+	nop
+
+	lw	$2,24($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,24($fp)
+$L307:
+	lw	$2,24($fp)
+	nop
+	slt	$2,$2,56
+	bne	$2,$0,$L310
+	nop
+
+	sw	$0,32($fp)
+	b	$L311
+	nop
+
+$L312:
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	li	$5,48			# 0x30
+	lw	$4,32($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,32($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,32($fp)
+$L311:
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,56
+	bne	$2,$0,$L312
+	nop
+
+	sw	$0,36($fp)
+	b	$L313
+	nop
+
+$L322:
+	li	$2,48			# 0x30
+	sw	$2,60($fp)
+	li	$2,28			# 0x1c
+	sw	$2,64($fp)
+	lw	$2,36($fp)
+	nop
+	bne	$2,$0,$L314
+	nop
+
+	lw	$2,64($fp)
+	nop
+	addiu	$3,$2,-8
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	lw	$5,60($fp)
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L314:
+	lw	$3,36($fp)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L315
+	nop
+
+	lw	$2,64($fp)
+	nop
+	addiu	$3,$2,8
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	lw	$5,60($fp)
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L315:
+	lw	$3,36($fp)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L316
+	nop
+
+	lw	$2,60($fp)
+	nop
+	addiu	$3,$2,-8
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	move	$5,$3
+	lw	$4,64($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L316:
+	lw	$3,36($fp)
+	li	$2,3			# 0x3
+	bne	$3,$2,$L317
+	nop
+
+	lw	$2,60($fp)
+	nop
+	addiu	$3,$2,8
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	move	$5,$3
+	lw	$4,64($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L317:
+	lw	$3,36($fp)
+	li	$2,4			# 0x4
+	bne	$3,$2,$L318
+	nop
+
+	lw	$2,64($fp)
+	nop
+	addiu	$3,$2,-6
+	lw	$2,60($fp)
+	nop
+	addiu	$4,$2,-6
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	move	$5,$4
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L318:
+	lw	$3,36($fp)
+	li	$2,5			# 0x5
+	bne	$3,$2,$L319
+	nop
+
+	lw	$2,64($fp)
+	nop
+	addiu	$3,$2,-6
+	lw	$2,60($fp)
+	nop
+	addiu	$4,$2,6
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	move	$5,$4
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L319:
+	lw	$3,36($fp)
+	li	$2,6			# 0x6
+	bne	$3,$2,$L320
+	nop
+
+	lw	$2,64($fp)
+	nop
+	addiu	$3,$2,6
+	lw	$2,60($fp)
+	nop
+	addiu	$4,$2,-6
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	move	$5,$4
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L320:
+	lw	$3,36($fp)
+	li	$2,7			# 0x7
+	bne	$3,$2,$L321
+	nop
+
+	lw	$2,64($fp)
+	nop
+	addiu	$3,$2,6
+	lw	$2,60($fp)
+	nop
+	addiu	$4,$2,6
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	move	$5,$4
+	move	$4,$3
+	jal	lcd_set_vbuf_pixel
+	nop
+
+$L321:
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,36($fp)
+$L313:
+	lw	$2,36($fp)
+	nop
+	slt	$2,$2,8
+	bne	$2,$0,$L322
+	nop
+
+	li	$2,16			# 0x10
+	sw	$2,40($fp)
+	b	$L323
+	nop
+
+$L324:
+	sw	$0,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	move	$5,$0
+	lw	$4,40($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	sw	$0,16($sp)
+	li	$7,255			# 0xff
+	li	$6,255			# 0xff
+	li	$5,95			# 0x5f
+	lw	$4,40($fp)
+	jal	lcd_set_vbuf_pixel
+	nop
+
+	lw	$2,40($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,40($fp)
+$L323:
+	lw	$2,40($fp)
+	nop
+	slt	$2,$2,40
+	bne	$2,$0,$L324
+	nop
+
+	lui	$2,%hi(soccer_invincible_timer)
+	lw	$2,%lo(soccer_invincible_timer)($2)
+	nop
+	blez	$2,$L325
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,1			# 0x1
+	beq	$3,$2,$L325
+	nop
+
+	li	$2,1			# 0x1
+	b	$L326
+	nop
+
+$L325:
+	move	$2,$0
+$L326:
+	sw	$2,52($fp)
+	lui	$2,%hi(soccer_invincible_timer)
+	lw	$2,%lo(soccer_invincible_timer)($2)
+	nop
+	blez	$2,$L327
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,2			# 0x2
+	beq	$3,$2,$L327
+	nop
+
+	li	$2,1			# 0x1
+	b	$L328
+	nop
+
+$L327:
+	move	$2,$0
+$L328:
+	sw	$2,56($fp)
+	lui	$2,%hi(soccer_p1_x)
+	lw	$3,%lo(soccer_p1_x)($2)
+	lui	$2,%hi(soccer_p1_y)
+	lw	$4,%lo(soccer_p1_y)($2)
+	lw	$2,52($fp)
+	nop
+	sw	$2,20($sp)
+	sw	$0,16($sp)
+	li	$7,255			# 0xff
+	move	$6,$0
+	move	$5,$4
+	move	$4,$3
+	jal	draw_soccer_player
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	lw	$3,%lo(soccer_p2_x)($2)
+	lui	$2,%hi(soccer_p2_y)
+	lw	$4,%lo(soccer_p2_y)($2)
+	lw	$2,56($fp)
+	nop
+	sw	$2,20($sp)
+	sw	$0,16($sp)
+	li	$7,128			# 0x80
+	li	$6,255			# 0xff
+	move	$5,$4
+	move	$4,$3
+	jal	draw_soccer_player
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L329
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	addiu	$2,$2,8
+	sw	$2,44($fp)
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	addiu	$2,$2,2
+	sw	$2,48($fp)
+	b	$L330
+	nop
+
+$L329:
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L331
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	addiu	$2,$2,-4
+	sw	$2,44($fp)
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	addiu	$2,$2,2
+	sw	$2,48($fp)
+	b	$L330
+	nop
+
+$L331:
+	lui	$2,%hi(soccer_ball_x)
+	lw	$2,%lo(soccer_ball_x)($2)
+	nop
+	sw	$2,44($fp)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	nop
+	sw	$2,48($fp)
+$L330:
+	lw	$5,48($fp)
+	lw	$4,44($fp)
+	jal	draw_soccer_ball
+	nop
+
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC18)
+	addiu	$6,$2,%lo($LC18)
+	move	$5,$0
+	li	$4,7			# 0x7
+	jal	lcd_puts_color
+	nop
+
+	lui	$2,%hi(soccer_p1_score)
+	lw	$2,%lo(soccer_p1_score)($2)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	move	$6,$3
+	li	$5,3			# 0x3
+	li	$4,7			# 0x7
+	jal	lcd_putc_color
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,45			# 0x2d
+	li	$5,4			# 0x4
+	li	$4,7			# 0x7
+	jal	lcd_putc_color
+	nop
+
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC19)
+	addiu	$6,$2,%lo($LC19)
+	li	$5,5			# 0x5
+	li	$4,7			# 0x7
+	jal	lcd_puts_color
+	nop
+
+	lui	$2,%hi(soccer_p2_score)
+	lw	$2,%lo(soccer_p2_score)($2)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	move	$6,$3
+	li	$5,8			# 0x8
+	li	$4,7			# 0x7
+	jal	lcd_putc_color
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,76($sp)
+	lw	$fp,72($sp)
+	addiu	$sp,$sp,80
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	draw_soccer_game
+	.size	draw_soccer_game, .-draw_soccer_game
+	.align	2
+	.globl	soccer_reset_positions
+	.set	nomips16
+	.set	nomicromips
+	.ent	soccer_reset_positions
+	.type	soccer_reset_positions, @function
+soccer_reset_positions:
+	.frame	$fp,8,$31		# vars= 0, regs= 1/0, args= 0, gp= 0
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-8
+	sw	$fp,4($sp)
+	move	$fp,$sp
+	lui	$2,%hi(soccer_p1_x)
+	li	$3,10			# 0xa
+	sw	$3,%lo(soccer_p1_x)($2)
+	lui	$2,%hi(soccer_p1_y)
+	li	$3,24			# 0x18
+	sw	$3,%lo(soccer_p1_y)($2)
+	lui	$2,%hi(soccer_p2_x)
+	li	$3,78			# 0x4e
+	sw	$3,%lo(soccer_p2_x)($2)
+	lui	$2,%hi(soccer_p2_y)
+	li	$3,24			# 0x18
+	sw	$3,%lo(soccer_p2_y)($2)
+	lui	$2,%hi(soccer_ball_x)
+	li	$3,44			# 0x2c
+	sw	$3,%lo(soccer_ball_x)($2)
+	lui	$2,%hi(soccer_ball_y)
+	li	$3,24			# 0x18
+	sw	$3,%lo(soccer_ball_y)($2)
+	lui	$2,%hi(soccer_ball_vx)
+	sw	$0,%lo(soccer_ball_vx)($2)
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$0,%lo(soccer_ball_vy)($2)
+	lui	$2,%hi(soccer_ball_flying)
+	sw	$0,%lo(soccer_ball_flying)($2)
+	lui	$2,%hi(soccer_ball_owner)
+	sw	$0,%lo(soccer_ball_owner)($2)
+	lui	$2,%hi(soccer_invincible_timer)
+	sw	$0,%lo(soccer_invincible_timer)($2)
+	nop
+	move	$sp,$fp
+	lw	$fp,4($sp)
+	addiu	$sp,$sp,8
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	soccer_reset_positions
+	.size	soccer_reset_positions, .-soccer_reset_positions
+	.align	2
+	.globl	soccer_update
+	.set	nomips16
+	.set	nomicromips
+	.ent	soccer_update
+	.type	soccer_update, @function
+soccer_update:
+	.frame	$fp,104,$31		# vars= 80, regs= 2/0, args= 16, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-104
+	sw	$31,100($sp)
+	sw	$fp,96($sp)
+	move	$fp,$sp
+	lui	$2,%hi(soccer_invincible_timer)
+	lw	$2,%lo(soccer_invincible_timer)($2)
+	nop
+	blez	$2,$L334
+	nop
+
+	lui	$2,%hi(soccer_invincible_timer)
+	lw	$2,%lo(soccer_invincible_timer)($2)
+	nop
+	addiu	$3,$2,-1
+	lui	$2,%hi(soccer_invincible_timer)
+	sw	$3,%lo(soccer_invincible_timer)($2)
+$L334:
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L335
+	nop
+
+	li	$2,4			# 0x4
+	b	$L336
+	nop
+
+$L335:
+	li	$2,6			# 0x6
+$L336:
+	sw	$2,56($fp)
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L337
+	nop
+
+	li	$2,4			# 0x4
+	b	$L338
+	nop
+
+$L337:
+	li	$2,6			# 0x6
+$L338:
+	sw	$2,60($fp)
+	lui	$2,%hi(input_p1_dir)
+	lw	$3,%lo(input_p1_dir)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L339
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	blez	$2,$L340
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	lw	$3,%lo(soccer_p1_y)($2)
+	lw	$2,56($fp)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(soccer_p1_y)
+	sw	$3,%lo(soccer_p1_y)($2)
+$L340:
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	bgez	$2,$L339
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	sw	$0,%lo(soccer_p1_y)($2)
+$L339:
+	lui	$2,%hi(input_p1_dir)
+	lw	$3,%lo(input_p1_dir)($2)
+	li	$2,7			# 0x7
+	bne	$3,$2,$L341
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	slt	$2,$2,48
+	beq	$2,$0,$L342
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	lw	$3,%lo(soccer_p1_y)($2)
+	lw	$2,56($fp)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_p1_y)
+	sw	$3,%lo(soccer_p1_y)($2)
+$L342:
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	slt	$2,$2,49
+	bne	$2,$0,$L341
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	li	$3,48			# 0x30
+	sw	$3,%lo(soccer_p1_y)($2)
+$L341:
+	lui	$2,%hi(input_p1_dir)
+	lw	$3,%lo(input_p1_dir)($2)
+	li	$2,4			# 0x4
+	bne	$3,$2,$L343
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	blez	$2,$L344
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$3,%lo(soccer_p1_x)($2)
+	lw	$2,56($fp)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(soccer_p1_x)
+	sw	$3,%lo(soccer_p1_x)($2)
+$L344:
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	bgez	$2,$L343
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	sw	$0,%lo(soccer_p1_x)($2)
+$L343:
+	lui	$2,%hi(input_p1_dir)
+	lw	$3,%lo(input_p1_dir)($2)
+	li	$2,5			# 0x5
+	bne	$3,$2,$L345
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	slt	$2,$2,88
+	beq	$2,$0,$L346
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$3,%lo(soccer_p1_x)($2)
+	lw	$2,56($fp)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_p1_x)
+	sw	$3,%lo(soccer_p1_x)($2)
+$L346:
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	slt	$2,$2,89
+	bne	$2,$0,$L345
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	li	$3,88			# 0x58
+	sw	$3,%lo(soccer_p1_x)($2)
+$L345:
+	lui	$2,%hi(input_p2_dir)
+	lw	$3,%lo(input_p2_dir)($2)
+	li	$2,10			# 0xa
+	bne	$3,$2,$L347
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	blez	$2,$L348
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	lw	$3,%lo(soccer_p2_y)($2)
+	lw	$2,60($fp)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(soccer_p2_y)
+	sw	$3,%lo(soccer_p2_y)($2)
+$L348:
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	bgez	$2,$L347
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	sw	$0,%lo(soccer_p2_y)($2)
+$L347:
+	lui	$2,%hi(input_p2_dir)
+	lw	$3,%lo(input_p2_dir)($2)
+	li	$2,12			# 0xc
+	bne	$3,$2,$L349
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	slt	$2,$2,48
+	beq	$2,$0,$L350
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	lw	$3,%lo(soccer_p2_y)($2)
+	lw	$2,60($fp)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_p2_y)
+	sw	$3,%lo(soccer_p2_y)($2)
+$L350:
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	slt	$2,$2,49
+	bne	$2,$0,$L349
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	li	$3,48			# 0x30
+	sw	$3,%lo(soccer_p2_y)($2)
+$L349:
+	lui	$2,%hi(input_p2_dir)
+	lw	$3,%lo(input_p2_dir)($2)
+	li	$2,6			# 0x6
+	bne	$3,$2,$L351
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	blez	$2,$L352
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	lw	$3,%lo(soccer_p2_x)($2)
+	lw	$2,60($fp)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(soccer_p2_x)
+	sw	$3,%lo(soccer_p2_x)($2)
+$L352:
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	bgez	$2,$L351
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	sw	$0,%lo(soccer_p2_x)($2)
+$L351:
+	lui	$2,%hi(input_p2_dir)
+	lw	$3,%lo(input_p2_dir)($2)
+	li	$2,11			# 0xb
+	bne	$3,$2,$L353
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	slt	$2,$2,88
+	beq	$2,$0,$L354
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	lw	$3,%lo(soccer_p2_x)($2)
+	lw	$2,60($fp)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_p2_x)
+	sw	$3,%lo(soccer_p2_x)($2)
+$L354:
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	slt	$2,$2,89
+	bne	$2,$0,$L353
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	li	$3,88			# 0x58
+	sw	$3,%lo(soccer_p2_x)($2)
+$L353:
+	lui	$2,%hi(input_p1_dir)
+	lw	$3,%lo(input_p1_dir)($2)
+	li	$2,8			# 0x8
+	bne	$3,$2,$L355
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L355
+	nop
+
+	lui	$2,%hi(soccer_ball_flying)
+	li	$3,1			# 0x1
+	sw	$3,%lo(soccer_ball_flying)($2)
+	lui	$2,%hi(soccer_ball_owner)
+	sw	$0,%lo(soccer_ball_owner)($2)
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	addiu	$3,$2,8
+	lui	$2,%hi(soccer_ball_x)
+	sw	$3,%lo(soccer_ball_x)($2)
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	addiu	$3,$2,2
+	lui	$2,%hi(soccer_ball_y)
+	sw	$3,%lo(soccer_ball_y)($2)
+	li	$2,28			# 0x1c
+	sw	$2,64($fp)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	lw	$3,64($fp)
+	nop
+	subu	$2,$3,$2
+	sw	$2,68($fp)
+	lui	$2,%hi(soccer_ball_vx)
+	li	$3,8			# 0x8
+	sw	$3,%lo(soccer_ball_vx)($2)
+	lw	$2,68($fp)
+	nop
+	slt	$2,$2,21
+	bne	$2,$0,$L356
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,3			# 0x3
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L357
+	nop
+
+$L356:
+	lw	$2,68($fp)
+	nop
+	slt	$2,$2,9
+	bne	$2,$0,$L358
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,2			# 0x2
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L357
+	nop
+
+$L358:
+	lw	$2,68($fp)
+	nop
+	blez	$2,$L359
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,1			# 0x1
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L357
+	nop
+
+$L359:
+	lw	$2,68($fp)
+	nop
+	slt	$2,$2,-7
+	bne	$2,$0,$L360
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$0,%lo(soccer_ball_vy)($2)
+	b	$L357
+	nop
+
+$L360:
+	lw	$2,68($fp)
+	nop
+	slt	$2,$2,-19
+	bne	$2,$0,$L361
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,-2			# 0xfffffffffffffffe
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L357
+	nop
+
+$L361:
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,-3			# 0xfffffffffffffffd
+	sw	$3,%lo(soccer_ball_vy)($2)
+$L357:
+	li	$4,13			# 0xd
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,2			# 0x2
+	sw	$3,%lo(buzzer_timer)($2)
+$L355:
+	lui	$2,%hi(input_p2_dir)
+	lw	$3,%lo(input_p2_dir)($2)
+	li	$2,3			# 0x3
+	bne	$3,$2,$L362
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L362
+	nop
+
+	lui	$2,%hi(soccer_ball_flying)
+	li	$3,1			# 0x1
+	sw	$3,%lo(soccer_ball_flying)($2)
+	lui	$2,%hi(soccer_ball_owner)
+	sw	$0,%lo(soccer_ball_owner)($2)
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	addiu	$3,$2,-4
+	lui	$2,%hi(soccer_ball_x)
+	sw	$3,%lo(soccer_ball_x)($2)
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	addiu	$3,$2,2
+	lui	$2,%hi(soccer_ball_y)
+	sw	$3,%lo(soccer_ball_y)($2)
+	li	$2,28			# 0x1c
+	sw	$2,72($fp)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	lw	$3,72($fp)
+	nop
+	subu	$2,$3,$2
+	sw	$2,76($fp)
+	lui	$2,%hi(soccer_ball_vx)
+	li	$3,-8			# 0xfffffffffffffff8
+	sw	$3,%lo(soccer_ball_vx)($2)
+	lw	$2,76($fp)
+	nop
+	slt	$2,$2,21
+	bne	$2,$0,$L363
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,3			# 0x3
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L364
+	nop
+
+$L363:
+	lw	$2,76($fp)
+	nop
+	slt	$2,$2,9
+	bne	$2,$0,$L365
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,2			# 0x2
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L364
+	nop
+
+$L365:
+	lw	$2,76($fp)
+	nop
+	blez	$2,$L366
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,1			# 0x1
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L364
+	nop
+
+$L366:
+	lw	$2,76($fp)
+	nop
+	slt	$2,$2,-7
+	bne	$2,$0,$L367
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$0,%lo(soccer_ball_vy)($2)
+	b	$L364
+	nop
+
+$L367:
+	lw	$2,76($fp)
+	nop
+	slt	$2,$2,-19
+	bne	$2,$0,$L368
+	nop
+
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,-2			# 0xfffffffffffffffe
+	sw	$3,%lo(soccer_ball_vy)($2)
+	b	$L364
+	nop
+
+$L368:
+	lui	$2,%hi(soccer_ball_vy)
+	li	$3,-3			# 0xfffffffffffffffd
+	sw	$3,%lo(soccer_ball_vy)($2)
+$L364:
+	li	$4,13			# 0xd
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,2			# 0x2
+	sw	$3,%lo(buzzer_timer)($2)
+$L362:
+	lui	$2,%hi(soccer_ball_flying)
+	lw	$2,%lo(soccer_ball_flying)($2)
+	nop
+	beq	$2,$0,$L369
+	nop
+
+	lui	$2,%hi(soccer_ball_x)
+	lw	$3,%lo(soccer_ball_x)($2)
+	lui	$2,%hi(soccer_ball_vx)
+	lw	$2,%lo(soccer_ball_vx)($2)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_ball_x)
+	sw	$3,%lo(soccer_ball_x)($2)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$3,%lo(soccer_ball_y)($2)
+	lui	$2,%hi(soccer_ball_vy)
+	lw	$2,%lo(soccer_ball_vy)($2)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_ball_y)
+	sw	$3,%lo(soccer_ball_y)($2)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	nop
+	bgtz	$2,$L370
+	nop
+
+	lui	$2,%hi(soccer_ball_y)
+	sw	$0,%lo(soccer_ball_y)($2)
+	lui	$2,%hi(soccer_ball_vy)
+	lw	$2,%lo(soccer_ball_vy)($2)
+	nop
+	subu	$3,$0,$2
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$3,%lo(soccer_ball_vy)($2)
+$L370:
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	nop
+	slt	$2,$2,48
+	bne	$2,$0,$L371
+	nop
+
+	lui	$2,%hi(soccer_ball_y)
+	li	$3,48			# 0x30
+	sw	$3,%lo(soccer_ball_y)($2)
+	lui	$2,%hi(soccer_ball_vy)
+	lw	$2,%lo(soccer_ball_vy)($2)
+	nop
+	subu	$3,$0,$2
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$3,%lo(soccer_ball_vy)($2)
+$L371:
+	lui	$2,%hi(soccer_ball_x)
+	lw	$2,%lo(soccer_ball_x)($2)
+	nop
+	slt	$2,$2,96
+	bne	$2,$0,$L372
+	nop
+
+	lui	$2,%hi(soccer_p1_score)
+	lw	$2,%lo(soccer_p1_score)($2)
+	nop
+	addiu	$3,$2,1
+	lui	$2,%hi(soccer_p1_score)
+	sw	$3,%lo(soccer_p1_score)($2)
+	li	$4,13			# 0xd
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,5			# 0x5
+	sw	$3,%lo(buzzer_timer)($2)
+	lui	$2,%hi(soccer_p1_score)
+	lw	$2,%lo(soccer_p1_score)($2)
+	nop
+	slt	$2,$2,3
+	bne	$2,$0,$L373
+	nop
+
+	lui	$2,%hi(game_state)
+	li	$3,4			# 0x4
+	sw	$3,%lo(game_state)($2)
+	b	$L372
+	nop
+
+$L373:
+	jal	soccer_reset_positions
+	nop
+
+$L372:
+	lui	$2,%hi(soccer_ball_x)
+	lw	$2,%lo(soccer_ball_x)($2)
+	nop
+	bgtz	$2,$L369
+	nop
+
+	lui	$2,%hi(soccer_p2_score)
+	lw	$2,%lo(soccer_p2_score)($2)
+	nop
+	addiu	$3,$2,1
+	lui	$2,%hi(soccer_p2_score)
+	sw	$3,%lo(soccer_p2_score)($2)
+	li	$4,13			# 0xd
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,5			# 0x5
+	sw	$3,%lo(buzzer_timer)($2)
+	lui	$2,%hi(soccer_p2_score)
+	lw	$2,%lo(soccer_p2_score)($2)
+	nop
+	slt	$2,$2,3
+	bne	$2,$0,$L374
+	nop
+
+	lui	$2,%hi(game_state)
+	li	$3,4			# 0x4
+	sw	$3,%lo(game_state)($2)
+	b	$L369
+	nop
+
+$L374:
+	jal	soccer_reset_positions
+	nop
+
+$L369:
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$2,%lo(soccer_ball_owner)($2)
+	nop
+	bne	$2,$0,$L375
+	nop
+
+	lui	$2,%hi(soccer_ball_flying)
+	lw	$2,%lo(soccer_ball_flying)($2)
+	nop
+	bne	$2,$0,$L375
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$3,%lo(soccer_p1_x)($2)
+	lui	$2,%hi(soccer_ball_x)
+	lw	$2,%lo(soccer_ball_x)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,16($fp)
+	lui	$2,%hi(soccer_p1_y)
+	lw	$3,%lo(soccer_p1_y)($2)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,20($fp)
+	lw	$2,16($fp)
+	nop
+	bgez	$2,$L376
+	nop
+
+	lw	$2,16($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,16($fp)
+$L376:
+	lw	$2,20($fp)
+	nop
+	bgez	$2,$L377
+	nop
+
+	lw	$2,20($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,20($fp)
+$L377:
+	lw	$2,16($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L378
+	nop
+
+	lw	$2,20($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L378
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	li	$3,1			# 0x1
+	sw	$3,%lo(soccer_ball_owner)($2)
+	li	$4,8			# 0x8
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,2			# 0x2
+	sw	$3,%lo(buzzer_timer)($2)
+$L378:
+	lui	$2,%hi(soccer_p2_x)
+	lw	$3,%lo(soccer_p2_x)($2)
+	lui	$2,%hi(soccer_ball_x)
+	lw	$2,%lo(soccer_ball_x)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,24($fp)
+	lui	$2,%hi(soccer_p2_y)
+	lw	$3,%lo(soccer_p2_y)($2)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,28($fp)
+	lw	$2,24($fp)
+	nop
+	bgez	$2,$L379
+	nop
+
+	lw	$2,24($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,24($fp)
+$L379:
+	lw	$2,28($fp)
+	nop
+	bgez	$2,$L380
+	nop
+
+	lw	$2,28($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,28($fp)
+$L380:
+	lw	$2,24($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L375
+	nop
+
+	lw	$2,28($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L375
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	li	$3,2			# 0x2
+	sw	$3,%lo(soccer_ball_owner)($2)
+	li	$4,8			# 0x8
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,2			# 0x2
+	sw	$3,%lo(buzzer_timer)($2)
+$L375:
+	lui	$2,%hi(soccer_ball_flying)
+	lw	$2,%lo(soccer_ball_flying)($2)
+	nop
+	beq	$2,$0,$L381
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$3,%lo(soccer_p1_x)($2)
+	lui	$2,%hi(soccer_ball_x)
+	lw	$2,%lo(soccer_ball_x)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,32($fp)
+	lui	$2,%hi(soccer_p1_y)
+	lw	$3,%lo(soccer_p1_y)($2)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,36($fp)
+	lw	$2,32($fp)
+	nop
+	bgez	$2,$L382
+	nop
+
+	lw	$2,32($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,32($fp)
+$L382:
+	lw	$2,36($fp)
+	nop
+	bgez	$2,$L383
+	nop
+
+	lw	$2,36($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,36($fp)
+$L383:
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L384
+	nop
+
+	lw	$2,36($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L384
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	li	$3,1			# 0x1
+	sw	$3,%lo(soccer_ball_owner)($2)
+	lui	$2,%hi(soccer_ball_flying)
+	sw	$0,%lo(soccer_ball_flying)($2)
+	lui	$2,%hi(soccer_ball_vx)
+	sw	$0,%lo(soccer_ball_vx)($2)
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$0,%lo(soccer_ball_vy)($2)
+	li	$4,8			# 0x8
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,2			# 0x2
+	sw	$3,%lo(buzzer_timer)($2)
+$L384:
+	lui	$2,%hi(soccer_p2_x)
+	lw	$3,%lo(soccer_p2_x)($2)
+	lui	$2,%hi(soccer_ball_x)
+	lw	$2,%lo(soccer_ball_x)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,40($fp)
+	lui	$2,%hi(soccer_p2_y)
+	lw	$3,%lo(soccer_p2_y)($2)
+	lui	$2,%hi(soccer_ball_y)
+	lw	$2,%lo(soccer_ball_y)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,44($fp)
+	lw	$2,40($fp)
+	nop
+	bgez	$2,$L385
+	nop
+
+	lw	$2,40($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,40($fp)
+$L385:
+	lw	$2,44($fp)
+	nop
+	bgez	$2,$L386
+	nop
+
+	lw	$2,44($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,44($fp)
+$L386:
+	lw	$2,40($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L381
+	nop
+
+	lw	$2,44($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L381
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	li	$3,2			# 0x2
+	sw	$3,%lo(soccer_ball_owner)($2)
+	lui	$2,%hi(soccer_ball_flying)
+	sw	$0,%lo(soccer_ball_flying)($2)
+	lui	$2,%hi(soccer_ball_vx)
+	sw	$0,%lo(soccer_ball_vx)($2)
+	lui	$2,%hi(soccer_ball_vy)
+	sw	$0,%lo(soccer_ball_vy)($2)
+	li	$4,8			# 0x8
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,2			# 0x2
+	sw	$3,%lo(buzzer_timer)($2)
+$L381:
+	lui	$2,%hi(soccer_invincible_timer)
+	lw	$2,%lo(soccer_invincible_timer)($2)
+	nop
+	bgtz	$2,$L387
+	nop
+
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$2,%lo(soccer_ball_owner)($2)
+	nop
+	beq	$2,$0,$L387
+	nop
+
+	lui	$2,%hi(soccer_ball_flying)
+	lw	$2,%lo(soccer_ball_flying)($2)
+	nop
+	bne	$2,$0,$L387
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$3,%lo(soccer_p1_x)($2)
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,48($fp)
+	lui	$2,%hi(soccer_p1_y)
+	lw	$3,%lo(soccer_p1_y)($2)
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	subu	$2,$3,$2
+	sw	$2,52($fp)
+	lw	$2,48($fp)
+	nop
+	bgez	$2,$L388
+	nop
+
+	lw	$2,48($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,48($fp)
+$L388:
+	lw	$2,52($fp)
+	nop
+	bgez	$2,$L389
+	nop
+
+	lw	$2,52($fp)
+	nop
+	subu	$2,$0,$2
+	sw	$2,52($fp)
+$L389:
+	lw	$2,48($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L387
+	nop
+
+	lw	$2,52($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L387
+	nop
+
+	li	$2,15			# 0xf
+	sw	$2,80($fp)
+	lui	$2,%hi(frame_counter)
+	lw	$3,%lo(frame_counter)($2)
+	nop
+	move	$2,$3
+	sll	$2,$2,3
+	subu	$3,$2,$3
+	li	$2,5			# 0x5
+	divu	$0,$3,$2
+	bne	$2,$0,1f
+	nop
+	break	7
+1:
+	mfhi	$2
+	addiu	$2,$2,-2
+	sw	$2,84($fp)
+	lw	$3,84($fp)
+	nop
+	move	$2,$3
+	sll	$2,$2,1
+	addu	$2,$2,$3
+	sll	$2,$2,1
+	sw	$2,88($fp)
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L390
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$3,%lo(soccer_p1_x)($2)
+	lw	$2,80($fp)
+	nop
+	subu	$3,$3,$2
+	lui	$2,%hi(soccer_p1_x)
+	sw	$3,%lo(soccer_p1_x)($2)
+	lui	$2,%hi(soccer_p1_y)
+	lw	$3,%lo(soccer_p1_y)($2)
+	lw	$2,88($fp)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_p1_y)
+	sw	$3,%lo(soccer_p1_y)($2)
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	bgez	$2,$L391
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	sw	$0,%lo(soccer_p1_x)($2)
+$L391:
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	bgez	$2,$L392
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	sw	$0,%lo(soccer_p1_y)($2)
+$L392:
+	lui	$2,%hi(soccer_p1_y)
+	lw	$2,%lo(soccer_p1_y)($2)
+	nop
+	slt	$2,$2,49
+	bne	$2,$0,$L394
+	nop
+
+	lui	$2,%hi(soccer_p1_y)
+	li	$3,48			# 0x30
+	sw	$3,%lo(soccer_p1_y)($2)
+	b	$L394
+	nop
+
+$L390:
+	lui	$2,%hi(soccer_p2_x)
+	lw	$3,%lo(soccer_p2_x)($2)
+	lw	$2,80($fp)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_p2_x)
+	sw	$3,%lo(soccer_p2_x)($2)
+	lui	$2,%hi(soccer_p2_y)
+	lw	$3,%lo(soccer_p2_y)($2)
+	lw	$2,88($fp)
+	nop
+	addu	$3,$3,$2
+	lui	$2,%hi(soccer_p2_y)
+	sw	$3,%lo(soccer_p2_y)($2)
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	slt	$2,$2,89
+	bne	$2,$0,$L395
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	li	$3,88			# 0x58
+	sw	$3,%lo(soccer_p2_x)($2)
+$L395:
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	bgez	$2,$L396
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	sw	$0,%lo(soccer_p2_y)($2)
+$L396:
+	lui	$2,%hi(soccer_p2_y)
+	lw	$2,%lo(soccer_p2_y)($2)
+	nop
+	slt	$2,$2,49
+	bne	$2,$0,$L394
+	nop
+
+	lui	$2,%hi(soccer_p2_y)
+	li	$3,48			# 0x30
+	sw	$3,%lo(soccer_p2_y)($2)
+$L394:
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L397
+	nop
+
+	li	$2,2			# 0x2
+	b	$L398
+	nop
+
+$L397:
+	li	$2,1			# 0x1
+$L398:
+	lui	$3,%hi(soccer_ball_owner)
+	sw	$2,%lo(soccer_ball_owner)($3)
+	lui	$2,%hi(soccer_invincible_timer)
+	li	$3,10			# 0xa
+	sw	$3,%lo(soccer_invincible_timer)($2)
+	li	$4,8			# 0x8
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,2			# 0x2
+	sw	$3,%lo(buzzer_timer)($2)
+$L387:
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,1			# 0x1
+	bne	$3,$2,$L399
+	nop
+
+	lui	$2,%hi(soccer_p1_x)
+	lw	$2,%lo(soccer_p1_x)($2)
+	nop
+	slt	$2,$2,88
+	bne	$2,$0,$L399
+	nop
+
+	lui	$2,%hi(soccer_p1_score)
+	lw	$2,%lo(soccer_p1_score)($2)
+	nop
+	addiu	$3,$2,1
+	lui	$2,%hi(soccer_p1_score)
+	sw	$3,%lo(soccer_p1_score)($2)
+	li	$4,13			# 0xd
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,5			# 0x5
+	sw	$3,%lo(buzzer_timer)($2)
+	lui	$2,%hi(soccer_p1_score)
+	lw	$2,%lo(soccer_p1_score)($2)
+	nop
+	slt	$2,$2,3
+	bne	$2,$0,$L400
+	nop
+
+	lui	$2,%hi(game_state)
+	li	$3,4			# 0x4
+	sw	$3,%lo(game_state)($2)
+	b	$L399
+	nop
+
+$L400:
+	jal	soccer_reset_positions
+	nop
+
+$L399:
+	lui	$2,%hi(soccer_ball_owner)
+	lw	$3,%lo(soccer_ball_owner)($2)
+	li	$2,2			# 0x2
+	bne	$3,$2,$L401
+	nop
+
+	lui	$2,%hi(soccer_p2_x)
+	lw	$2,%lo(soccer_p2_x)($2)
+	nop
+	bgtz	$2,$L401
+	nop
+
+	lui	$2,%hi(soccer_p2_score)
+	lw	$2,%lo(soccer_p2_score)($2)
+	nop
+	addiu	$3,$2,1
+	lui	$2,%hi(soccer_p2_score)
+	sw	$3,%lo(soccer_p2_score)($2)
+	li	$4,13			# 0xd
+	jal	buzzer_play
+	nop
+
+	lui	$2,%hi(buzzer_timer)
+	li	$3,5			# 0x5
+	sw	$3,%lo(buzzer_timer)($2)
+	lui	$2,%hi(soccer_p2_score)
+	lw	$2,%lo(soccer_p2_score)($2)
+	nop
+	slt	$2,$2,3
+	bne	$2,$0,$L402
+	nop
+
+	lui	$2,%hi(game_state)
+	li	$3,4			# 0x4
+	sw	$3,%lo(game_state)($2)
+	b	$L401
+	nop
+
+$L402:
+	jal	soccer_reset_positions
+	nop
+
+$L401:
+	jal	draw_soccer_game
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,100($sp)
+	lw	$fp,96($sp)
+	addiu	$sp,$sp,104
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	soccer_update
+	.size	soccer_update, .-soccer_update
+	.align	2
+	.globl	draw_result_soccer
+	.set	nomips16
+	.set	nomicromips
+	.ent	draw_result_soccer
+	.type	draw_result_soccer, @function
+draw_result_soccer:
+	.frame	$fp,32,$31		# vars= 0, regs= 2/0, args= 24, gp= 0
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-32
+	sw	$31,28($sp)
+	sw	$fp,24($sp)
+	move	$fp,$sp
+	sw	$4,32($fp)
+	sw	$5,36($fp)
+	jal	lcd_clear_vbuf
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC5)
+	addiu	$6,$2,%lo($LC5)
+	move	$5,$0
+	move	$4,$0
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,3
+	bne	$2,$0,$L404
+	nop
+
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC23)
+	addiu	$6,$2,%lo($LC23)
+	li	$5,1			# 0x1
+	li	$4,2			# 0x2
+	jal	lcd_puts_color
+	nop
+
+	b	$L405
+	nop
+
+$L404:
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC24)
+	addiu	$6,$2,%lo($LC24)
+	li	$5,1			# 0x1
+	li	$4,2			# 0x2
+	jal	lcd_puts_color
+	nop
+
+$L405:
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC5)
+	addiu	$6,$2,%lo($LC5)
+	move	$5,$0
+	li	$4,3			# 0x3
+	jal	lcd_puts_color
+	nop
+
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC18)
+	addiu	$6,$2,%lo($LC18)
+	li	$5,1			# 0x1
+	li	$4,5			# 0x5
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,32($fp)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	move	$6,$3
+	li	$5,4			# 0x4
+	li	$4,5			# 0x5
+	jal	lcd_putc_color
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	li	$6,45			# 0x2d
+	li	$5,5			# 0x5
+	li	$4,5			# 0x5
+	jal	lcd_putc_color
+	nop
+
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	lui	$2,%hi($LC19)
+	addiu	$6,$2,%lo($LC19)
+	li	$5,6			# 0x6
+	li	$4,5			# 0x5
+	jal	lcd_puts_color
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$3,$2,48
+	sw	$0,20($sp)
+	li	$2,128			# 0x80
+	sw	$2,16($sp)
+	li	$7,255			# 0xff
+	move	$6,$3
+	li	$5,9			# 0x9
+	li	$4,5			# 0x5
+	jal	lcd_putc_color
+	nop
+
+	li	$2,255			# 0xff
+	sw	$2,20($sp)
+	li	$2,255			# 0xff
+	sw	$2,16($sp)
+	move	$7,$0
+	lui	$2,%hi($LC9)
+	addiu	$6,$2,%lo($LC9)
+	move	$5,$0
+	li	$4,7			# 0x7
+	jal	lcd_puts_color
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,28($sp)
+	lw	$fp,24($sp)
+	addiu	$sp,$sp,32
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	draw_result_soccer
+	.size	draw_result_soccer, .-draw_result_soccer
 	.ident	"GCC: (GNU) 7.4.0"
