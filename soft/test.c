@@ -122,7 +122,7 @@ const unsigned char PLAYER_PATTERN[8][8] = {
     {0,0,1,1,1,1,0,0},  /* 頭部上 */
     {0,1,1,0,0,1,1,0},  /* 頭部 */
     {0,0,1,1,1,1,0,0},  /* 頭部下 */
-    {0,0,0,1,1,0,0,0},  /* 首 */
+    {1,1,1,1,1,1,1,1},  /* 首 */
     {0,0,1,1,1,1,0,0},  /* 胴体 */
     {0,1,1,0,0,1,1,0},  /* 腕 */
     {0,1,1,0,0,1,1,0},  /* 足上 */
@@ -188,6 +188,8 @@ int sq_p2_score = 0;                 /* P2ポイント（2Pモード用） */
 int soccer_p1_x = 10, soccer_p1_y = 24;   /* P1座標 */
 int soccer_p2_x = 78, soccer_p2_y = 24;   /* P2座標 */
 int soccer_ball_x = 44, soccer_ball_y = 24; /* ボール座標 */
+int soccer_ball_vx = 0, soccer_ball_vy = 0; /* ボール速度 */
+int soccer_ball_flying = 0;               /* ボール飛行中フラグ */
 int soccer_ball_owner = NO_OWNER;         /* ボール所有者 */
 int soccer_p1_score = 0;                  /* P1スコア */
 int soccer_p2_score = 0;                  /* P2スコア */
@@ -519,6 +521,9 @@ void main() {
                     soccer_p2_y = 24;
                     soccer_ball_x = 44;
                     soccer_ball_y = 24;
+                    soccer_ball_vx = 0;
+                    soccer_ball_vy = 0;
+                    soccer_ball_flying = 0;
                     soccer_ball_owner = NO_OWNER;
                     soccer_p1_score = 0;
                     soccer_p2_score = 0;
@@ -716,13 +721,15 @@ void kypd_scan_both(volatile int *p1_dir, volatile int *p2_dir) {
     if ((raw & 0x80) == 0) temp_p1 = 1;  /* 上 */
     if ((raw & 0x40) == 0) temp_p1 = 4;  /* 左 */
     if ((raw & 0x20) == 0) temp_p1 = 7;  /* 下 */
-    /* row1: キー 2, 5, 8, F をスキャン（P1の右） */
+    /* row1: キー 2, 5, 8, F をスキャン（P1の右・シュート） */
     *ioc_ptr = 0x0b; tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
     if ((raw & 0x40) == 0) temp_p1 = 5;  /* 右 */
-    /* row2: キー 3, 6, 9, E をスキャン（P2の左） */
+    if ((raw & 0x20) == 0) temp_p1 = 8;  /* シュート */
+    /* row2: キー 3, 6, 9, E をスキャン（P2の左・シュート） */
     *ioc_ptr = 0x0d; tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
+    if ((raw & 0x80) == 0) temp_p2 = 3;  /* シュート */
     if ((raw & 0x40) == 0) temp_p2 = 6;  /* 左 */
     /* row3: キー A, B, C, D をスキャン（P2の上・右・下） */
     *ioc_ptr = 0x0e; tiny_wait(300);
@@ -1400,6 +1407,9 @@ void soccer_reset_positions() {
     soccer_p2_y = 24;
     soccer_ball_x = 44;
     soccer_ball_y = 24;
+    soccer_ball_vx = 0;
+    soccer_ball_vy = 0;
+    soccer_ball_flying = 0;
     soccer_ball_owner = NO_OWNER;
     soccer_invincible_timer = 0;
 }
@@ -1451,8 +1461,72 @@ void soccer_update() {
         if (soccer_p2_x > 88) soccer_p2_x = 88;
     }
 
-    /* ボール取得判定（所有者なしの場合） */
-    if (soccer_ball_owner == NO_OWNER) {
+    /* シュート処理 */
+    /* P1シュート（キー8） */
+    if (input_p1_dir == 8 && soccer_ball_owner == OWNER_P1) {
+        soccer_ball_flying = 1;
+        soccer_ball_owner = NO_OWNER;
+        soccer_ball_x = soccer_p1_x + PLAYER_SIZE;
+        soccer_ball_y = soccer_p1_y + (PLAYER_SIZE - BALL_SIZE) / 2;
+        soccer_ball_vx = 8;   /* 右方向に飛ぶ */
+        soccer_ball_vy = 0;
+        buzzer_play(TONE_SCORE);
+        buzzer_timer = BUZZER_SHORT;
+    }
+    /* P2シュート（キー3） */
+    if (input_p2_dir == 3 && soccer_ball_owner == OWNER_P2) {
+        soccer_ball_flying = 1;
+        soccer_ball_owner = NO_OWNER;
+        soccer_ball_x = soccer_p2_x - BALL_SIZE;
+        soccer_ball_y = soccer_p2_y + (PLAYER_SIZE - BALL_SIZE) / 2;
+        soccer_ball_vx = -8;  /* 左方向に飛ぶ */
+        soccer_ball_vy = 0;
+        buzzer_play(TONE_SCORE);
+        buzzer_timer = BUZZER_SHORT;
+    }
+
+    /* ボール飛行処理 */
+    if (soccer_ball_flying) {
+        soccer_ball_x += soccer_ball_vx;
+        soccer_ball_y += soccer_ball_vy;
+
+        /* 上下の壁で跳ね返り */
+        if (soccer_ball_y <= 0) {
+            soccer_ball_y = 0;
+            soccer_ball_vy = -soccer_ball_vy;
+        }
+        if (soccer_ball_y >= SOCCER_FIELD_BOTTOM) {
+            soccer_ball_y = SOCCER_FIELD_BOTTOM;
+            soccer_ball_vy = -soccer_ball_vy;
+        }
+
+        /* ゴール判定（飛行中） */
+        if (soccer_ball_x >= 96) {
+            /* P1得点（右ゴール） */
+            soccer_p1_score++;
+            buzzer_play(TONE_SCORE);
+            buzzer_timer = BUZZER_LONG;
+            if (soccer_p1_score >= SOCCER_WINNING_SCORE) {
+                game_state = STATE_RESULT;
+            } else {
+                soccer_reset_positions();
+            }
+        }
+        if (soccer_ball_x <= 0) {
+            /* P2得点（左ゴール） */
+            soccer_p2_score++;
+            buzzer_play(TONE_SCORE);
+            buzzer_timer = BUZZER_LONG;
+            if (soccer_p2_score >= SOCCER_WINNING_SCORE) {
+                game_state = STATE_RESULT;
+            } else {
+                soccer_reset_positions();
+            }
+        }
+    }
+
+    /* ボール取得判定（所有者なし・飛行中でない場合） */
+    if (soccer_ball_owner == NO_OWNER && !soccer_ball_flying) {
         /* P1がボールに触れたか */
         int dx1 = soccer_p1_x - soccer_ball_x;
         int dy1 = soccer_p1_y - soccer_ball_y;
@@ -1476,8 +1550,39 @@ void soccer_update() {
         }
     }
 
-    /* 衝突判定（ボール奪取） */
-    if (soccer_invincible_timer <= 0 && soccer_ball_owner != NO_OWNER) {
+    /* 飛行中のボールをキャッチ */
+    if (soccer_ball_flying) {
+        /* P1がボールをキャッチ */
+        int dx1 = soccer_p1_x - soccer_ball_x;
+        int dy1 = soccer_p1_y - soccer_ball_y;
+        if (dx1 < 0) dx1 = -dx1;
+        if (dy1 < 0) dy1 = -dy1;
+        if (dx1 < SOCCER_COLLISION_THRESHOLD && dy1 < SOCCER_COLLISION_THRESHOLD) {
+            soccer_ball_owner = OWNER_P1;
+            soccer_ball_flying = 0;
+            soccer_ball_vx = 0;
+            soccer_ball_vy = 0;
+            buzzer_play(TONE_HIT);
+            buzzer_timer = BUZZER_SHORT;
+        }
+
+        /* P2がボールをキャッチ */
+        int dx2 = soccer_p2_x - soccer_ball_x;
+        int dy2 = soccer_p2_y - soccer_ball_y;
+        if (dx2 < 0) dx2 = -dx2;
+        if (dy2 < 0) dy2 = -dy2;
+        if (dx2 < SOCCER_COLLISION_THRESHOLD && dy2 < SOCCER_COLLISION_THRESHOLD) {
+            soccer_ball_owner = OWNER_P2;
+            soccer_ball_flying = 0;
+            soccer_ball_vx = 0;
+            soccer_ball_vy = 0;
+            buzzer_play(TONE_HIT);
+            buzzer_timer = BUZZER_SHORT;
+        }
+    }
+
+    /* 衝突判定（ボール奪取）- ボール保持中のみ */
+    if (soccer_invincible_timer <= 0 && soccer_ball_owner != NO_OWNER && !soccer_ball_flying) {
         int dx = soccer_p1_x - soccer_p2_x;
         int dy = soccer_p1_y - soccer_p2_y;
         if (dx < 0) dx = -dx;
@@ -1492,7 +1597,7 @@ void soccer_update() {
         }
     }
 
-    /* ゴール判定 */
+    /* ゴール判定（ボール保持でゴールラインに到達） */
     /* P1が右端に到達（P1のゴール） */
     if (soccer_ball_owner == OWNER_P1 && soccer_p1_x >= 88) {
         soccer_p1_score++;
