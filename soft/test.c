@@ -41,10 +41,11 @@ void draw_squash_racket(int x, int y, int r, int g, int b);
 void draw_squash_ball(int x, int y);
 void draw_squash_score(int score);
 void draw_lives(int lives);
-void draw_turn_indicator(int turn, int frame);
+void draw_squash_2p_score(int p1, int p2);
 void squash_update();
 void squash_move_players();
 void draw_result_squash(int score);
+void draw_result_squash_2p(int p1, int p2);
 
 /*
  * ゲームステート定義
@@ -154,10 +155,13 @@ int sq_p1_x = 2, sq_p1_y = 20;      /* P1座標（左側配置） */
 int sq_p2_x = 2, sq_p2_y = 36;      /* P2座標（左側配置） */
 int sq_ball_x = 46, sq_ball_y = 26; /* ボール座標 */
 int sq_ball_vx = 3, sq_ball_vy = 2; /* ボール速度 */
-int sq_score = 0;                    /* スコア */
-int sq_lives = 3;                    /* 残機 */
+int sq_score = 0;                    /* スコア（1Pモード用） */
+int sq_lives = 3;                    /* 残機（1Pモード用） */
 int sq_turn = 0;                     /* 現在のターン (0=P1, 1=P2) */
 int sq_rally = 0;                    /* ラリー回数 */
+int sq_p1_score = 0;                 /* P1ポイント（2Pモード用） */
+int sq_p2_score = 0;                 /* P2ポイント（2Pモード用） */
+#define WINNING_SCORE 5              /* 勝利に必要なポイント */
 
 /*
  * 割り込みハンドラ（100msecごとに呼ばれる）
@@ -338,7 +342,11 @@ void interrupt_handler() {
             lcd_puts_color(7, 0, "0+1:RESET", 0, 255, 255);
         } else {
             /* スカッシュ結果画面 */
-            draw_result_squash(sq_score);
+            if (game_mode == MODE_SQUASH_2P) {
+                draw_result_squash_2p(sq_p1_score, sq_p2_score);
+            } else {
+                draw_result_squash(sq_score);
+            }
         }
     }
     lcd_sync_vbuf();
@@ -463,6 +471,8 @@ void main() {
                     sq_lives = 3;
                     sq_turn = 0;       /* P1のターンから開始 */
                     sq_rally = 0;
+                    sq_p1_score = 0;   /* 2Pモード用スコアリセット */
+                    sq_p2_score = 0;
                 }
                 game_state = STATE_PLAY;
                 led_blink();
@@ -901,16 +911,24 @@ void draw_squash_walls() {
     for (int y = 0; y < WALL_THICKNESS; y++)
         for (int x = 0; x < 96; x++)
             lcd_set_vbuf_pixel(y, x, 0, 180, 255);
-    
+
     /* 下壁 */
     for (int y = 52; y < 56; y++)
         for (int x = 0; x < 96; x++)
             lcd_set_vbuf_pixel(y, x, 0, 180, 255);
-    
+
     /* 右壁 */
     for (int y = 0; y < 56; y++)
         for (int x = 92; x < 96; x++)
             lcd_set_vbuf_pixel(y, x, 0, 180, 255);
+
+    /* サービスライン（縦線） */
+    for (int y = WALL_THICKNESS; y < 52; y++)
+        lcd_set_vbuf_pixel(y, 46, 255, 255, 255);
+
+    /* ハーフライン（横の点線） */
+    for (int x = 0; x < 92; x += 2)
+        lcd_set_vbuf_pixel(28, x, 255, 255, 255);
 }
 
 /* ラケット描画（テニスと同じパターン） */
@@ -967,6 +985,16 @@ void draw_lives(int lives) {
     }
 }
 
+/* 2Pモード用スコア表示 */
+void draw_squash_2p_score(int p1, int p2) {
+    /* P1:X-P2:X 形式で表示 */
+    lcd_puts_color(7, 0, "P1:", 0, 255, 0);
+    lcd_putc_color(7, 3, '0' + p1, 0, 255, 0);
+    lcd_putc_color(7, 4, '-', 255, 255, 255);
+    lcd_puts_color(7, 5, "P2:", 255, 128, 0);
+    lcd_putc_color(7, 8, '0' + p2, 255, 128, 0);
+}
+
 /* ターン表示（点滅） */
 void draw_turn_indicator(int turn, int frame) {
     int blink = (frame / 3) % 2;
@@ -1015,15 +1043,14 @@ void draw_squash_game() {
     
     /* ボール描画 */
     draw_squash_ball(sq_ball_x, sq_ball_y);
-    
-    /* ターン表示 */
-    if (game_mode == MODE_SQUASH_2P) {
-        draw_turn_indicator(sq_turn, frame_counter);
-    }
-    
+
     /* スコア・残機表示 */
-    draw_squash_score(sq_score);
-    draw_lives(sq_lives);
+    if (game_mode == MODE_SQUASH_2P) {
+        draw_squash_2p_score(sq_p1_score, sq_p2_score);
+    } else {
+        draw_squash_score(sq_score);
+        draw_lives(sq_lives);
+    }
 }
 
 /* スカッシュモード割り込みハンドラ処理 */
@@ -1039,29 +1066,23 @@ void squash_update() {
     if (sq_ball_y <= WALL_THICKNESS) {
         sq_ball_y = WALL_THICKNESS;
         sq_ball_vy = -sq_ball_vy;
-        buzzer_play(TONE_HIT);
-        buzzer_timer = BUZZER_SHORT;
     }
-    
+
     /* 下壁との反射 */
     if (sq_ball_y >= 52 - BALL_SIZE) {
         sq_ball_y = 52 - BALL_SIZE;
         sq_ball_vy = -sq_ball_vy;
-        buzzer_play(TONE_HIT);
-        buzzer_timer = BUZZER_SHORT;
     }
-    
+
     /* 右壁との反射 */
     if (sq_ball_x >= 92 - BALL_SIZE) {
         sq_ball_x = 92 - BALL_SIZE;
         sq_ball_vx = -sq_ball_vx;
-        buzzer_play(TONE_HIT);
-        buzzer_timer = BUZZER_SHORT;
     }
     
-    /* ラケットとの当たり判定（テニスと同様のロジック） */
-    /* P1ラケットとの衝突判定 */
-    if (sq_ball_vx < 0) {  /* ボールが左に向かっている時のみ判定 */
+    /* ラケットとの当たり判定 */
+    /* P1ラケットとの衝突判定（1Pモード時は常に、2Pモード時はP1のターンのみ） */
+    if (sq_ball_vx < 0 && (game_mode != MODE_SQUASH_2P || sq_turn == 0)) {
         if (sq_ball_x <= sq_p1_x + RACKET_WIDTH &&
             sq_ball_x + BALL_SIZE >= sq_p1_x &&
             sq_ball_y + BALL_SIZE >= sq_p1_y &&
@@ -1078,9 +1099,9 @@ void squash_update() {
             buzzer_timer = BUZZER_SHORT;
         }
     }
-    
-    /* P2ラケットとの衝突判定（2Pモード時） */
-    if (game_mode == MODE_SQUASH_2P && sq_ball_vx < 0) {
+
+    /* P2ラケットとの衝突判定（2Pモード時かつP2のターンのみ） */
+    if (game_mode == MODE_SQUASH_2P && sq_ball_vx < 0 && sq_turn == 1) {
         if (sq_ball_x <= sq_p2_x + RACKET_WIDTH &&
             sq_ball_x + BALL_SIZE >= sq_p2_x &&
             sq_ball_y + BALL_SIZE >= sq_p2_y &&
@@ -1098,18 +1119,39 @@ void squash_update() {
     
     /* 左端到達（ミス判定） */
     if (sq_ball_x < 0) {
-        /* ミス */
-        sq_lives--;
-        if (sq_lives <= 0) {
-            game_state = STATE_RESULT;
+        if (game_mode == MODE_SQUASH_2P) {
+            /* 2Pモード: ターンの人がミス → 相手に得点 */
+            if (sq_turn == 0) {
+                sq_p2_score++;  /* P1のミス → P2に得点 */
+            } else {
+                sq_p1_score++;  /* P2のミス → P1に得点 */
+            }
+            /* 勝敗判定 */
+            if (sq_p1_score >= WINNING_SCORE || sq_p2_score >= WINNING_SCORE) {
+                game_state = STATE_RESULT;
+            } else {
+                /* ボールリセット */
+                sq_ball_x = 20;
+                sq_ball_y = 26;
+                sq_ball_vx = 3;
+                sq_ball_vy = 2;
+                sq_rally = 0;
+                sq_turn = 0;
+            }
         } else {
-            /* ボールリセット（左側から再スタート） */
-            sq_ball_x = 20;
-            sq_ball_y = 26;
-            sq_ball_vx = 3;
-            sq_ball_vy = 2;
-            sq_rally = 0;
-            sq_turn = 0;  /* P1のターンに戻す */
+            /* 1Pモード: 従来通り残機制 */
+            sq_lives--;
+            if (sq_lives <= 0) {
+                game_state = STATE_RESULT;
+            } else {
+                /* ボールリセット（左側から再スタート） */
+                sq_ball_x = 20;
+                sq_ball_y = 26;
+                sq_ball_vx = 3;
+                sq_ball_vy = 2;
+                sq_rally = 0;
+                sq_turn = 0;
+            }
         }
         buzzer_play(TONE_SCORE);
         buzzer_timer = BUZZER_LONG;
@@ -1155,13 +1197,13 @@ void squash_move_players() {
     }
 }
 
-/* スカッシュ結果画面 */
+/* スカッシュ結果画面（1Pモード） */
 void draw_result_squash(int score) {
     lcd_clear_vbuf();
     lcd_puts_color(1, 0, "============", 255, 255, 255);
     lcd_puts_color(2, 0, " GAME OVER! ", 255, 0, 0);
     lcd_puts_color(3, 0, "============", 255, 255, 255);
-    
+
     lcd_putc_color(5, 0, 'S', 0, 255, 0);
     lcd_putc_color(5, 1, 'C', 0, 255, 0);
     lcd_putc_color(5, 2, 'O', 0, 255, 0);
@@ -1171,7 +1213,28 @@ void draw_result_squash(int score) {
     lcd_putc_color(5, 6, '0' + (score / 100) % 10, 0, 255, 0);
     lcd_putc_color(5, 7, '0' + (score / 10) % 10, 0, 255, 0);
     lcd_putc_color(5, 8, '0' + score % 10, 0, 255, 0);
-    
+
+    lcd_puts_color(7, 0, "0+1:RESET", 0, 255, 255);
+}
+
+/* スカッシュ結果画面（2Pモード） */
+void draw_result_squash_2p(int p1, int p2) {
+    lcd_clear_vbuf();
+    lcd_puts_color(0, 0, "============", 255, 255, 255);
+    if (p1 >= WINNING_SCORE) {
+        lcd_puts_color(2, 1, " P1  WIN! ", 0, 255, 0);
+    } else {
+        lcd_puts_color(2, 1, " P2  WIN! ", 255, 128, 0);
+    }
+    lcd_puts_color(3, 0, "============", 255, 255, 255);
+
+    /* スコア表示 */
+    lcd_puts_color(5, 1, "P1:", 0, 255, 0);
+    lcd_putc_color(5, 4, '0' + p1, 0, 255, 0);
+    lcd_putc_color(5, 5, '-', 255, 255, 255);
+    lcd_puts_color(5, 6, "P2:", 255, 128, 0);
+    lcd_putc_color(5, 9, '0' + p2, 255, 128, 0);
+
     lcd_puts_color(7, 0, "0+1:RESET", 0, 255, 255);
 }
 
