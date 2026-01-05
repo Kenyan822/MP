@@ -24,7 +24,7 @@ int btn_check_3();
 
 int rotary_read();
 int kypd_scan();
-void kypd_scan_both(int *p1_dir, int *p2_dir);
+void kypd_scan_both(volatile int *p1_dir, volatile int *p2_dir);
 
 void buzzer_play(int mode);
 void buzzer_stop();
@@ -110,10 +110,10 @@ const unsigned char PLAYER_PATTERN[8][8] = {
 /*
  * グローバル変数
  */
-int game_state = STATE_INIT;
-int game_mode = MODE_TENNIS;
-int cursor = 0;                 /* モード選択カーソル位置 (0-2) */
-unsigned int frame_counter = 0; /* アニメーション用カウンタ */
+volatile int game_state = STATE_INIT;
+volatile int game_mode = MODE_TENNIS;
+volatile int cursor = 0;                 /* モード選択カーソル位置 (0-2) */
+volatile unsigned int frame_counter = 0; /* アニメーション用カウンタ */
 
 /* ボタン入力のエッジ検出用 */
 int btn0_prev = 0;
@@ -137,10 +137,10 @@ int score_p1 = 0;       /* P1スコア */
 int score_p2 = 0;       /* P2スコア */
 
 /* 入力状態保存用（割り込みハンドラで使用） */
-int input_p1_dir = -1;  /* P1の方向入力 (1=上, 4=左, 5=右, 7=下) */
-int input_p2_dir = -1;  /* P2の方向入力 (A=上, 6=左, B=右, C=下) */
-int input_btn0 = 0;     /* ボタン0の状態 */
-int input_btn1 = 0;     /* ボタン1の状態 */
+volatile int input_p1_dir = -1;  /* P1の方向入力 (1=上, 4=左, 5=右, 7=下) */
+volatile int input_p2_dir = -1;  /* P2の方向入力 (A=上, 6=左, B=右, C=下) */
+volatile int input_btn0 = 0;     /* ボタン0の状態 */
+volatile int input_btn1 = 0;     /* ボタン1の状態 */
 
 /* ブザー用変数 */
 int buzzer_timer = 0;   /* ブザー持続フレーム数 */
@@ -647,7 +647,7 @@ int kypd_scan() {
  * P2: A=上, 6=左, B=右, C=下
  * 各行をスキャンして両方のプレイヤーの入力を検出
  */
-void kypd_scan_both(int *p1_dir, int *p2_dir) {
+void kypd_scan_both(volatile int *p1_dir, volatile int *p2_dir) {
     volatile int *ioc_ptr = (int *)0xff18;
     unsigned char raw;
     
@@ -677,6 +677,11 @@ void kypd_scan_both(int *p1_dir, int *p2_dir) {
     if ((raw & 0x80) == 0) *p2_dir = 0xa;  /* 上 */
     if ((raw & 0x40) == 0) *p2_dir = 0xb;  /* 右 */
     if ((raw & 0x20) == 0) *p2_dir = 0xc;  /* 下 */
+
+       /* スキャン終了後、少し待ってから出力を初期化 */
+       tiny_wait(100);
+       *ioc_ptr = 0x0f; tiny_wait(100);
+
 }
 
 /*
