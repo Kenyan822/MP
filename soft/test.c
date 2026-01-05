@@ -57,75 +57,74 @@ void draw_result_soccer(int p1, int p2);
 /*
  * ゲームステート定義
  */
-#define STATE_INIT      0   /* 初期化 */
-#define STATE_SELECT    1   /* モード選択画面 */
-#define STATE_WAIT      2   /* 待機画面（スタート待ち） */
-#define STATE_PLAY      3   /* プレイ中 */
-#define STATE_RESULT    4   /* 結果画面 */
+#define STATE_INIT 0   /* 初期化 */
+#define STATE_SELECT 1 /* モード選択画面 */
+#define STATE_WAIT 2   /* 待機画面（スタート待ち） */
+#define STATE_PLAY 3   /* プレイ中 */
+#define STATE_RESULT 4 /* 結果画面 */
 
 /*
  * ゲームモード定義
  */
-#define MODE_TENNIS     0   /* テニス */
-#define MODE_SQUASH_2P  1   /* スカッシュ2人 */
-#define MODE_SOCCER     2   /* サッカー */
+#define MODE_TENNIS 0    /* テニス */
+#define MODE_SQUASH_2P 1 /* スカッシュ2人 */
+#define MODE_SOCCER 2    /* サッカー */
 
 /*
  * テニスモード定数
  */
-#define RACKET_WIDTH  8
+#define RACKET_WIDTH 8
 #define RACKET_HEIGHT 12
-#define BALL_SIZE     4
-#define P1_X          2    /* プレイヤー1のX座標（固定） */
-#define P2_X          86   /* プレイヤー2のX座標（固定） */
+#define BALL_SIZE 4
+#define P1_X 2  /* プレイヤー1のX座標（固定） */
+#define P2_X 86 /* プレイヤー2のX座標（固定） */
 
 /*
  * スカッシュモード定数
  */
-#define WALL_THICKNESS  4
-#define PLAYER_SIZE     8
-#define PLAYER_SPEED    4
-#define HIT_RANGE       10
+#define WALL_THICKNESS 4
+#define PLAYER_SIZE 8
+#define PLAYER_SPEED 4
+#define HIT_RANGE 10
 
 /*
  * サッカーモード定数
  */
-#define SOCCER_NORMAL_SPEED    6    /* 通常移動速度 */
-#define SOCCER_HOLDER_SPEED    4    /* ボール保持時速度 */
-#define SOCCER_COLLISION_THRESHOLD 12  /* 衝突判定距離 */
-#define SOCCER_INVINCIBLE_DURATION 10  /* 無敵時間（フレーム数） */
-#define SOCCER_WINNING_SCORE   3    /* 勝利得点 */
-#define SOCCER_FIELD_BOTTOM    48   /* フィールド下端 */
-#define NO_OWNER    0
-#define OWNER_P1    1
-#define OWNER_P2    2
+#define SOCCER_NORMAL_SPEED 6         /* 通常移動速度 */
+#define SOCCER_HOLDER_SPEED 4         /* ボール保持時速度 */
+#define SOCCER_COLLISION_THRESHOLD 6  /* 衝突判定距離（プレイヤー同士・ボール取得） */
+#define SOCCER_INVINCIBLE_DURATION 10 /* 無敵時間（フレーム数） */
+#define SOCCER_WINNING_SCORE 3        /* 勝利得点 */
+#define SOCCER_FIELD_BOTTOM 48        /* フィールド下端 */
+#define NO_OWNER 0
+#define OWNER_P1 1
+#define OWNER_P2 2
 
 /* ラケットパターン (1:フレーム, 2:ガット, 0:透過) */
 const unsigned char RACKET_PATTERN[12][8] = {
-    {0,0,1,1,1,1,0,0},
-    {0,1,2,2,2,2,1,0},
-    {0,1,2,2,2,2,1,0},
-    {0,1,2,2,2,2,1,0},
-    {0,1,2,2,2,2,1,0},
-    {0,0,1,1,1,1,0,0},
-    {0,0,0,1,1,0,0,0},
-    {0,0,0,1,1,0,0,0},
-    {0,0,0,1,1,0,0,0},
-    {0,0,0,1,1,0,0,0},
-    {0,0,0,1,1,0,0,0},
-    {0,0,0,1,1,0,0,0}
-};
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 1, 2, 2, 2, 2, 1, 0},
+    {0, 1, 2, 2, 2, 2, 1, 0},
+    {0, 1, 2, 2, 2, 2, 1, 0},
+    {0, 1, 2, 2, 2, 2, 1, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0}};
 
 /* プレイヤースプライトパターン (1:描画, 0:透過) */
 const unsigned char PLAYER_PATTERN[8][8] = {
-    {0,0,1,1,1,1,0,0},  /* 頭部上 */
-    {0,1,1,0,0,1,1,0},  /* 頭部 */
-    {0,0,1,1,1,1,0,0},  /* 頭部下 */
-    {1,1,1,1,1,1,1,1},  /* 首 */
-    {0,0,1,1,1,1,0,0},  /* 胴体 */
-    {0,1,1,0,0,1,1,0},  /* 腕 */
-    {0,1,1,0,0,1,1,0},  /* 足上 */
-    {0,1,0,0,0,0,1,0}   /* 足下 */
+    {0, 0, 1, 1, 1, 1, 0, 0}, /* 頭部上 */
+    {0, 1, 1, 0, 0, 1, 1, 0}, /* 頭部 */
+    {0, 0, 1, 1, 1, 1, 0, 0}, /* 頭部下 */
+    {1, 1, 1, 1, 1, 1, 1, 1}, /* 首 */
+    {0, 0, 1, 1, 1, 1, 0, 0}, /* 胴体 */
+    {0, 1, 1, 0, 0, 1, 1, 0}, /* 腕 */
+    {0, 1, 1, 0, 0, 1, 1, 0}, /* 足上 */
+    {0, 1, 0, 0, 0, 0, 1, 0}  /* 足下 */
 };
 
 /*
@@ -142,142 +141,192 @@ int btn2_prev = 0;
 int btn3_prev = 0;
 
 /* ロータリーエンコーダ用 */
-int rotary_prev = 128;          /* 前回のカウンタ値（初期値128） */
-int rotary_threshold = 4;       /* 何カウント変化でカーソル移動するか */
+int rotary_prev = 128;    /* 前回のカウンタ値（初期値128） */
+int rotary_threshold = 4; /* 何カウント変化でカーソル移動するか */
 
 /* テニスモード用変数 */
-int p1_x = P1_X;        /* P1ラケットX座標（2次元移動用） */
-int p1_y = 24;          /* P1ラケットY座標 */
-int p2_x = P2_X;        /* P2ラケットX座標（2次元移動用） */
-int p2_y = 24;          /* P2ラケットY座標 */
-int ball_x = 46;        /* ボールX座標 */
-int ball_y = 30;        /* ボールY座標 */
-int ball_vx = 3;        /* ボールX方向速度 */
-int ball_vy = 2;        /* ボールY方向速度 */
-int score_p1 = 0;       /* P1スコア */
-int score_p2 = 0;       /* P2スコア */
+int p1_x = P1_X;  /* P1ラケットX座標（2次元移動用） */
+int p1_y = 24;    /* P1ラケットY座標 */
+int p2_x = P2_X;  /* P2ラケットX座標（2次元移動用） */
+int p2_y = 24;    /* P2ラケットY座標 */
+int ball_x = 46;  /* ボールX座標 */
+int ball_y = 30;  /* ボールY座標 */
+int ball_vx = 5;  /* ボールX方向速度 */
+int ball_vy = 3;  /* ボールY方向速度 */
+int score_p1 = 0; /* P1スコア */
+int score_p2 = 0; /* P2スコア */
 
 /* 入力状態保存用（割り込みハンドラで使用） */
-volatile int input_p1_dir = -1;  /* P1の方向入力 (1=上, 4=左, 5=右, 7=下) */
-volatile int input_p2_dir = -1;  /* P2の方向入力 (A=上, 6=左, B=右, C=下) */
-volatile int input_btn0 = 0;     /* ボタン0の状態 */
-volatile int input_btn1 = 0;     /* ボタン1の状態 */
+volatile int input_p1_dir = -1; /* P1の方向入力 (1=上, 4=左, 5=右, 7=下) */
+volatile int input_p2_dir = -1; /* P2の方向入力 (A=上, 6=左, B=右, C=下) */
+volatile int input_btn0 = 0;    /* ボタン0の状態 */
+volatile int input_btn1 = 0;    /* ボタン1の状態 */
 
 /* ブザー用変数 */
-int buzzer_timer = 0;   /* ブザー持続フレーム数 */
-#define BUZZER_SHORT 2  /* 打ち返し音の長さ（フレーム数） */
-#define BUZZER_LONG  5  /* 得点音の長さ（フレーム数） */
-#define TONE_HIT     8  /* 打ち返し音の音階（G） */
-#define TONE_SCORE  13  /* 得点音の音階（高いC） */
+int buzzer_timer = 0;  /* ブザー持続フレーム数 */
+#define BUZZER_SHORT 2 /* 打ち返し音の長さ（フレーム数） */
+#define BUZZER_LONG 5  /* 得点音の長さ（フレーム数） */
+#define TONE_HIT 8     /* 打ち返し音の音階（G） */
+#define TONE_SCORE 13  /* 得点音の音階（高いC） */
 
 /* スカッシュモード用変数 */
 int sq_p1_x = 2, sq_p1_y = 20;      /* P1座標（左側配置） */
 int sq_p2_x = 2, sq_p2_y = 36;      /* P2座標（左側配置） */
 int sq_ball_x = 46, sq_ball_y = 26; /* ボール座標 */
-int sq_ball_vx = 3, sq_ball_vy = 2; /* ボール速度 */
-int sq_score = 0;                    /* スコア（1Pモード用） */
-int sq_lives = 3;                    /* 残機（1Pモード用） */
-int sq_turn = 0;                     /* 現在のターン (0=P1, 1=P2) */
-int sq_rally = 0;                    /* ラリー回数 */
-int sq_p1_score = 0;                 /* P1ポイント（2Pモード用） */
-int sq_p2_score = 0;                 /* P2ポイント（2Pモード用） */
-#define WINNING_SCORE 5              /* 勝利に必要なポイント */
+int sq_ball_vx = 5, sq_ball_vy = 3; /* ボール速度 */
+int sq_score = 0;                   /* スコア（1Pモード用） */
+int sq_lives = 3;                   /* 残機（1Pモード用） */
+int sq_turn = 0;                    /* 現在のターン (0=P1, 1=P2) */
+int sq_rally = 0;                   /* ラリー回数 */
+int sq_p1_score = 0;                /* P1ポイント（2Pモード用） */
+int sq_p2_score = 0;                /* P2ポイント（2Pモード用） */
+#define WINNING_SCORE 5             /* 勝利に必要なポイント */
 
 /* サッカーモード用変数 */
-int soccer_p1_x = 10, soccer_p1_y = 24;   /* P1座標 */
-int soccer_p2_x = 78, soccer_p2_y = 24;   /* P2座標 */
+int soccer_p1_x = 10, soccer_p1_y = 24;     /* P1座標 */
+int soccer_p2_x = 78, soccer_p2_y = 24;     /* P2座標 */
 int soccer_ball_x = 44, soccer_ball_y = 24; /* ボール座標 */
 int soccer_ball_vx = 0, soccer_ball_vy = 0; /* ボール速度 */
-int soccer_ball_flying = 0;               /* ボール飛行中フラグ */
-int soccer_ball_owner = NO_OWNER;         /* ボール所有者 */
-int soccer_p1_score = 0;                  /* P1スコア */
-int soccer_p2_score = 0;                  /* P2スコア */
-int soccer_invincible_timer = 0;          /* 無敵時間カウンタ */
+int soccer_ball_flying = 0;                 /* ボール飛行中フラグ */
+int soccer_ball_owner = NO_OWNER;           /* ボール所有者 */
+int soccer_p1_score = 0;                    /* P1スコア */
+int soccer_p2_score = 0;                    /* P2スコア */
+int soccer_invincible_timer = 0;            /* 無敵時間カウンタ */
 
 /*
  * 割り込みハンドラ（100msecごとに呼ばれる）
  */
-void interrupt_handler() {
+void interrupt_handler()
+{
     frame_counter++;
-    
+
     /* ブザータイマー処理 */
-    if (buzzer_timer > 0) {
+    if (buzzer_timer > 0)
+    {
         buzzer_timer--;
-        if (buzzer_timer == 0) {
+        if (buzzer_timer == 0)
+        {
             buzzer_stop();
         }
     }
-    
+
     /* モード選択画面の描画 */
-    if (game_state == STATE_SELECT) {
+    if (game_state == STATE_SELECT)
+    {
         draw_mode_select(cursor);
-    } else if (game_state == STATE_WAIT) {
+    }
+    else if (game_state == STATE_WAIT)
+    {
         /* 待機画面の描画 */
         lcd_clear_vbuf();
         int r_title = 0, g_title = 0, b_title = 0;
         int phase = (frame_counter / 3) % 3;
-        if (phase == 0) { r_title=255; g_title=0; b_title=0; }
-        else if (phase == 1) { r_title=0; g_title=255; b_title=0; }
-        else { r_title=0; g_title=0; b_title=255; }
+        if (phase == 0)
+        {
+            r_title = 255;
+            g_title = 0;
+            b_title = 0;
+        }
+        else if (phase == 1)
+        {
+            r_title = 0;
+            g_title = 255;
+            b_title = 0;
+        }
+        else
+        {
+            r_title = 0;
+            g_title = 0;
+            b_title = 255;
+        }
 
-        if (game_mode == MODE_TENNIS) {
+        if (game_mode == MODE_TENNIS)
+        {
             lcd_puts_color(2, 1, "TENNIS MODE", r_title, g_title, b_title);
-        } else if (game_mode == MODE_SQUASH_2P) {
+        }
+        else if (game_mode == MODE_SQUASH_2P)
+        {
             lcd_puts_color(2, 0, "SQUASH MODE", r_title, g_title, b_title);
-        } else if (game_mode == MODE_SOCCER) {
+        }
+        else if (game_mode == MODE_SOCCER)
+        {
             lcd_puts_color(2, 0, "SOCCER MODE", r_title, g_title, b_title);
         }
-        
-        if ((frame_counter / 5) % 2) {
+
+        if ((frame_counter / 5) % 2)
+        {
             lcd_puts_color(4, 0, "PRESS 0", 255, 255, 0);
             lcd_puts_color(5, 0, "TO START", 255, 255, 0);
-        } else {
+        }
+        else
+        {
             lcd_puts_color(4, 0, "PRESS 0", 255, 0, 0);
             lcd_puts_color(5, 0, "TO START", 255, 0, 0);
         }
-    } else if (game_state == STATE_PLAY) {
+    }
+    else if (game_state == STATE_PLAY)
+    {
         /* プレイ中 */
-        if (game_mode == MODE_TENNIS) {
+        if (game_mode == MODE_TENNIS)
+        {
             /* テニスゲームロジック（100msecごとに処理） */
-            
+
             /* ラケット操作（100msec間隔で処理） */
             /* P1: キーパッドで2次元移動（input_p1_dirを使用） */
-            if (input_p1_dir == 1) {         /* キーパッド1: 上 */
-                if (p1_y > 5) p1_y -= 6;
+            if (input_p1_dir == 1)
+            { /* キーパッド1: 上 */
+                if (p1_y > 5)
+                    p1_y -= 6;
             }
-            if (input_p1_dir == 7) {         /* キーパッド7: 下 */
-                if (p1_y < 47) p1_y += 6;
+            if (input_p1_dir == 7)
+            { /* キーパッド7: 下 */
+                if (p1_y < 47)
+                    p1_y += 6;
             }
-            if (input_p1_dir == 4) {         /* キーパッド4: 左 */
-                if (p1_x > 5) p1_x -= 6;
+            if (input_p1_dir == 4)
+            { /* キーパッド4: 左 */
+                if (p1_x > 5)
+                    p1_x -= 6;
             }
-            if (input_p1_dir == 5) {         /* キーパッド5: 右 */
-                if (p1_x < 40) p1_x += 6;
+            if (input_p1_dir == 5)
+            { /* キーパッド5: 右 */
+                if (p1_x < 40)
+                    p1_x += 6;
             }
             /* P2: キーパッドで2次元移動（input_p2_dirを使用） */
-            if (input_p2_dir == 0xa) {         /* キーパッドA: 上 */
-                if (p2_y > 5) p2_y -= 6;
+            if (input_p2_dir == 0xa)
+            { /* キーパッドA: 上 */
+                if (p2_y > 5)
+                    p2_y -= 6;
             }
-            if (input_p2_dir == 0xc) {         /* キーパッドC: 下 */
-                if (p2_y < 47) p2_y += 6;
+            if (input_p2_dir == 0xc)
+            { /* キーパッドC: 下 */
+                if (p2_y < 47)
+                    p2_y += 6;
             }
-            if (input_p2_dir == 6) {           /* キーパッド6: 左 */
-                if (p2_x > 50) p2_x -= 6;
+            if (input_p2_dir == 6)
+            { /* キーパッド6: 左 */
+                if (p2_x > 50)
+                    p2_x -= 6;
             }
-            if (input_p2_dir == 0xb) {         /* キーパッドB: 右 */
-                if (p2_x < 86) p2_x += 6;
+            if (input_p2_dir == 0xb)
+            { /* キーパッドB: 右 */
+                if (p2_x < 86)
+                    p2_x += 6;
             }
-            
+
             /* ボール移動 */
             ball_x += ball_vx;
             ball_y += ball_vy;
 
             /* 上下壁との反射 (コートライン y=4, y=59) */
-            if (ball_y <= 5) {
+            if (ball_y <= 5)
+            {
                 ball_y = 5;
                 ball_vy = -ball_vy;
             }
-            if (ball_y >= 55) { /* 59 - BALL_SIZE */
+            if (ball_y >= 55)
+            { /* 59 - BALL_SIZE */
                 ball_y = 55;
                 ball_vy = -ball_vy;
             }
@@ -286,7 +335,8 @@ void interrupt_handler() {
             if (ball_x <= p1_x + RACKET_WIDTH &&
                 ball_x + BALL_SIZE >= p1_x &&
                 ball_y + BALL_SIZE >= p1_y &&
-                ball_y <= p1_y + RACKET_HEIGHT) {
+                ball_y <= p1_y + RACKET_HEIGHT)
+            {
                 ball_x = p1_x + RACKET_WIDTH;
                 ball_vx = -ball_vx;
                 /* 打ち返し音（短め） */
@@ -298,7 +348,8 @@ void interrupt_handler() {
             if (ball_x + BALL_SIZE >= p2_x &&
                 ball_x <= p2_x + RACKET_WIDTH &&
                 ball_y + BALL_SIZE >= p2_y &&
-                ball_y <= p2_y + RACKET_HEIGHT) {
+                ball_y <= p2_y + RACKET_HEIGHT)
+            {
                 ball_x = p2_x - BALL_SIZE;
                 ball_vx = -ball_vx;
                 /* 打ち返し音（短め） */
@@ -307,77 +358,101 @@ void interrupt_handler() {
             }
 
             /* 得点判定 */
-            if (ball_x < 0) {
+            if (ball_x < 0)
+            {
                 /* P2得点 */
                 score_p2++;
                 ball_x = 46;
                 ball_y = 26;
-                ball_vx = 3;
-                ball_vy = 2;
+                ball_vx = 5;
+                ball_vy = 3;
                 /* 得点音（長め） */
                 buzzer_play(TONE_SCORE);
                 buzzer_timer = BUZZER_LONG;
             }
-            if (ball_x > 96 - BALL_SIZE) {
+            if (ball_x > 96 - BALL_SIZE)
+            {
                 /* P1得点 */
                 score_p1++;
                 ball_x = 46;
                 ball_y = 26;
-                ball_vx = -3;
-                ball_vy = 2;
+                ball_vx = -5;
+                ball_vy = 3;
                 /* 得点音（長め） */
                 buzzer_play(TONE_SCORE);
                 buzzer_timer = BUZZER_LONG;
             }
 
             /* 勝利判定（5点先取） */
-            if (score_p1 >= 5 || score_p2 >= 5) {
+            if (score_p1 >= 5 || score_p2 >= 5)
+            {
                 game_state = STATE_RESULT;
             }
-            
+
             draw_tennis_game();
-        } else if (game_mode == MODE_SQUASH_2P) {
+        }
+        else if (game_mode == MODE_SQUASH_2P)
+        {
             /* スカッシュモード（2P） */
             squash_update();
-        } else if (game_mode == MODE_SOCCER) {
+        }
+        else if (game_mode == MODE_SOCCER)
+        {
             /* サッカーモード */
             soccer_update();
         }
-    } else if (game_state == STATE_RESULT) {
+    }
+    else if (game_state == STATE_RESULT)
+    {
         /* 結果画面 */
-        if (game_mode == MODE_TENNIS) {
+        if (game_mode == MODE_TENNIS)
+        {
             /* テニス結果画面 */
             lcd_clear_vbuf();
             int phase = (frame_counter / 2) % 2;
             lcd_puts_color(1, 0, "============", 255, 255, 255);
-            if (phase) {
+            if (phase)
+            {
                 lcd_puts_color(2, 0, " GAME OVER! ", 255, 0, 0);
-            } else {
+            }
+            else
+            {
                 lcd_puts_color(2, 0, " GAME OVER! ", 255, 255, 255);
             }
             lcd_puts_color(3, 0, "============", 255, 255, 255);
-            
+
             /* 勝者表示 */
-            if (score_p1 > score_p2) {
+            if (score_p1 > score_p2)
+            {
                 lcd_puts_color(4, 0, " WINNER: P1 ", 0, 255, 0);
-            } else {
+            }
+            else
+            {
                 lcd_puts_color(4, 0, " WINNER: P2 ", 255, 128, 0);
             }
-            
+
             /* スコア表示 */
             char result_str[12];
-            result_str[0] = 'S'; result_str[1] = 'C'; result_str[2] = 'O';
-            result_str[3] = 'R'; result_str[4] = 'E'; result_str[5] = ':';
+            result_str[0] = 'S';
+            result_str[1] = 'C';
+            result_str[2] = 'O';
+            result_str[3] = 'R';
+            result_str[4] = 'E';
+            result_str[5] = ':';
             result_str[6] = '0' + score_p1;
             result_str[7] = '-';
             result_str[8] = '0' + score_p2;
             result_str[9] = '\0';
             lcd_puts_color(6, 1, result_str, 255, 255, 0);
             lcd_puts_color(7, 0, "0+1:RESET", 0, 255, 255);
-        } else if (game_mode == MODE_SQUASH_2P) {
+        }
+        else if (game_mode == MODE_SQUASH_2P)
+        {
             /* スカッシュ結果画面 */
             draw_result_squash_2p(sq_p1_score, sq_p2_score);
-        } else if (game_mode == MODE_SOCCER) {
+        }
+        else if (game_mode == MODE_SOCCER)
+        {
             /* サッカー結果画面 */
             draw_result_soccer(soccer_p1_score, soccer_p2_score);
         }
@@ -388,41 +463,57 @@ void interrupt_handler() {
 /*
  * メイン関数
  */
-void main() {
-    
-    volatile int *iob_ptr = (int *)0xff14;
-    
-    *iob_ptr = 1; lcd_wait(500000);
-    *iob_ptr = 2; lcd_wait(500000);
-    *iob_ptr = 3; lcd_wait(500000);
-    *iob_ptr = 4; lcd_wait(500000);
-    *iob_ptr = 5; lcd_wait(500000);
-    *iob_ptr = 6; lcd_wait(500000);
-    *iob_ptr = 0; lcd_wait(500000);
+void main()
+{
 
-    while (1) {
-        if (game_state == STATE_INIT) {
+    volatile int *iob_ptr = (int *)0xff14;
+
+    *iob_ptr = 1;
+    lcd_wait(500000);
+    *iob_ptr = 2;
+    lcd_wait(500000);
+    *iob_ptr = 3;
+    lcd_wait(500000);
+    *iob_ptr = 4;
+    lcd_wait(500000);
+    *iob_ptr = 5;
+    lcd_wait(500000);
+    *iob_ptr = 6;
+    lcd_wait(500000);
+    *iob_ptr = 0;
+    lcd_wait(500000);
+
+    while (1)
+    {
+        if (game_state == STATE_INIT)
+        {
             /* LCD初期化 */
             lcd_init();
             game_state = STATE_SELECT;
             cursor = 0;
-            rotary_prev = rotary_read();  /* ロータリーエンコーダの初期値を保存 */
-        } else if (game_state == STATE_SELECT) {
+            rotary_prev = rotary_read(); /* ロータリーエンコーダの初期値を保存 */
+        }
+        else if (game_state == STATE_SELECT)
+        {
             /* モード選択画面 */
-            int btn3 = btn_check_3();  /* UP */
-            int btn2 = btn_check_2();  /* DOWN */
-            int btn0 = btn_check_0();  /* DECIDE */
+            int btn3 = btn_check_3(); /* UP */
+            int btn2 = btn_check_2(); /* DOWN */
+            int btn0 = btn_check_0(); /* DECIDE */
 
             /* ボタン3: カーソル上移動（エッジ検出） */
-            if (btn3 && !btn3_prev) {
-                if (cursor > 0) {
+            if (btn3 && !btn3_prev)
+            {
+                if (cursor > 0)
+                {
                     cursor--;
                     led_blink();
                 }
             }
             /* ボタン2: カーソル下移動（エッジ検出） */
-            if (btn2 && !btn2_prev) {
-                if (cursor < 2) {
+            if (btn2 && !btn2_prev)
+            {
+                if (cursor < 2)
+                {
                     cursor++;
                     led_blink();
                 }
@@ -431,22 +522,28 @@ void main() {
             /* ロータリーエンコーダでカーソル移動 */
             int rotary_val = rotary_read();
             int diff = rotary_val - rotary_prev;
-            
+
             /* ラップアラウンド対策: 差分が大きすぎる場合は逆方向に補正 */
-            if (diff > 128) diff -= 256;       /* 例: 2 - 254 = -252 → +4 に補正 */
-            else if (diff < -128) diff += 256; /* 例: 254 - 2 = 252 → -4 に補正 */
-            
+            if (diff > 128)
+                diff -= 256; /* 例: 2 - 254 = -252 → +4 に補正 */
+            else if (diff < -128)
+                diff += 256; /* 例: 254 - 2 = 252 → -4 に補正 */
+
             /* 反時計回り（値が増える）→ カーソル下に移動 */
-            if (diff >= rotary_threshold) {
-                if (cursor < 2) {
+            if (diff >= rotary_threshold)
+            {
+                if (cursor < 2)
+                {
                     cursor++;
                     led_blink();
                 }
                 rotary_prev = rotary_val;
             }
             /* 時計回り（値が減る）→ カーソル上に移動 */
-            else if (diff <= -rotary_threshold) {
-                if (cursor > 0) {
+            else if (diff <= -rotary_threshold)
+            {
+                if (cursor > 0)
+                {
                     cursor--;
                     led_blink();
                 }
@@ -454,7 +551,8 @@ void main() {
             }
 
             /* ボタン0: 決定（エッジ検出） */
-            if (btn0 && !btn0_prev) {
+            if (btn0 && !btn0_prev)
+            {
                 game_mode = cursor;
                 game_state = STATE_WAIT;
                 led_blink();
@@ -463,22 +561,26 @@ void main() {
             btn0_prev = btn0;
             btn2_prev = btn2;
             btn3_prev = btn3;
-
-        } else if (game_state == STATE_WAIT) {
+        }
+        else if (game_state == STATE_WAIT)
+        {
             /* 待機画面：ボタン0でゲーム開始 */
             int btn0 = btn_check_0();
             int btn1 = btn_check_1();
 
             /* ボタン0+1同時押し：モード選択に戻る */
-            if (btn0 && btn1) {
+            if (btn0 && btn1)
+            {
                 game_state = STATE_SELECT;
                 cursor = 0;
-                rotary_prev = rotary_read();  /* ロータリーエンコーダの値をリセット */
+                rotary_prev = rotary_read(); /* ロータリーエンコーダの値をリセット */
             }
             /* ボタン0のみ：ゲーム開始 */
-            else if (btn0 && !btn0_prev) {
+            else if (btn0 && !btn0_prev)
+            {
                 /* ゲーム変数初期化 */
-                if (game_mode == MODE_TENNIS) {
+                if (game_mode == MODE_TENNIS)
+                {
                     /* テニスモード初期化 */
                     p1_x = P1_X;
                     p1_y = 24;
@@ -486,27 +588,31 @@ void main() {
                     p2_y = 24;
                     ball_x = 46;
                     ball_y = 30;
-                    ball_vx = 3;
-                    ball_vy = 2;
+                    ball_vx = 5;
+                    ball_vy = 3;
                     score_p1 = 0;
                     score_p2 = 0;
-                } else if (game_mode == MODE_SQUASH_2P) {
+                }
+                else if (game_mode == MODE_SQUASH_2P)
+                {
                     /* スカッシュモード初期化 */
-                    sq_p1_x = 2;       /* 左側に配置 */
+                    sq_p1_x = 2; /* 左側に配置 */
                     sq_p1_y = 16;
-                    sq_p2_x = 2;       /* 左側に配置（P1の下） */
+                    sq_p2_x = 2; /* 左側に配置（P1の下） */
                     sq_p2_y = 36;
-                    sq_ball_x = 20;    /* ボールも左側から開始 */
+                    sq_ball_x = 20; /* ボールも左側から開始 */
                     sq_ball_y = 26;
-                    sq_ball_vx = 3;    /* 右に向かって発射 */
-                    sq_ball_vy = 2;
+                    sq_ball_vx = 5; /* 右に向かって発射 */
+                    sq_ball_vy = 3;
                     sq_score = 0;
                     sq_lives = 3;
-                    sq_turn = 0;       /* P1のターンから開始 */
+                    sq_turn = 0; /* P1のターンから開始 */
                     sq_rally = 0;
-                    sq_p1_score = 0;   /* 2Pモード用スコアリセット */
+                    sq_p1_score = 0; /* 2Pモード用スコアリセット */
                     sq_p2_score = 0;
-                } else if (game_mode == MODE_SOCCER) {
+                }
+                else if (game_mode == MODE_SOCCER)
+                {
                     /* サッカーモード初期化 */
                     soccer_p1_x = 10;
                     soccer_p1_y = 24;
@@ -526,23 +632,26 @@ void main() {
                 led_blink();
             }
             btn0_prev = btn0;
-
-        } else if (game_state == STATE_PLAY) {
+        }
+        else if (game_state == STATE_PLAY)
+        {
             /* プレイ中：入力読み取りのみ（ゲームロジックは割り込みハンドラで処理） */
             /* 入力状態を読み取ってグローバル変数に保存（P1とP2を別々に検出） */
             kypd_scan_both(&input_p1_dir, &input_p2_dir);
             input_btn0 = btn_check_0();
             input_btn1 = btn_check_1();
-
-        } else if (game_state == STATE_RESULT) {
+        }
+        else if (game_state == STATE_RESULT)
+        {
             /* 結果画面：ボタン0+1でモード選択に戻る */
             int btn0 = btn_check_0();
             int btn1 = btn_check_1();
 
-            if (btn0 && btn1) {
+            if (btn0 && btn1)
+            {
                 game_state = STATE_SELECT;
                 cursor = 0;
-                rotary_prev = rotary_read();  /* ロータリーエンコーダの値をリセット */
+                rotary_prev = rotary_read(); /* ロータリーエンコーダの値をリセット */
             }
         }
     }
@@ -551,20 +660,50 @@ void main() {
 /*
  * モード選択画面の描画
  */
-void draw_mode_select(int cursor) {
+void draw_mode_select(int cursor)
+{
     lcd_clear_vbuf();
 
     /* タイトル: レインボーカラー */
     int r, g, b;
     int phase = (frame_counter / 2) % 6;
-    switch(phase) {
-        case 0: r=255; g=0; b=0; break;
-        case 1: r=255; g=255; b=0; break;
-        case 2: r=0; g=255; b=0; break;
-        case 3: r=0; g=255; b=255; break;
-        case 4: r=0; g=0; b=255; break;
-        case 5: r=255; g=0; b=255; break;
-        default: r=255; g=255; b=255; break;
+    switch (phase)
+    {
+    case 0:
+        r = 255;
+        g = 0;
+        b = 0;
+        break;
+    case 1:
+        r = 255;
+        g = 255;
+        b = 0;
+        break;
+    case 2:
+        r = 0;
+        g = 255;
+        b = 0;
+        break;
+    case 3:
+        r = 0;
+        g = 255;
+        b = 255;
+        break;
+    case 4:
+        r = 0;
+        g = 0;
+        b = 255;
+        break;
+    case 5:
+        r = 255;
+        g = 0;
+        b = 255;
+        break;
+    default:
+        r = 255;
+        g = 255;
+        b = 255;
+        break;
     }
     lcd_puts_color(0, 0, "== SELECT ==", r, g, b);
 
@@ -574,21 +713,30 @@ void draw_mode_select(int cursor) {
     int g_sel = blink ? 255 : 0;
     int b_sel = blink ? 0 : 0; // 黄色 <-> 赤
 
-    if (cursor == 0) {
+    if (cursor == 0)
+    {
         lcd_puts_color(2, 0, "> TENNIS   <", r_sel, g_sel, b_sel);
-    } else {
+    }
+    else
+    {
         lcd_puts_color(2, 0, "  TENNIS    ", 0, 0, 255);
     }
 
-    if (cursor == 1) {
+    if (cursor == 1)
+    {
         lcd_puts_color(3, 0, "> SQUASH   <", r_sel, g_sel, b_sel);
-    } else {
+    }
+    else
+    {
         lcd_puts_color(3, 0, "  SQUASH    ", 0, 0, 255);
     }
 
-    if (cursor == 2) {
+    if (cursor == 2)
+    {
         lcd_puts_color(4, 0, "> SOCCER   <", r_sel, g_sel, b_sel);
-    } else {
+    }
+    else
+    {
         lcd_puts_color(4, 0, "  SOCCER    ", 0, 0, 255);
     }
 
@@ -609,22 +757,26 @@ void draw_mode_select(int cursor) {
  *   bit2: ボタン6
  *   bit3: ボタン7
  */
-int btn_check_0() {
+int btn_check_0()
+{
     volatile int *sw_ptr = (int *)0xff04;
     return (*sw_ptr & 0x10) ? 1 : 0;
 }
 
-int btn_check_1() {
+int btn_check_1()
+{
     volatile int *sw_ptr = (int *)0xff04;
     return (*sw_ptr & 0x20) ? 1 : 0;
 }
 
-int btn_check_2() {
+int btn_check_2()
+{
     volatile int *sw_ptr = (int *)0xff04;
     return (*sw_ptr & 0x40) ? 1 : 0;
 }
 
-int btn_check_3() {
+int btn_check_3()
+{
     volatile int *sw_ptr = (int *)0xff04;
     return (*sw_ptr & 0x80) ? 1 : 0;
 }
@@ -636,7 +788,8 @@ int btn_check_3() {
  * rte_out[1] = 押しボタン
  * rte_out[0] = スライドスイッチ
  */
-int rotary_read() {
+int rotary_read()
+{
     volatile int *rte_ptr = (int *)0xff10;
     int val = *rte_ptr;
     /* カウンタ値はbit9:2にあるので右シフトして取り出す */
@@ -649,43 +802,68 @@ int rotary_read() {
  * 下位4bitを出力、上位4bitを入力として使用
  * 戻り値: 押されているキー (0-9, A-F) または -1 (何も押されていない)
  */
-void tiny_wait(int n) { for (volatile int i = 0; i < n; i++); }
+void tiny_wait(int n)
+{
+    for (volatile int i = 0; i < n; i++)
+        ;
+}
 
-int kypd_scan() {
+int kypd_scan()
+{
     volatile int *ioc_ptr = (int *)0xff18;
     unsigned char raw;
 
     /* row0: キー 1, 4, 7, 0 をスキャン */
-    *ioc_ptr = 0x07; tiny_wait(300);
+    *ioc_ptr = 0x07;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) return 0x1;
-    if ((raw & 0x40) == 0) return 0x4;
-    if ((raw & 0x20) == 0) return 0x7;
-    if ((raw & 0x10) == 0) return 0x0;
+    if ((raw & 0x80) == 0)
+        return 0x1;
+    if ((raw & 0x40) == 0)
+        return 0x4;
+    if ((raw & 0x20) == 0)
+        return 0x7;
+    if ((raw & 0x10) == 0)
+        return 0x0;
 
     /* row1: キー 2, 5, 8, F をスキャン */
-    *ioc_ptr = 0x0b; tiny_wait(300);
+    *ioc_ptr = 0x0b;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) return 0x2;
-    if ((raw & 0x40) == 0) return 0x5;
-    if ((raw & 0x20) == 0) return 0x8;
-    if ((raw & 0x10) == 0) return 0xf;
+    if ((raw & 0x80) == 0)
+        return 0x2;
+    if ((raw & 0x40) == 0)
+        return 0x5;
+    if ((raw & 0x20) == 0)
+        return 0x8;
+    if ((raw & 0x10) == 0)
+        return 0xf;
 
     /* row2: キー 3, 6, 9, E をスキャン */
-    *ioc_ptr = 0x0d; tiny_wait(300);
+    *ioc_ptr = 0x0d;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) return 0x3;
-    if ((raw & 0x40) == 0) return 0x6;
-    if ((raw & 0x20) == 0) return 0x9;
-    if ((raw & 0x10) == 0) return 0xe;
+    if ((raw & 0x80) == 0)
+        return 0x3;
+    if ((raw & 0x40) == 0)
+        return 0x6;
+    if ((raw & 0x20) == 0)
+        return 0x9;
+    if ((raw & 0x10) == 0)
+        return 0xe;
 
     /* row3: キー A, B, C, D をスキャン */
-    *ioc_ptr = 0x0e; tiny_wait(300);
+    *ioc_ptr = 0x0e;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) return 0xa;
-    if ((raw & 0x40) == 0) return 0xb;
-    if ((raw & 0x20) == 0) return 0xc;
-    if ((raw & 0x10) == 0) return 0xd;
+    if ((raw & 0x80) == 0)
+        return 0xa;
+    if ((raw & 0x40) == 0)
+        return 0xb;
+    if ((raw & 0x20) == 0)
+        return 0xc;
+    if ((raw & 0x10) == 0)
+        return 0xd;
 
     return -1; /* 何も押されていない */
 }
@@ -696,34 +874,49 @@ int kypd_scan() {
  * P2: A=上, 6=左, B=右, C=下
  * 各行をスキャンして両方のプレイヤーの入力を検出
  */
-void kypd_scan_both(volatile int *p1_dir, volatile int *p2_dir) {
+void kypd_scan_both(volatile int *p1_dir, volatile int *p2_dir)
+{
     volatile int *ioc_ptr = (int *)0xff18;
     unsigned char raw;
     // 一時変数を用意（初期値は入力なし）
     int temp_p1 = -1;
     int temp_p2 = -1;
     /* row0: キー 1, 4, 7, 0 をスキャン（P1の上・左・下） */
-    *ioc_ptr = 0x07; tiny_wait(300);
+    *ioc_ptr = 0x07;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) temp_p1 = 1;  /* 上 */
-    if ((raw & 0x40) == 0) temp_p1 = 4;  /* 左 */
-    if ((raw & 0x20) == 0) temp_p1 = 7;  /* 下 */
+    if ((raw & 0x80) == 0)
+        temp_p1 = 1; /* 上 */
+    if ((raw & 0x40) == 0)
+        temp_p1 = 4; /* 左 */
+    if ((raw & 0x20) == 0)
+        temp_p1 = 7; /* 下 */
     /* row1: キー 2, 5, 8, F をスキャン（P1の右・シュート） */
-    *ioc_ptr = 0x0b; tiny_wait(300);
+    *ioc_ptr = 0x0b;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x40) == 0) temp_p1 = 5;  /* 右 */
-    if ((raw & 0x20) == 0) temp_p1 = 8;  /* シュート */
+    if ((raw & 0x40) == 0)
+        temp_p1 = 5; /* 右 */
+    if ((raw & 0x20) == 0)
+        temp_p1 = 8; /* シュート */
     /* row2: キー 3, 6, 9, E をスキャン（P2の左・シュート） */
-    *ioc_ptr = 0x0d; tiny_wait(300);
+    *ioc_ptr = 0x0d;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) temp_p2 = 3;  /* シュート */
-    if ((raw & 0x40) == 0) temp_p2 = 6;  /* 左 */
+    if ((raw & 0x80) == 0)
+        temp_p2 = 3; /* シュート */
+    if ((raw & 0x40) == 0)
+        temp_p2 = 6; /* 左 */
     /* row3: キー A, B, C, D をスキャン（P2の上・右・下） */
-    *ioc_ptr = 0x0e; tiny_wait(300);
+    *ioc_ptr = 0x0e;
+    tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) temp_p2 = 0xa;  /* 上 */
-    if ((raw & 0x40) == 0) temp_p2 = 0xb;  /* 右 */
-    if ((raw & 0x20) == 0) temp_p2 = 0xc;  /* 下 */
+    if ((raw & 0x80) == 0)
+        temp_p2 = 0xa; /* 上 */
+    if ((raw & 0x40) == 0)
+        temp_p2 = 0xb; /* 右 */
+    if ((raw & 0x20) == 0)
+        temp_p2 = 0xc; /* 下 */
     // 【重要】スキャンが全て終わってから、結果をグローバル変数に反映する
     *p1_dir = temp_p1;
     *p2_dir = temp_p2;
@@ -734,15 +927,18 @@ void kypd_scan_both(volatile int *p1_dir, volatile int *p2_dir) {
 /*
  * LED関数
  */
-void led_set(int data) {
+void led_set(int data)
+{
     volatile int *led_ptr = (int *)0xff08;
     *led_ptr = data;
 }
 
-void led_blink() {
-    led_set(0xf);               /* Turn on */
-    for (int i = 0; i < 100000; i++);   /* Wait */
-    led_set(0x0);               /* Turn off */
+void led_blink()
+{
+    led_set(0xf); /* Turn on */
+    for (int i = 0; i < 100000; i++)
+        ;         /* Wait */
+    led_set(0x0); /* Turn off */
 }
 
 /*
@@ -751,12 +947,14 @@ void led_blink() {
  * mode: 1-13 で音階を指定（1=C, 8=G, 13=高いC）
  *       0 で音を止める
  */
-void buzzer_play(int mode) {
+void buzzer_play(int mode)
+{
     volatile int *iob_ptr = (int *)0xff14;
     *iob_ptr = mode;
 }
 
-void buzzer_stop() {
+void buzzer_stop()
+{
     volatile int *iob_ptr = (int *)0xff14;
     *iob_ptr = 0;
 }
@@ -766,83 +964,102 @@ void buzzer_stop() {
  */
 unsigned char lcd_vbuf[64][96];
 
-void lcd_wait(int n) {
-    for (int i = 0; i < n; i++);
+void lcd_wait(int n)
+{
+    for (int i = 0; i < n; i++)
+        ;
 }
 
-void lcd_cmd(unsigned char cmd) {
+void lcd_cmd(unsigned char cmd)
+{
     volatile int *lcd_ptr = (int *)0xff0c;
     *lcd_ptr = cmd;
     lcd_wait(1000);
 }
 
-void lcd_data(unsigned char data) {
+void lcd_data(unsigned char data)
+{
     volatile int *lcd_ptr = (int *)0xff0c;
     *lcd_ptr = 0x100 | data;
     lcd_wait(200);
 }
 
-void lcd_pwr_on() {
+void lcd_pwr_on()
+{
     volatile int *lcd_ptr = (int *)0xff0c;
     *lcd_ptr = 0x200;
     lcd_wait(700000);
 }
 
-void lcd_init() {
-    lcd_pwr_on();   /* Display power ON */
-    lcd_cmd(0xa0);  /* Remap & color depth */
+void lcd_init()
+{
+    lcd_pwr_on();  /* Display power ON */
+    lcd_cmd(0xa0); /* Remap & color depth */
     lcd_cmd(0x20);
-    lcd_cmd(0x15);  /* Set column address */
+    lcd_cmd(0x15); /* Set column address */
     lcd_cmd(0);
     lcd_cmd(95);
-    lcd_cmd(0x75);  /* Set row address */
+    lcd_cmd(0x75); /* Set row address */
     lcd_cmd(0);
     lcd_cmd(63);
-    lcd_cmd(0xaf);  /* Display ON */
+    lcd_cmd(0xaf); /* Display ON */
 }
 
-void lcd_set_vbuf_pixel(int row, int col, int r, int g, int b) {
-    r >>= 5; g >>= 5; b >>= 6;
+void lcd_set_vbuf_pixel(int row, int col, int r, int g, int b)
+{
+    r >>= 5;
+    g >>= 5;
+    b >>= 6;
     lcd_vbuf[row][col] = ((r << 5) | (g << 2) | (b << 0)) & 0xff;
 }
 
-void lcd_clear_vbuf() {
+void lcd_clear_vbuf()
+{
     for (int row = 0; row < 64; row++)
         for (int col = 0; col < 96; col++)
             lcd_vbuf[row][col] = 0;
 }
 
-void lcd_sync_vbuf() {
+void lcd_sync_vbuf()
+{
     for (int row = 0; row < 64; row++)
         for (int col = 0; col < 96; col++)
             lcd_data(lcd_vbuf[row][col]);
 }
 
-void lcd_putc(int y, int x, int c) {
+void lcd_putc(int y, int x, int c)
+{
     for (int v = 0; v < 8; v++)
         for (int h = 0; h < 8; h++)
             if ((font8x8[(c - 0x20) * 8 + h] >> v) & 0x01)
                 lcd_set_vbuf_pixel(y * 8 + v, x * 8 + h, 0, 255, 0);
 }
 
-void lcd_puts(int y, int x, char *str) {
-    for (int i = 0; str[i] != '\0' && (x + i) < 12; i++) {
-        if (str[i] >= 0x20 && str[i] <= 0x7f) {
+void lcd_puts(int y, int x, char *str)
+{
+    for (int i = 0; str[i] != '\0' && (x + i) < 12; i++)
+    {
+        if (str[i] >= 0x20 && str[i] <= 0x7f)
+        {
             lcd_putc(y, x + i, str[i]);
         }
     }
 }
 
-void lcd_putc_color(int y, int x, int c, int r, int g, int b) {
+void lcd_putc_color(int y, int x, int c, int r, int g, int b)
+{
     for (int v = 0; v < 8; v++)
         for (int h = 0; h < 8; h++)
             if ((font8x8[(c - 0x20) * 8 + h] >> v) & 0x01)
                 lcd_set_vbuf_pixel(y * 8 + v, x * 8 + h, r, g, b);
 }
 
-void lcd_puts_color(int y, int x, char *str, int r, int g, int b) {
-    for (int i = 0; str[i] != '\0' && (x + i) < 12; i++) {
-        if (str[i] >= 0x20 && str[i] <= 0x7f) {
+void lcd_puts_color(int y, int x, char *str, int r, int g, int b)
+{
+    for (int i = 0; str[i] != '\0' && (x + i) < 12; i++)
+    {
+        if (str[i] >= 0x20 && str[i] <= 0x7f)
+        {
             lcd_putc_color(y, x + i, str[i], r, g, b);
         }
     }
@@ -853,43 +1070,56 @@ void lcd_puts_color(int y, int x, char *str, int r, int g, int b) {
  */
 
 /* コート描画 */
-void draw_court_lines() {
+void draw_court_lines()
+{
     /* 外枠 */
-    for(int x=4; x<=91; x++) {
-        lcd_set_vbuf_pixel(4, x, 255,255,255);
-        lcd_set_vbuf_pixel(59, x, 255,255,255);
+    for (int x = 4; x <= 91; x++)
+    {
+        lcd_set_vbuf_pixel(4, x, 255, 255, 255);
+        lcd_set_vbuf_pixel(59, x, 255, 255, 255);
     }
-    for(int y=4; y<=59; y++) {
-        lcd_set_vbuf_pixel(y, 4, 255,255,255);
-        lcd_set_vbuf_pixel(y, 91, 255,255,255);
+    for (int y = 4; y <= 59; y++)
+    {
+        lcd_set_vbuf_pixel(y, 4, 255, 255, 255);
+        lcd_set_vbuf_pixel(y, 91, 255, 255, 255);
     }
     /* サービスライン */
-    for(int y=16; y<=47; y++) {
-        lcd_set_vbuf_pixel(y, 24, 255,255,255);
-        lcd_set_vbuf_pixel(y, 71, 255,255,255);
+    for (int y = 16; y <= 47; y++)
+    {
+        lcd_set_vbuf_pixel(y, 24, 255, 255, 255);
+        lcd_set_vbuf_pixel(y, 71, 255, 255, 255);
     }
     /* センターライン (点線) */
-    for(int x=24; x<=71; x+=2) {
-         lcd_set_vbuf_pixel(32, x, 255,255,255);
+    for (int x = 24; x <= 71; x += 2)
+    {
+        lcd_set_vbuf_pixel(32, x, 255, 255, 255);
     }
     /* ネット */
-    for(int y=2; y<=61; y+=2) {
-        lcd_set_vbuf_pixel(y, 48, 180,180,180);
+    for (int y = 2; y <= 61; y += 2)
+    {
+        lcd_set_vbuf_pixel(y, 48, 180, 180, 180);
     }
 }
 
 /* ラケット描画 */
-void draw_racket(int x, int y, int r, int g, int b) {
-    for (int dy = 0; dy < RACKET_HEIGHT; dy++) {
-        for (int dx = 0; dx < RACKET_WIDTH; dx++) {
+void draw_racket(int x, int y, int r, int g, int b)
+{
+    for (int dy = 0; dy < RACKET_HEIGHT; dy++)
+    {
+        for (int dx = 0; dx < RACKET_WIDTH; dx++)
+        {
             int py = y + dy;
             int px = x + dx;
             /* 境界チェック */
-            if (px >= 0 && px < 96 && py >= 0 && py < 64) {
+            if (px >= 0 && px < 96 && py >= 0 && py < 64)
+            {
                 int type = RACKET_PATTERN[dy][dx];
-                if (type == 1) { /* フレーム */
+                if (type == 1)
+                { /* フレーム */
                     lcd_set_vbuf_pixel(py, px, r, g, b);
-                } else if (type == 2) { /* ガット (白半透明 -> 灰色) */
+                }
+                else if (type == 2)
+                { /* ガット (白半透明 -> 灰色) */
                     lcd_set_vbuf_pixel(py, px, 100, 100, 100);
                 }
             }
@@ -898,13 +1128,17 @@ void draw_racket(int x, int y, int r, int g, int b) {
 }
 
 /* ボール描画 */
-void draw_ball(int x, int y) {
-    for (int dy = 0; dy < BALL_SIZE; dy++) {
-        for (int dx = 0; dx < BALL_SIZE; dx++) {
+void draw_ball(int x, int y)
+{
+    for (int dy = 0; dy < BALL_SIZE; dy++)
+    {
+        for (int dx = 0; dx < BALL_SIZE; dx++)
+        {
             int py = y + dy;
             int px = x + dx;
             /* 境界チェック */
-            if (px >= 0 && px < 96 && py >= 0 && py < 64) {
+            if (px >= 0 && px < 96 && py >= 0 && py < 64)
+            {
                 lcd_set_vbuf_pixel(py, px, 255, 255, 0); /* 黄色 */
             }
         }
@@ -912,26 +1146,29 @@ void draw_ball(int x, int y) {
 }
 
 /* テニス画面全体描画 */
-void draw_tennis_game() {
+void draw_tennis_game()
+{
     lcd_clear_vbuf();
-    
+
     /* 背景色（濃緑）で塗りつぶし */
-    for (int y = 0; y < 64; y++) {
-        for (int x = 0; x < 96; x++) {
+    for (int y = 0; y < 64; y++)
+    {
+        for (int x = 0; x < 96; x++)
+        {
             lcd_set_vbuf_pixel(y, x, 0, 100, 0);
         }
     }
 
     /* コートライン描画 */
     draw_court_lines();
-    
+
     /* ラケット描画 */
-    draw_racket(p1_x, p1_y, 0, 255, 0);     /* P1: 緑 */
-    draw_racket(p2_x, p2_y, 255, 128, 0);   /* P2: オレンジ */
-    
+    draw_racket(p1_x, p1_y, 0, 255, 0);   /* P1: 緑 */
+    draw_racket(p2_x, p2_y, 255, 128, 0); /* P2: オレンジ */
+
     /* ボール描画 */
     draw_ball(ball_x, ball_y);
-    
+
     /* スコア表示 */
     char score_str[8];
     score_str[0] = '0' + score_p1;
@@ -946,16 +1183,20 @@ void draw_tennis_game() {
  */
 
 /* 背景描画（暗い青緑） */
-void draw_squash_background() {
-    for (int y = 0; y < 56; y++) {
-        for (int x = 0; x < 96; x++) {
+void draw_squash_background()
+{
+    for (int y = 0; y < 56; y++)
+    {
+        for (int x = 0; x < 96; x++)
+        {
             lcd_set_vbuf_pixel(y, x, 0, 40, 60);
         }
     }
 }
 
 /* 壁描画（水色） */
-void draw_squash_walls() {
+void draw_squash_walls()
+{
     /* 上壁 */
     for (int y = 0; y < WALL_THICKNESS; y++)
         for (int x = 0; x < 96; x++)
@@ -981,17 +1222,24 @@ void draw_squash_walls() {
 }
 
 /* ラケット描画（テニスと同じパターン） */
-void draw_squash_racket(int x, int y, int r, int g, int b) {
-    for (int dy = 0; dy < RACKET_HEIGHT; dy++) {
-        for (int dx = 0; dx < RACKET_WIDTH; dx++) {
+void draw_squash_racket(int x, int y, int r, int g, int b)
+{
+    for (int dy = 0; dy < RACKET_HEIGHT; dy++)
+    {
+        for (int dx = 0; dx < RACKET_WIDTH; dx++)
+        {
             int py = y + dy;
             int px = x + dx;
             /* 境界チェック */
-            if (px >= 0 && px < 96 && py >= 0 && py < 56) {
+            if (px >= 0 && px < 96 && py >= 0 && py < 56)
+            {
                 int type = RACKET_PATTERN[dy][dx];
-                if (type == 1) { /* フレーム */
+                if (type == 1)
+                { /* フレーム */
                     lcd_set_vbuf_pixel(py, px, r, g, b);
-                } else if (type == 2) { /* ガット (灰色) */
+                }
+                else if (type == 2)
+                { /* ガット (灰色) */
                     lcd_set_vbuf_pixel(py, px, 100, 100, 100);
                 }
             }
@@ -1000,12 +1248,16 @@ void draw_squash_racket(int x, int y, int r, int g, int b) {
 }
 
 /* ボール描画（白色、4x4） */
-void draw_squash_ball(int x, int y) {
-    for (int dy = 0; dy < BALL_SIZE; dy++) {
-        for (int dx = 0; dx < BALL_SIZE; dx++) {
+void draw_squash_ball(int x, int y)
+{
+    for (int dy = 0; dy < BALL_SIZE; dy++)
+    {
+        for (int dx = 0; dx < BALL_SIZE; dx++)
+        {
             int px = x + dx;
             int py = y + dy;
-            if (px >= 0 && px < 96 && py >= 0 && py < 56) {
+            if (px >= 0 && px < 96 && py >= 0 && py < 56)
+            {
                 lcd_set_vbuf_pixel(py, px, 255, 255, 255);
             }
         }
@@ -1013,7 +1265,8 @@ void draw_squash_ball(int x, int y) {
 }
 
 /* スコア表示 */
-void draw_squash_score(int score) {
+void draw_squash_score(int score)
+{
     lcd_putc_color(7, 0, 'S', 0, 255, 0);
     lcd_putc_color(7, 1, ':', 0, 255, 0);
     lcd_putc_color(7, 2, '0' + (score / 100) % 10, 0, 255, 0);
@@ -1022,20 +1275,26 @@ void draw_squash_score(int score) {
 }
 
 /* 残機表示 */
-void draw_lives(int lives) {
+void draw_lives(int lives)
+{
     lcd_putc_color(7, 6, 'L', 255, 0, 0);
     lcd_putc_color(7, 7, ':', 255, 0, 0);
-    for (int i = 0; i < 3; i++) {
-        if (i < lives) {
+    for (int i = 0; i < 3; i++)
+    {
+        if (i < lives)
+        {
             lcd_putc_color(7, 8 + i, '*', 255, 0, 0); /* 残機あり */
-        } else {
+        }
+        else
+        {
             lcd_putc_color(7, 8 + i, '-', 100, 100, 100); /* 失った残機 */
         }
     }
 }
 
 /* 2Pモード用スコア表示 */
-void draw_squash_2p_score(int p1, int p2) {
+void draw_squash_2p_score(int p1, int p2)
+{
     /* P1:X-P2:X 形式で表示 */
     lcd_puts_color(7, 0, "P1:", 0, 255, 0);
     lcd_putc_color(7, 3, '0' + p1, 0, 255, 0);
@@ -1045,21 +1304,31 @@ void draw_squash_2p_score(int p1, int p2) {
 }
 
 /* ターン表示（点滅） */
-void draw_turn_indicator(int turn, int frame) {
+void draw_turn_indicator(int turn, int frame)
+{
     int blink = (frame / 3) % 2;
-    if (turn == 0) {
+    if (turn == 0)
+    {
         /* P1のターン */
-        if (blink) {
+        if (blink)
+        {
             lcd_puts_color(0, 0, "P1", 0, 255, 0);
-        } else {
+        }
+        else
+        {
             lcd_puts_color(0, 0, "P1", 255, 255, 0);
         }
         lcd_puts_color(0, 2, " <", 255, 255, 0);
-    } else {
+    }
+    else
+    {
         /* P2のターン */
-        if (blink) {
+        if (blink)
+        {
             lcd_puts_color(0, 0, "P2", 255, 128, 0);
-        } else {
+        }
+        else
+        {
             lcd_puts_color(0, 0, "P2", 255, 255, 0);
         }
         lcd_puts_color(0, 2, " <", 255, 255, 0);
@@ -1067,23 +1336,27 @@ void draw_turn_indicator(int turn, int frame) {
 }
 
 /* スカッシュ画面全体描画 */
-void draw_squash_game() {
+void draw_squash_game()
+{
     lcd_clear_vbuf();
-    
+
     /* 背景描画 */
     draw_squash_background();
-    
+
     /* 壁描画 */
     draw_squash_walls();
-    
+
     /* ラケット描画（テニスと同じ形状） */
     /* 現在のターンのプレイヤーは明るく、そうでない方は暗く表示 */
-    if (sq_turn == 0) {
-        draw_squash_racket(sq_p1_x, sq_p1_y, 0, 255, 0);      /* P1: 緑（明るい） */
-        draw_squash_racket(sq_p2_x, sq_p2_y, 128, 64, 0);     /* P2: 暗いオレンジ */
-    } else {
-        draw_squash_racket(sq_p1_x, sq_p1_y, 0, 128, 0);      /* P1: 暗い緑 */
-        draw_squash_racket(sq_p2_x, sq_p2_y, 255, 128, 0);    /* P2: オレンジ（明るい） */
+    if (sq_turn == 0)
+    {
+        draw_squash_racket(sq_p1_x, sq_p1_y, 0, 255, 0);  /* P1: 緑（明るい） */
+        draw_squash_racket(sq_p2_x, sq_p2_y, 128, 64, 0); /* P2: 暗いオレンジ */
+    }
+    else
+    {
+        draw_squash_racket(sq_p1_x, sq_p1_y, 0, 128, 0);   /* P1: 暗い緑 */
+        draw_squash_racket(sq_p2_x, sq_p2_y, 255, 128, 0); /* P2: オレンジ（明るい） */
     }
 
     /* ボール描画 */
@@ -1094,128 +1367,161 @@ void draw_squash_game() {
 }
 
 /* スカッシュモード割り込みハンドラ処理 */
-void squash_update() {
+void squash_update()
+{
     /* プレイヤー移動 */
     squash_move_players();
-    
+
     /* ボール移動 */
     sq_ball_x += sq_ball_vx;
     sq_ball_y += sq_ball_vy;
-    
+
     /* 上壁との反射 */
-    if (sq_ball_y <= WALL_THICKNESS) {
+    if (sq_ball_y <= WALL_THICKNESS)
+    {
         sq_ball_y = WALL_THICKNESS;
         sq_ball_vy = -sq_ball_vy;
     }
 
     /* 下壁との反射 */
-    if (sq_ball_y >= 52 - BALL_SIZE) {
+    if (sq_ball_y >= 52 - BALL_SIZE)
+    {
         sq_ball_y = 52 - BALL_SIZE;
         sq_ball_vy = -sq_ball_vy;
     }
 
     /* 右壁との反射 */
-    if (sq_ball_x >= 92 - BALL_SIZE) {
+    if (sq_ball_x >= 92 - BALL_SIZE)
+    {
         sq_ball_x = 92 - BALL_SIZE;
         sq_ball_vx = -sq_ball_vx;
     }
-    
+
     /* ラケットとの当たり判定 */
     /* P1ラケットとの衝突判定（P1のターンのみ） */
-    if (sq_ball_vx < 0 && sq_turn == 0) {
+    if (sq_ball_vx < 0 && sq_turn == 0)
+    {
         if (sq_ball_x <= sq_p1_x + RACKET_WIDTH &&
             sq_ball_x + BALL_SIZE >= sq_p1_x &&
             sq_ball_y + BALL_SIZE >= sq_p1_y &&
-            sq_ball_y <= sq_p1_y + RACKET_HEIGHT) {
+            sq_ball_y <= sq_p1_y + RACKET_HEIGHT)
+        {
             sq_ball_x = sq_p1_x + RACKET_WIDTH;
             sq_ball_vx = -sq_ball_vx;
             sq_score++;
             sq_rally++;
-            sq_turn = 1;  /* P2のターンに */
+            sq_turn = 1; /* P2のターンに */
             buzzer_play(TONE_HIT);
             buzzer_timer = BUZZER_SHORT;
         }
     }
 
     /* P2ラケットとの衝突判定（P2のターンのみ） */
-    if (sq_ball_vx < 0 && sq_turn == 1) {
+    if (sq_ball_vx < 0 && sq_turn == 1)
+    {
         if (sq_ball_x <= sq_p2_x + RACKET_WIDTH &&
             sq_ball_x + BALL_SIZE >= sq_p2_x &&
             sq_ball_y + BALL_SIZE >= sq_p2_y &&
-            sq_ball_y <= sq_p2_y + RACKET_HEIGHT) {
+            sq_ball_y <= sq_p2_y + RACKET_HEIGHT)
+        {
             sq_ball_x = sq_p2_x + RACKET_WIDTH;
             sq_ball_vx = -sq_ball_vx;
             sq_score++;
             sq_rally++;
-            sq_turn = 0;  /* P1のターンに */
+            sq_turn = 0; /* P1のターンに */
             buzzer_play(TONE_HIT);
             buzzer_timer = BUZZER_SHORT;
         }
     }
 
     /* 左端到達（ミス判定） */
-    if (sq_ball_x < 0) {
+    if (sq_ball_x < 0)
+    {
         /* ターンの人がミス → 相手に得点 */
-        if (sq_turn == 0) {
-            sq_p2_score++;  /* P1のミス → P2に得点 */
-        } else {
-            sq_p1_score++;  /* P2のミス → P1に得点 */
+        if (sq_turn == 0)
+        {
+            sq_p2_score++; /* P1のミス → P2に得点 */
+        }
+        else
+        {
+            sq_p1_score++; /* P2のミス → P1に得点 */
         }
         /* 勝敗判定 */
-        if (sq_p1_score >= WINNING_SCORE || sq_p2_score >= WINNING_SCORE) {
+        if (sq_p1_score >= WINNING_SCORE || sq_p2_score >= WINNING_SCORE)
+        {
             game_state = STATE_RESULT;
-        } else {
+        }
+        else
+        {
             /* ボールリセット */
             sq_ball_x = 20;
             sq_ball_y = 26;
-            sq_ball_vx = 3;
-            sq_ball_vy = 2;
+            sq_ball_vx = 5;
+            sq_ball_vy = 3;
             sq_rally = 0;
             sq_turn = 0;
         }
         buzzer_play(TONE_SCORE);
         buzzer_timer = BUZZER_LONG;
     }
-    
+
     /* 画面描画 */
     draw_squash_game();
 }
 
 /* プレイヤー移動処理 */
-void squash_move_players() {
-    int move_speed = 6;  /* テニスと同じ移動速度 */
+void squash_move_players()
+{
+    int move_speed = 6; /* テニスと同じ移動速度 */
 
     /* P1移動 */
-    if (input_p1_dir == 1) {  /* キーパッド1: 上 */
-        if (sq_p1_y > WALL_THICKNESS) sq_p1_y -= move_speed;
+    if (input_p1_dir == 1)
+    { /* キーパッド1: 上 */
+        if (sq_p1_y > WALL_THICKNESS)
+            sq_p1_y -= move_speed;
     }
-    if (input_p1_dir == 7) {  /* キーパッド7: 下 */
-        if (sq_p1_y < 52 - RACKET_HEIGHT) sq_p1_y += move_speed;
+    if (input_p1_dir == 7)
+    { /* キーパッド7: 下 */
+        if (sq_p1_y < 52 - RACKET_HEIGHT)
+            sq_p1_y += move_speed;
     }
-    if (input_p1_dir == 4) {  /* キーパッド4: 左 */
-        if (sq_p1_x > 0) sq_p1_x -= move_speed;
+    if (input_p1_dir == 4)
+    { /* キーパッド4: 左 */
+        if (sq_p1_x > 0)
+            sq_p1_x -= move_speed;
     }
-    if (input_p1_dir == 5) {  /* キーパッド5: 右 */
-        if (sq_p1_x < 80) sq_p1_x += move_speed;
+    if (input_p1_dir == 5)
+    { /* キーパッド5: 右 */
+        if (sq_p1_x < 80)
+            sq_p1_x += move_speed;
     }
 
     /* P2移動 */
-    if (input_p2_dir == 0xa) {  /* キーパッドA: 上 */
-        if (sq_p2_y > WALL_THICKNESS) sq_p2_y -= move_speed;
+    if (input_p2_dir == 0xa)
+    { /* キーパッドA: 上 */
+        if (sq_p2_y > WALL_THICKNESS)
+            sq_p2_y -= move_speed;
     }
-    if (input_p2_dir == 0xc) {  /* キーパッドC: 下 */
-        if (sq_p2_y < 52 - RACKET_HEIGHT) sq_p2_y += move_speed;
+    if (input_p2_dir == 0xc)
+    { /* キーパッドC: 下 */
+        if (sq_p2_y < 52 - RACKET_HEIGHT)
+            sq_p2_y += move_speed;
     }
-    if (input_p2_dir == 6) {    /* キーパッド6: 左 */
-        if (sq_p2_x > 0) sq_p2_x -= move_speed;
+    if (input_p2_dir == 6)
+    { /* キーパッド6: 左 */
+        if (sq_p2_x > 0)
+            sq_p2_x -= move_speed;
     }
-    if (input_p2_dir == 0xb) {  /* キーパッドB: 右 */
-        if (sq_p2_x < 80) sq_p2_x += move_speed;
+    if (input_p2_dir == 0xb)
+    { /* キーパッドB: 右 */
+        if (sq_p2_x < 80)
+            sq_p2_x += move_speed;
     }
 }
 
 /* スカッシュ結果画面（1Pモード） */
-void draw_result_squash(int score) {
+void draw_result_squash(int score)
+{
     lcd_clear_vbuf();
     lcd_puts_color(1, 0, "============", 255, 255, 255);
     lcd_puts_color(2, 0, " GAME OVER! ", 255, 0, 0);
@@ -1235,12 +1541,16 @@ void draw_result_squash(int score) {
 }
 
 /* スカッシュ結果画面（2Pモード） */
-void draw_result_squash_2p(int p1, int p2) {
+void draw_result_squash_2p(int p1, int p2)
+{
     lcd_clear_vbuf();
     lcd_puts_color(0, 0, "============", 255, 255, 255);
-    if (p1 >= WINNING_SCORE) {
+    if (p1 >= WINNING_SCORE)
+    {
         lcd_puts_color(2, 1, " P1  WIN! ", 0, 255, 0);
-    } else {
+    }
+    else
+    {
         lcd_puts_color(2, 1, " P2  WIN! ", 255, 128, 0);
     }
     lcd_puts_color(3, 0, "============", 255, 255, 255);
@@ -1260,17 +1570,23 @@ void draw_result_squash_2p(int p1, int p2) {
  */
 
 /* プレイヤー描画（点滅対応） */
-void draw_soccer_player(int x, int y, int r, int g, int b, int blink) {
-    if (blink && (frame_counter % 2 == 0)) {
-        return;  /* 点滅中は描画しない */
+void draw_soccer_player(int x, int y, int r, int g, int b, int blink)
+{
+    if (blink && (frame_counter % 2 == 0))
+    {
+        return; /* 点滅中は描画しない */
     }
-    for (int dy = 0; dy < PLAYER_SIZE; dy++) {
-        for (int dx = 0; dx < PLAYER_SIZE; dx++) {
+    for (int dy = 0; dy < PLAYER_SIZE; dy++)
+    {
+        for (int dx = 0; dx < PLAYER_SIZE; dx++)
+        {
             int py = y + dy;
             int px = x + dx;
-            if (px >= 0 && px < 96 && py >= 0 && py < 56) {
+            if (px >= 0 && px < 96 && py >= 0 && py < 56)
+            {
                 int type = PLAYER_PATTERN[dy][dx];
-                if (type == 1) {
+                if (type == 1)
+                {
                     lcd_set_vbuf_pixel(py, px, r, g, b);
                 }
             }
@@ -1279,68 +1595,107 @@ void draw_soccer_player(int x, int y, int r, int g, int b, int blink) {
 }
 
 /* ボール描画 */
-void draw_soccer_ball(int x, int y) {
-    for (int dy = 0; dy < BALL_SIZE; dy++) {
-        for (int dx = 0; dx < BALL_SIZE; dx++) {
+void draw_soccer_ball(int x, int y)
+{
+    for (int dy = 0; dy < BALL_SIZE; dy++)
+    {
+        for (int dx = 0; dx < BALL_SIZE; dx++)
+        {
             int py = y + dy;
             int px = x + dx;
-            if (px >= 0 && px < 96 && py >= 0 && py < 56) {
-                lcd_set_vbuf_pixel(py, px, 255, 255, 255);  /* 白色 */
+            if (px >= 0 && px < 96 && py >= 0 && py < 56)
+            {
+                lcd_set_vbuf_pixel(py, px, 255, 255, 255); /* 白色 */
             }
         }
     }
 }
 
 /* サッカー画面全体描画 */
-void draw_soccer_game() {
+void draw_soccer_game()
+{
     lcd_clear_vbuf();
 
     /* 背景（緑のフィールド） */
-    for (int y = 0; y < 56; y++) {
-        for (int x = 0; x < 96; x++) {
+    for (int y = 0; y < 56; y++)
+    {
+        for (int x = 0; x < 96; x++)
+        {
             lcd_set_vbuf_pixel(y, x, 0, 80, 0);
         }
     }
 
     /* フィールドライン */
     /* 中央線 */
-    for (int y = 0; y < 56; y++) {
+    for (int y = 0; y < 56; y++)
+    {
         lcd_set_vbuf_pixel(y, 48, 255, 255, 255);
     }
     /* センターサークル（簡易表示） */
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++)
+    {
         int cx = 48;
         int cy = 28;
-        if (i == 0) { lcd_set_vbuf_pixel(cy - 8, cx, 255, 255, 255); }
-        if (i == 1) { lcd_set_vbuf_pixel(cy + 8, cx, 255, 255, 255); }
-        if (i == 2) { lcd_set_vbuf_pixel(cy, cx - 8, 255, 255, 255); }
-        if (i == 3) { lcd_set_vbuf_pixel(cy, cx + 8, 255, 255, 255); }
-        if (i == 4) { lcd_set_vbuf_pixel(cy - 6, cx - 6, 255, 255, 255); }
-        if (i == 5) { lcd_set_vbuf_pixel(cy - 6, cx + 6, 255, 255, 255); }
-        if (i == 6) { lcd_set_vbuf_pixel(cy + 6, cx - 6, 255, 255, 255); }
-        if (i == 7) { lcd_set_vbuf_pixel(cy + 6, cx + 6, 255, 255, 255); }
+        if (i == 0)
+        {
+            lcd_set_vbuf_pixel(cy - 8, cx, 255, 255, 255);
+        }
+        if (i == 1)
+        {
+            lcd_set_vbuf_pixel(cy + 8, cx, 255, 255, 255);
+        }
+        if (i == 2)
+        {
+            lcd_set_vbuf_pixel(cy, cx - 8, 255, 255, 255);
+        }
+        if (i == 3)
+        {
+            lcd_set_vbuf_pixel(cy, cx + 8, 255, 255, 255);
+        }
+        if (i == 4)
+        {
+            lcd_set_vbuf_pixel(cy - 6, cx - 6, 255, 255, 255);
+        }
+        if (i == 5)
+        {
+            lcd_set_vbuf_pixel(cy - 6, cx + 6, 255, 255, 255);
+        }
+        if (i == 6)
+        {
+            lcd_set_vbuf_pixel(cy + 6, cx - 6, 255, 255, 255);
+        }
+        if (i == 7)
+        {
+            lcd_set_vbuf_pixel(cy + 6, cx + 6, 255, 255, 255);
+        }
     }
     /* ゴールエリア（左右） */
-    for (int y = 16; y < 40; y++) {
-        lcd_set_vbuf_pixel(y, 0, 255, 255, 0);   /* 左ゴール */
-        lcd_set_vbuf_pixel(y, 95, 255, 255, 0);  /* 右ゴール */
+    for (int y = 16; y < 40; y++)
+    {
+        lcd_set_vbuf_pixel(y, 0, 255, 255, 0);  /* 左ゴール */
+        lcd_set_vbuf_pixel(y, 95, 255, 255, 0); /* 右ゴール */
     }
 
     /* プレイヤー描画 */
     int p1_blink = (soccer_invincible_timer > 0 && soccer_ball_owner != OWNER_P1);
     int p2_blink = (soccer_invincible_timer > 0 && soccer_ball_owner != OWNER_P2);
-    draw_soccer_player(soccer_p1_x, soccer_p1_y, 0, 255, 0, p1_blink);     /* P1: 緑 */
-    draw_soccer_player(soccer_p2_x, soccer_p2_y, 255, 128, 0, p2_blink);   /* P2: オレンジ */
+    draw_soccer_player(soccer_p1_x, soccer_p1_y, 0, 255, 0, p1_blink);   /* P1: 緑 */
+    draw_soccer_player(soccer_p2_x, soccer_p2_y, 255, 128, 0, p2_blink); /* P2: オレンジ */
 
     /* ボール描画（所有者に追従または中央） */
     int ball_draw_x, ball_draw_y;
-    if (soccer_ball_owner == OWNER_P1) {
+    if (soccer_ball_owner == OWNER_P1)
+    {
         ball_draw_x = soccer_p1_x + PLAYER_SIZE;
         ball_draw_y = soccer_p1_y + (PLAYER_SIZE - BALL_SIZE) / 2;
-    } else if (soccer_ball_owner == OWNER_P2) {
+    }
+    else if (soccer_ball_owner == OWNER_P2)
+    {
         ball_draw_x = soccer_p2_x - BALL_SIZE;
         ball_draw_y = soccer_p2_y + (PLAYER_SIZE - BALL_SIZE) / 2;
-    } else {
+    }
+    else
+    {
         ball_draw_x = soccer_ball_x;
         ball_draw_y = soccer_ball_y;
     }
@@ -1355,7 +1710,8 @@ void draw_soccer_game() {
 }
 
 /* ポジションリセット */
-void soccer_reset_positions() {
+void soccer_reset_positions()
+{
     soccer_p1_x = 10;
     soccer_p1_y = 24;
     soccer_p2_x = 78;
@@ -1370,9 +1726,11 @@ void soccer_reset_positions() {
 }
 
 /* サッカーゲームロジック更新 */
-void soccer_update() {
+void soccer_update()
+{
     /* 無敵時間カウントダウン */
-    if (soccer_invincible_timer > 0) {
+    if (soccer_invincible_timer > 0)
+    {
         soccer_invincible_timer--;
     }
 
@@ -1381,131 +1739,184 @@ void soccer_update() {
     int p2_speed = (soccer_ball_owner == OWNER_P2) ? SOCCER_HOLDER_SPEED : SOCCER_NORMAL_SPEED;
 
     /* P1移動 */
-    if (input_p1_dir == 1) {  /* 上 */
-        if (soccer_p1_y > 0) soccer_p1_y -= p1_speed;
-        if (soccer_p1_y < 0) soccer_p1_y = 0;
+    if (input_p1_dir == 1)
+    { /* 上 */
+        if (soccer_p1_y > 0)
+            soccer_p1_y -= p1_speed;
+        if (soccer_p1_y < 0)
+            soccer_p1_y = 0;
     }
-    if (input_p1_dir == 7) {  /* 下 */
-        if (soccer_p1_y < SOCCER_FIELD_BOTTOM) soccer_p1_y += p1_speed;
-        if (soccer_p1_y > SOCCER_FIELD_BOTTOM) soccer_p1_y = SOCCER_FIELD_BOTTOM;
+    if (input_p1_dir == 7)
+    { /* 下 */
+        if (soccer_p1_y < SOCCER_FIELD_BOTTOM)
+            soccer_p1_y += p1_speed;
+        if (soccer_p1_y > SOCCER_FIELD_BOTTOM)
+            soccer_p1_y = SOCCER_FIELD_BOTTOM;
     }
-    if (input_p1_dir == 4) {  /* 左 */
-        if (soccer_p1_x > 0) soccer_p1_x -= p1_speed;
-        if (soccer_p1_x < 0) soccer_p1_x = 0;
+    if (input_p1_dir == 4)
+    { /* 左 */
+        if (soccer_p1_x > 0)
+            soccer_p1_x -= p1_speed;
+        if (soccer_p1_x < 0)
+            soccer_p1_x = 0;
     }
-    if (input_p1_dir == 5) {  /* 右 */
-        if (soccer_p1_x < 88) soccer_p1_x += p1_speed;
-        if (soccer_p1_x > 88) soccer_p1_x = 88;
+    if (input_p1_dir == 5)
+    { /* 右 */
+        if (soccer_p1_x < 88)
+            soccer_p1_x += p1_speed;
+        if (soccer_p1_x > 88)
+            soccer_p1_x = 88;
     }
 
     /* P2移動 */
-    if (input_p2_dir == 0xa) {  /* 上 */
-        if (soccer_p2_y > 0) soccer_p2_y -= p2_speed;
-        if (soccer_p2_y < 0) soccer_p2_y = 0;
+    if (input_p2_dir == 0xa)
+    { /* 上 */
+        if (soccer_p2_y > 0)
+            soccer_p2_y -= p2_speed;
+        if (soccer_p2_y < 0)
+            soccer_p2_y = 0;
     }
-    if (input_p2_dir == 0xc) {  /* 下 */
-        if (soccer_p2_y < SOCCER_FIELD_BOTTOM) soccer_p2_y += p2_speed;
-        if (soccer_p2_y > SOCCER_FIELD_BOTTOM) soccer_p2_y = SOCCER_FIELD_BOTTOM;
+    if (input_p2_dir == 0xc)
+    { /* 下 */
+        if (soccer_p2_y < SOCCER_FIELD_BOTTOM)
+            soccer_p2_y += p2_speed;
+        if (soccer_p2_y > SOCCER_FIELD_BOTTOM)
+            soccer_p2_y = SOCCER_FIELD_BOTTOM;
     }
-    if (input_p2_dir == 6) {    /* 左 */
-        if (soccer_p2_x > 0) soccer_p2_x -= p2_speed;
-        if (soccer_p2_x < 0) soccer_p2_x = 0;
+    if (input_p2_dir == 6)
+    { /* 左 */
+        if (soccer_p2_x > 0)
+            soccer_p2_x -= p2_speed;
+        if (soccer_p2_x < 0)
+            soccer_p2_x = 0;
     }
-    if (input_p2_dir == 0xb) {  /* 右 */
-        if (soccer_p2_x < 88) soccer_p2_x += p2_speed;
-        if (soccer_p2_x > 88) soccer_p2_x = 88;
+    if (input_p2_dir == 0xb)
+    { /* 右 */
+        if (soccer_p2_x < 88)
+            soccer_p2_x += p2_speed;
+        if (soccer_p2_x > 88)
+            soccer_p2_x = 88;
     }
 
     /* シュート処理 */
     /* P1シュート（キー8）- ゴール中心（x=96, y=28）に向かう */
-    if (input_p1_dir == 8 && soccer_ball_owner == OWNER_P1) {
+    if (input_p1_dir == 8 && soccer_ball_owner == OWNER_P1)
+    {
         soccer_ball_flying = 1;
         soccer_ball_owner = NO_OWNER;
         soccer_ball_x = soccer_p1_x + PLAYER_SIZE;
         soccer_ball_y = soccer_p1_y + (PLAYER_SIZE - BALL_SIZE) / 2;
         /* ゴール中心に向かう方向を計算 */
-        int goal_y = 28;  /* ゴール中心Y座標 */
+        int goal_y = 28; /* ゴール中心Y座標 */
         int dy = goal_y - soccer_ball_y;
-        soccer_ball_vx = 8;   /* 右方向に飛ぶ */
+        soccer_ball_vx = 8; /* 右方向に飛ぶ */
         /* Y方向速度: 距離に応じて調整（-3〜+3程度） */
-        if (dy > 20) soccer_ball_vy = 3;
-        else if (dy > 8) soccer_ball_vy = 2;
-        else if (dy > 0) soccer_ball_vy = 1;
-        else if (dy > -8) soccer_ball_vy = 0;
-        else if (dy > -20) soccer_ball_vy = -2;
-        else soccer_ball_vy = -3;
+        if (dy > 20)
+            soccer_ball_vy = 3;
+        else if (dy > 8)
+            soccer_ball_vy = 2;
+        else if (dy > 0)
+            soccer_ball_vy = 1;
+        else if (dy > -8)
+            soccer_ball_vy = 0;
+        else if (dy > -20)
+            soccer_ball_vy = -2;
+        else
+            soccer_ball_vy = -3;
         buzzer_play(TONE_SCORE);
         buzzer_timer = BUZZER_SHORT;
     }
     /* P2シュート（キー3）- ゴール中心（x=0, y=28）に向かう */
-    if (input_p2_dir == 3 && soccer_ball_owner == OWNER_P2) {
+    if (input_p2_dir == 3 && soccer_ball_owner == OWNER_P2)
+    {
         soccer_ball_flying = 1;
         soccer_ball_owner = NO_OWNER;
         soccer_ball_x = soccer_p2_x - BALL_SIZE;
         soccer_ball_y = soccer_p2_y + (PLAYER_SIZE - BALL_SIZE) / 2;
         /* ゴール中心に向かう方向を計算 */
-        int goal_y = 28;  /* ゴール中心Y座標 */
+        int goal_y = 28; /* ゴール中心Y座標 */
         int dy = goal_y - soccer_ball_y;
-        soccer_ball_vx = -8;  /* 左方向に飛ぶ */
+        soccer_ball_vx = -8; /* 左方向に飛ぶ */
         /* Y方向速度: 距離に応じて調整（-3〜+3程度） */
-        if (dy > 20) soccer_ball_vy = 3;
-        else if (dy > 8) soccer_ball_vy = 2;
-        else if (dy > 0) soccer_ball_vy = 1;
-        else if (dy > -8) soccer_ball_vy = 0;
-        else if (dy > -20) soccer_ball_vy = -2;
-        else soccer_ball_vy = -3;
+        if (dy > 20)
+            soccer_ball_vy = 3;
+        else if (dy > 8)
+            soccer_ball_vy = 2;
+        else if (dy > 0)
+            soccer_ball_vy = 1;
+        else if (dy > -8)
+            soccer_ball_vy = 0;
+        else if (dy > -20)
+            soccer_ball_vy = -2;
+        else
+            soccer_ball_vy = -3;
         buzzer_play(TONE_SCORE);
         buzzer_timer = BUZZER_SHORT;
     }
 
     /* ボール飛行処理 */
-    if (soccer_ball_flying) {
+    if (soccer_ball_flying)
+    {
         soccer_ball_x += soccer_ball_vx;
         soccer_ball_y += soccer_ball_vy;
 
         /* 上下の壁で跳ね返り */
-        if (soccer_ball_y <= 0) {
+        if (soccer_ball_y <= 0)
+        {
             soccer_ball_y = 0;
             soccer_ball_vy = -soccer_ball_vy;
         }
-        if (soccer_ball_y >= SOCCER_FIELD_BOTTOM) {
+        if (soccer_ball_y >= SOCCER_FIELD_BOTTOM)
+        {
             soccer_ball_y = SOCCER_FIELD_BOTTOM;
             soccer_ball_vy = -soccer_ball_vy;
         }
 
         /* ゴール判定（飛行中） */
-        if (soccer_ball_x >= 96) {
+        if (soccer_ball_x >= 96)
+        {
             /* P1得点（右ゴール） */
             soccer_p1_score++;
             buzzer_play(TONE_SCORE);
             buzzer_timer = BUZZER_LONG;
-            if (soccer_p1_score >= SOCCER_WINNING_SCORE) {
+            if (soccer_p1_score >= SOCCER_WINNING_SCORE)
+            {
                 game_state = STATE_RESULT;
-            } else {
+            }
+            else
+            {
                 soccer_reset_positions();
             }
         }
-        if (soccer_ball_x <= 0) {
+        if (soccer_ball_x <= 0)
+        {
             /* P2得点（左ゴール） */
             soccer_p2_score++;
             buzzer_play(TONE_SCORE);
             buzzer_timer = BUZZER_LONG;
-            if (soccer_p2_score >= SOCCER_WINNING_SCORE) {
+            if (soccer_p2_score >= SOCCER_WINNING_SCORE)
+            {
                 game_state = STATE_RESULT;
-            } else {
+            }
+            else
+            {
                 soccer_reset_positions();
             }
         }
     }
 
     /* ボール取得判定（所有者なし・飛行中でない場合） */
-    if (soccer_ball_owner == NO_OWNER && !soccer_ball_flying) {
+    if (soccer_ball_owner == NO_OWNER && !soccer_ball_flying)
+    {
         /* P1がボールに触れたか */
         int dx1 = soccer_p1_x - soccer_ball_x;
         int dy1 = soccer_p1_y - soccer_ball_y;
-        if (dx1 < 0) dx1 = -dx1;
-        if (dy1 < 0) dy1 = -dy1;
-        if (dx1 < SOCCER_COLLISION_THRESHOLD && dy1 < SOCCER_COLLISION_THRESHOLD) {
+        if (dx1 < 0)
+            dx1 = -dx1;
+        if (dy1 < 0)
+            dy1 = -dy1;
+        if (dx1 < SOCCER_COLLISION_THRESHOLD && dy1 < SOCCER_COLLISION_THRESHOLD)
+        {
             soccer_ball_owner = OWNER_P1;
             buzzer_play(TONE_HIT);
             buzzer_timer = BUZZER_SHORT;
@@ -1514,9 +1925,12 @@ void soccer_update() {
         /* P2がボールに触れたか */
         int dx2 = soccer_p2_x - soccer_ball_x;
         int dy2 = soccer_p2_y - soccer_ball_y;
-        if (dx2 < 0) dx2 = -dx2;
-        if (dy2 < 0) dy2 = -dy2;
-        if (dx2 < SOCCER_COLLISION_THRESHOLD && dy2 < SOCCER_COLLISION_THRESHOLD) {
+        if (dx2 < 0)
+            dx2 = -dx2;
+        if (dy2 < 0)
+            dy2 = -dy2;
+        if (dx2 < SOCCER_COLLISION_THRESHOLD && dy2 < SOCCER_COLLISION_THRESHOLD)
+        {
             soccer_ball_owner = OWNER_P2;
             buzzer_play(TONE_HIT);
             buzzer_timer = BUZZER_SHORT;
@@ -1524,13 +1938,17 @@ void soccer_update() {
     }
 
     /* 飛行中のボールをキャッチ */
-    if (soccer_ball_flying) {
+    if (soccer_ball_flying)
+    {
         /* P1がボールをキャッチ */
         int dx1 = soccer_p1_x - soccer_ball_x;
         int dy1 = soccer_p1_y - soccer_ball_y;
-        if (dx1 < 0) dx1 = -dx1;
-        if (dy1 < 0) dy1 = -dy1;
-        if (dx1 < SOCCER_COLLISION_THRESHOLD && dy1 < SOCCER_COLLISION_THRESHOLD) {
+        if (dx1 < 0)
+            dx1 = -dx1;
+        if (dy1 < 0)
+            dy1 = -dy1;
+        if (dx1 < SOCCER_COLLISION_THRESHOLD && dy1 < SOCCER_COLLISION_THRESHOLD)
+        {
             soccer_ball_owner = OWNER_P1;
             soccer_ball_flying = 0;
             soccer_ball_vx = 0;
@@ -1542,9 +1960,12 @@ void soccer_update() {
         /* P2がボールをキャッチ */
         int dx2 = soccer_p2_x - soccer_ball_x;
         int dy2 = soccer_p2_y - soccer_ball_y;
-        if (dx2 < 0) dx2 = -dx2;
-        if (dy2 < 0) dy2 = -dy2;
-        if (dx2 < SOCCER_COLLISION_THRESHOLD && dy2 < SOCCER_COLLISION_THRESHOLD) {
+        if (dx2 < 0)
+            dx2 = -dx2;
+        if (dy2 < 0)
+            dy2 = -dy2;
+        if (dx2 < SOCCER_COLLISION_THRESHOLD && dy2 < SOCCER_COLLISION_THRESHOLD)
+        {
             soccer_ball_owner = OWNER_P2;
             soccer_ball_flying = 0;
             soccer_ball_vx = 0;
@@ -1555,32 +1976,45 @@ void soccer_update() {
     }
 
     /* 衝突判定（ボール奪取）- ボール保持中のみ */
-    if (soccer_invincible_timer <= 0 && soccer_ball_owner != NO_OWNER && !soccer_ball_flying) {
+    if (soccer_invincible_timer <= 0 && soccer_ball_owner != NO_OWNER && !soccer_ball_flying)
+    {
         int dx = soccer_p1_x - soccer_p2_x;
         int dy = soccer_p1_y - soccer_p2_y;
-        if (dx < 0) dx = -dx;
-        if (dy < 0) dy = -dy;
+        if (dx < 0)
+            dx = -dx;
+        if (dy < 0)
+            dy = -dy;
 
-        if (dx < SOCCER_COLLISION_THRESHOLD && dy < SOCCER_COLLISION_THRESHOLD) {
+        if (dx < SOCCER_COLLISION_THRESHOLD && dy < SOCCER_COLLISION_THRESHOLD)
+        {
             /* ボールを奪われた側を少し後ろにノックバック */
-            int knockback_x = 15;  /* X方向ノックバック距離 */
-            int random_y = ((frame_counter * 7) % 5) - 2;  /* -2, -1, 0, 1, 2 のランダム */
-            int knockback_y = random_y * 6;  /* Y方向ノックバック */
+            int knockback_x = 15;                         /* X方向ノックバック距離 */
+            int random_y = ((frame_counter * 7) % 5) - 2; /* -2, -1, 0, 1, 2 のランダム */
+            int knockback_y = random_y * 6;               /* Y方向ノックバック */
 
-            if (soccer_ball_owner == OWNER_P1) {
+            if (soccer_ball_owner == OWNER_P1)
+            {
                 /* P1がボールを奪われた → P1を少し左後ろにノックバック */
                 soccer_p1_x -= knockback_x;
                 soccer_p1_y += knockback_y;
-                if (soccer_p1_x < 0) soccer_p1_x = 0;
-                if (soccer_p1_y < 0) soccer_p1_y = 0;
-                if (soccer_p1_y > SOCCER_FIELD_BOTTOM) soccer_p1_y = SOCCER_FIELD_BOTTOM;
-            } else {
+                if (soccer_p1_x < 0)
+                    soccer_p1_x = 0;
+                if (soccer_p1_y < 0)
+                    soccer_p1_y = 0;
+                if (soccer_p1_y > SOCCER_FIELD_BOTTOM)
+                    soccer_p1_y = SOCCER_FIELD_BOTTOM;
+            }
+            else
+            {
                 /* P2がボールを奪われた → P2を少し右後ろにノックバック */
                 soccer_p2_x += knockback_x;
                 soccer_p2_y += knockback_y;
-                if (soccer_p2_x > 88) soccer_p2_x = 88;
-                if (soccer_p2_y < 0) soccer_p2_y = 0;
-                if (soccer_p2_y > SOCCER_FIELD_BOTTOM) soccer_p2_y = SOCCER_FIELD_BOTTOM;
+                if (soccer_p2_x > 88)
+                    soccer_p2_x = 88;
+                if (soccer_p2_y < 0)
+                    soccer_p2_y = 0;
+                if (soccer_p2_y > SOCCER_FIELD_BOTTOM)
+                    soccer_p2_y = SOCCER_FIELD_BOTTOM;
             }
 
             /* ボール所有権が相手に移る */
@@ -1593,24 +2027,32 @@ void soccer_update() {
 
     /* ゴール判定（ボール保持でゴールラインに到達） */
     /* P1が右端に到達（P1のゴール） */
-    if (soccer_ball_owner == OWNER_P1 && soccer_p1_x >= 88) {
+    if (soccer_ball_owner == OWNER_P1 && soccer_p1_x >= 88)
+    {
         soccer_p1_score++;
         buzzer_play(TONE_SCORE);
         buzzer_timer = BUZZER_LONG;
-        if (soccer_p1_score >= SOCCER_WINNING_SCORE) {
+        if (soccer_p1_score >= SOCCER_WINNING_SCORE)
+        {
             game_state = STATE_RESULT;
-        } else {
+        }
+        else
+        {
             soccer_reset_positions();
         }
     }
     /* P2が左端に到達（P2のゴール） */
-    if (soccer_ball_owner == OWNER_P2 && soccer_p2_x <= 0) {
+    if (soccer_ball_owner == OWNER_P2 && soccer_p2_x <= 0)
+    {
         soccer_p2_score++;
         buzzer_play(TONE_SCORE);
         buzzer_timer = BUZZER_LONG;
-        if (soccer_p2_score >= SOCCER_WINNING_SCORE) {
+        if (soccer_p2_score >= SOCCER_WINNING_SCORE)
+        {
             game_state = STATE_RESULT;
-        } else {
+        }
+        else
+        {
             soccer_reset_positions();
         }
     }
@@ -1620,12 +2062,16 @@ void soccer_update() {
 }
 
 /* サッカー結果画面 */
-void draw_result_soccer(int p1, int p2) {
+void draw_result_soccer(int p1, int p2)
+{
     lcd_clear_vbuf();
     lcd_puts_color(0, 0, "============", 255, 255, 255);
-    if (p1 >= SOCCER_WINNING_SCORE) {
+    if (p1 >= SOCCER_WINNING_SCORE)
+    {
         lcd_puts_color(2, 1, " P1  WIN! ", 0, 255, 0);
-    } else {
+    }
+    else
+    {
         lcd_puts_color(2, 1, " P2  WIN! ", 255, 128, 0);
     }
     lcd_puts_color(3, 0, "============", 255, 255, 255);
@@ -1639,4 +2085,3 @@ void draw_result_soccer(int p1, int p2) {
 
     lcd_puts_color(7, 0, "0+1:RESET", 0, 255, 255);
 }
-
