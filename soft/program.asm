@@ -3727,153 +3727,148 @@ $L104:
 	.ent	kypd_scan_both
 	.type	kypd_scan_both, @function
 kypd_scan_both:
-	.frame	$fp,32,$31		# vars= 8, regs= 2/0, args= 16, gp= 0
+	.frame	$fp,40,$31		# vars= 16, regs= 2/0, args= 16, gp= 0
 	.mask	0xc0000000,-4
 	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-32
-	sw	$31,28($sp)
-	sw	$fp,24($sp)
+	addiu	$sp,$sp,-40
+	sw	$31,36($sp)
+	sw	$fp,32($sp)
 	move	$fp,$sp
-	sw	$4,32($fp)
-	sw	$5,36($fp)
+	sw	$4,40($fp)
+	sw	$5,44($fp)
 	li	$2,65304			# 0xff18
+	sw	$2,24($fp)
+	li	$2,-1			# 0xffffffffffffffff
 	sw	$2,16($fp)
-	lw	$2,32($fp)
-	li	$3,-1			# 0xffffffffffffffff
-	sw	$3,0($2)
-	lw	$2,36($fp)
-	li	$3,-1			# 0xffffffffffffffff
-	sw	$3,0($2)
-	lw	$2,16($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	sw	$2,20($fp)
+	lw	$2,24($fp)
 	li	$3,7			# 0x7
 	sw	$3,0($2)
 	li	$4,300			# 0x12c
 	jal	tiny_wait
 	nop
 
-	lw	$2,16($fp)
+	lw	$2,24($fp)
 	nop
 	lw	$2,0($2)
 	nop
-	sb	$2,20($fp)
-	lb	$2,20($fp)
+	sb	$2,28($fp)
+	lb	$2,28($fp)
 	nop
 	bltz	$2,$L121
 	nop
 
-	lw	$2,32($fp)
-	li	$3,1			# 0x1
-	sw	$3,0($2)
+	li	$2,1			# 0x1
+	sw	$2,16($fp)
 $L121:
-	lbu	$2,20($fp)
+	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
 	bne	$2,$0,$L122
 	nop
 
-	lw	$2,32($fp)
-	li	$3,4			# 0x4
-	sw	$3,0($2)
+	li	$2,4			# 0x4
+	sw	$2,16($fp)
 $L122:
-	lbu	$2,20($fp)
+	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x20
 	bne	$2,$0,$L123
 	nop
 
-	lw	$2,32($fp)
-	li	$3,7			# 0x7
-	sw	$3,0($2)
+	li	$2,7			# 0x7
+	sw	$2,16($fp)
 $L123:
-	lw	$2,16($fp)
+	lw	$2,24($fp)
 	li	$3,11			# 0xb
 	sw	$3,0($2)
 	li	$4,300			# 0x12c
 	jal	tiny_wait
 	nop
 
-	lw	$2,16($fp)
+	lw	$2,24($fp)
 	nop
 	lw	$2,0($2)
 	nop
-	sb	$2,20($fp)
-	lbu	$2,20($fp)
+	sb	$2,28($fp)
+	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
 	bne	$2,$0,$L124
 	nop
 
-	lw	$2,32($fp)
-	li	$3,5			# 0x5
-	sw	$3,0($2)
+	li	$2,5			# 0x5
+	sw	$2,16($fp)
 $L124:
-	lw	$2,16($fp)
+	lw	$2,24($fp)
 	li	$3,13			# 0xd
 	sw	$3,0($2)
 	li	$4,300			# 0x12c
 	jal	tiny_wait
 	nop
 
-	lw	$2,16($fp)
+	lw	$2,24($fp)
 	nop
 	lw	$2,0($2)
 	nop
-	sb	$2,20($fp)
-	lbu	$2,20($fp)
+	sb	$2,28($fp)
+	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
 	bne	$2,$0,$L125
 	nop
 
-	lw	$2,36($fp)
-	li	$3,6			# 0x6
-	sw	$3,0($2)
+	li	$2,6			# 0x6
+	sw	$2,20($fp)
 $L125:
-	lw	$2,16($fp)
+	lw	$2,24($fp)
 	li	$3,14			# 0xe
 	sw	$3,0($2)
 	li	$4,300			# 0x12c
 	jal	tiny_wait
 	nop
 
-	lw	$2,16($fp)
+	lw	$2,24($fp)
 	nop
 	lw	$2,0($2)
 	nop
-	sb	$2,20($fp)
-	lb	$2,20($fp)
+	sb	$2,28($fp)
+	lb	$2,28($fp)
 	nop
 	bltz	$2,$L126
 	nop
 
-	lw	$2,36($fp)
-	li	$3,10			# 0xa
-	sw	$3,0($2)
+	li	$2,10			# 0xa
+	sw	$2,20($fp)
 $L126:
-	lbu	$2,20($fp)
+	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x40
 	bne	$2,$0,$L127
 	nop
 
-	lw	$2,36($fp)
-	li	$3,11			# 0xb
-	sw	$3,0($2)
+	li	$2,11			# 0xb
+	sw	$2,20($fp)
 $L127:
-	lbu	$2,20($fp)
+	lbu	$2,28($fp)
 	nop
 	andi	$2,$2,0x20
 	bne	$2,$0,$L128
 	nop
 
-	lw	$2,36($fp)
-	li	$3,12			# 0xc
-	sw	$3,0($2)
+	li	$2,12			# 0xc
+	sw	$2,20($fp)
 $L128:
-	lw	$2,16($fp)
-	li	$3,15			# 0xf
+	lw	$2,40($fp)
+	lw	$3,16($fp)
+	nop
+	sw	$3,0($2)
+	lw	$2,44($fp)
+	lw	$3,20($fp)
+	nop
 	sw	$3,0($2)
 	li	$4,100			# 0x64
 	jal	tiny_wait
@@ -3881,9 +3876,9 @@ $L128:
 
 	nop
 	move	$sp,$fp
-	lw	$31,28($sp)
-	lw	$fp,24($sp)
-	addiu	$sp,$sp,32
+	lw	$31,36($sp)
+	lw	$fp,32($sp)
+	addiu	$sp,$sp,40
 	jr	$31
 	nop
 

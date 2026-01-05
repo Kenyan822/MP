@@ -650,38 +650,34 @@ int kypd_scan() {
 void kypd_scan_both(volatile int *p1_dir, volatile int *p2_dir) {
     volatile int *ioc_ptr = (int *)0xff18;
     unsigned char raw;
-    
-    *p1_dir = -1;
-    *p2_dir = -1;
-    
+    // 一時変数を用意（初期値は入力なし）
+    int temp_p1 = -1;
+    int temp_p2 = -1;
     /* row0: キー 1, 4, 7, 0 をスキャン（P1の上・左・下） */
     *ioc_ptr = 0x07; tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) *p1_dir = 1;  /* 上 */
-    if ((raw & 0x40) == 0) *p1_dir = 4;  /* 左 */
-    if ((raw & 0x20) == 0) *p1_dir = 7;  /* 下 */
-    
+    if ((raw & 0x80) == 0) temp_p1 = 1;  /* 上 */
+    if ((raw & 0x40) == 0) temp_p1 = 4;  /* 左 */
+    if ((raw & 0x20) == 0) temp_p1 = 7;  /* 下 */
     /* row1: キー 2, 5, 8, F をスキャン（P1の右） */
     *ioc_ptr = 0x0b; tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x40) == 0) *p1_dir = 5;  /* 右 */
-    
+    if ((raw & 0x40) == 0) temp_p1 = 5;  /* 右 */
     /* row2: キー 3, 6, 9, E をスキャン（P2の左） */
     *ioc_ptr = 0x0d; tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x40) == 0) *p2_dir = 6;  /* 左 */
-    
+    if ((raw & 0x40) == 0) temp_p2 = 6;  /* 左 */
     /* row3: キー A, B, C, D をスキャン（P2の上・右・下） */
     *ioc_ptr = 0x0e; tiny_wait(300);
     raw = (unsigned char)(*ioc_ptr & 0xff);
-    if ((raw & 0x80) == 0) *p2_dir = 0xa;  /* 上 */
-    if ((raw & 0x40) == 0) *p2_dir = 0xb;  /* 右 */
-    if ((raw & 0x20) == 0) *p2_dir = 0xc;  /* 下 */
+    if ((raw & 0x80) == 0) temp_p2 = 0xa;  /* 上 */
+    if ((raw & 0x40) == 0) temp_p2 = 0xb;  /* 右 */
+    if ((raw & 0x20) == 0) temp_p2 = 0xc;  /* 下 */
+    // 【重要】スキャンが全て終わってから、結果をグローバル変数に反映する
+    *p1_dir = temp_p1;
+    *p2_dir = temp_p2;
 
-       /* スキャン終了後、少し待ってから出力を初期化 */
-       tiny_wait(100);
-       *ioc_ptr = 0x0f; tiny_wait(100);
-
+    tiny_wait(100);
 }
 
 /*
