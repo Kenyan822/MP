@@ -350,13 +350,22 @@ void interrupt_handler() {
 void main() {
     
     volatile int *iob_ptr = (int *)0xff14;
-    *iob_ptr = 1; lcd_wait(700000);
-    *iob_ptr = 2; lcd_wait(700000);
-    *iob_ptr = 3; lcd_wait(700000);
-    *iob_ptr = 4; lcd_wait(700000);
-    *iob_ptr = 5; lcd_wait(700000);
-    *iob_ptr = 6; lcd_wait(700000);
-    *iob_ptr = 0; lcd_wait(700000);
+    /* テニスゲーム起動音 - ラケットのスイング音風 */
+    *iob_ptr = 5; lcd_wait(100000);   /* F - スイング開始 */
+    *iob_ptr = 8; lcd_wait(150000);   /* G - スイング途中 */
+    *iob_ptr = 10; lcd_wait(200000);  /* A - インパクト！ */
+    *iob_ptr = 13; lcd_wait(300000);  /* 高いC - ボールが飛ぶ音 */
+    *iob_ptr = 0; lcd_wait(200000);   /* 無音 */
+
+    /* "Ready!" の合図 */
+    *iob_ptr = 8; lcd_wait(150000);   /* G */
+    *iob_ptr = 10; lcd_wait(150000);  /* A */
+    *iob_ptr = 12; lcd_wait(300000);  /* B - "Ready!" */
+    *iob_ptr = 0; lcd_wait(100000);
+
+    /* 試合開始のホイッスル風 */
+    *iob_ptr = 13; lcd_wait(500000);  /* 高いC - ピッ！ */
+    *iob_ptr = 0; lcd_wait(100000);
 
     while (1) {
         if (game_state == STATE_INIT) {
