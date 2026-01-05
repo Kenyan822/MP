@@ -47,6 +47,13 @@ void squash_move_players();
 void draw_result_squash(int score);
 void draw_result_squash_2p(int p1, int p2);
 
+void draw_soccer_game();
+void draw_soccer_player(int x, int y, int r, int g, int b, int blink);
+void draw_soccer_ball(int x, int y);
+void soccer_update();
+void soccer_reset_positions();
+void draw_result_soccer(int p1, int p2);
+
 /*
  * ゲームステート定義
  */
@@ -62,6 +69,7 @@ void draw_result_squash_2p(int p1, int p2);
 #define MODE_TENNIS     0   /* テニス */
 #define MODE_SQUASH_1P  1   /* スカッシュ1人 */
 #define MODE_SQUASH_2P  2   /* スカッシュ2人 */
+#define MODE_SOCCER     3   /* サッカー */
 
 /*
  * テニスモード定数
@@ -79,6 +87,19 @@ void draw_result_squash_2p(int p1, int p2);
 #define PLAYER_SIZE     8
 #define PLAYER_SPEED    4
 #define HIT_RANGE       10
+
+/*
+ * サッカーモード定数
+ */
+#define SOCCER_NORMAL_SPEED    6    /* 通常移動速度 */
+#define SOCCER_HOLDER_SPEED    4    /* ボール保持時速度 */
+#define SOCCER_COLLISION_THRESHOLD 12  /* 衝突判定距離 */
+#define SOCCER_INVINCIBLE_DURATION 10  /* 無敵時間（フレーム数） */
+#define SOCCER_WINNING_SCORE   3    /* 勝利得点 */
+#define SOCCER_FIELD_BOTTOM    48   /* フィールド下端 */
+#define NO_OWNER    0
+#define OWNER_P1    1
+#define OWNER_P2    2
 
 /* ラケットパターン (1:フレーム, 2:ガット, 0:透過) */
 const unsigned char RACKET_PATTERN[12][8] = {
@@ -163,6 +184,15 @@ int sq_p1_score = 0;                 /* P1ポイント（2Pモード用） */
 int sq_p2_score = 0;                 /* P2ポイント（2Pモード用） */
 #define WINNING_SCORE 5              /* 勝利に必要なポイント */
 
+/* サッカーモード用変数 */
+int soccer_p1_x = 10, soccer_p1_y = 24;   /* P1座標 */
+int soccer_p2_x = 78, soccer_p2_y = 24;   /* P2座標 */
+int soccer_ball_x = 44, soccer_ball_y = 24; /* ボール座標 */
+int soccer_ball_owner = NO_OWNER;         /* ボール所有者 */
+int soccer_p1_score = 0;                  /* P1スコア */
+int soccer_p2_score = 0;                  /* P2スコア */
+int soccer_invincible_timer = 0;          /* 無敵時間カウンタ */
+
 /*
  * 割り込みハンドラ（100msecごとに呼ばれる）
  */
@@ -193,8 +223,10 @@ void interrupt_handler() {
             lcd_puts_color(2, 1, "TENNIS MODE", r_title, g_title, b_title);
         } else if (game_mode == MODE_SQUASH_1P) {
             lcd_puts_color(2, 0, "SQUASH 1P", r_title, g_title, b_title);
-        } else {
+        } else if (game_mode == MODE_SQUASH_2P) {
             lcd_puts_color(2, 0, "SQUASH 2P", r_title, g_title, b_title);
+        } else if (game_mode == MODE_SOCCER) {
+            lcd_puts_color(2, 0, "SOCCER MODE", r_title, g_title, b_title);
         }
         
         if ((frame_counter / 5) % 2) {
@@ -305,9 +337,12 @@ void interrupt_handler() {
             }
             
             draw_tennis_game();
-        } else {
+        } else if (game_mode == MODE_SQUASH_1P || game_mode == MODE_SQUASH_2P) {
             /* スカッシュモード（1Pまたは2P） */
             squash_update();
+        } else if (game_mode == MODE_SOCCER) {
+            /* サッカーモード */
+            soccer_update();
         }
     } else if (game_state == STATE_RESULT) {
         /* 結果画面 */
@@ -340,13 +375,16 @@ void interrupt_handler() {
             result_str[9] = '\0';
             lcd_puts_color(6, 1, result_str, 255, 255, 0);
             lcd_puts_color(7, 0, "0+1:RESET", 0, 255, 255);
-        } else {
+        } else if (game_mode == MODE_SQUASH_1P || game_mode == MODE_SQUASH_2P) {
             /* スカッシュ結果画面 */
             if (game_mode == MODE_SQUASH_2P) {
                 draw_result_squash_2p(sq_p1_score, sq_p2_score);
             } else {
                 draw_result_squash(sq_score);
             }
+        } else if (game_mode == MODE_SOCCER) {
+            /* サッカー結果画面 */
+            draw_result_soccer(soccer_p1_score, soccer_p2_score);
         }
     }
     lcd_sync_vbuf();
@@ -389,7 +427,7 @@ void main() {
             }
             /* ボタン2: カーソル下移動（エッジ検出） */
             if (btn2 && !btn2_prev) {
-                if (cursor < 2) {
+                if (cursor < 3) {
                     cursor++;
                     led_blink();
                 }
@@ -405,7 +443,7 @@ void main() {
             
             /* 反時計回り（値が増える）→ カーソル下に移動 */
             if (diff >= rotary_threshold) {
-                if (cursor < 2) {
+                if (cursor < 3) {
                     cursor++;
                     led_blink();
                 }
@@ -457,7 +495,7 @@ void main() {
                     ball_vy = 2;
                     score_p1 = 0;
                     score_p2 = 0;
-                } else {
+                } else if (game_mode == MODE_SQUASH_1P || game_mode == MODE_SQUASH_2P) {
                     /* スカッシュモード初期化 */
                     sq_p1_x = 2;       /* 左側に配置 */
                     sq_p1_y = 16;
@@ -473,6 +511,18 @@ void main() {
                     sq_rally = 0;
                     sq_p1_score = 0;   /* 2Pモード用スコアリセット */
                     sq_p2_score = 0;
+                } else if (game_mode == MODE_SOCCER) {
+                    /* サッカーモード初期化 */
+                    soccer_p1_x = 10;
+                    soccer_p1_y = 24;
+                    soccer_p2_x = 78;
+                    soccer_p2_y = 24;
+                    soccer_ball_x = 44;
+                    soccer_ball_y = 24;
+                    soccer_ball_owner = NO_OWNER;
+                    soccer_p1_score = 0;
+                    soccer_p2_score = 0;
+                    soccer_invincible_timer = 0;
                 }
                 game_state = STATE_PLAY;
                 led_blink();
@@ -544,8 +594,13 @@ void draw_mode_select(int cursor) {
         lcd_puts_color(4, 0, "  SQUASH 2P ", 0, 0, 255);
     }
 
+    if (cursor == 3) {
+        lcd_puts_color(5, 0, "> SOCCER   <", r_sel, g_sel, b_sel);
+    } else {
+        lcd_puts_color(5, 0, "  SOCCER    ", 0, 0, 255);
+    }
+
     /* 操作説明 */
-    lcd_puts_color(6, 0, "ROTARY/3/2", 0, 255, 255);
     lcd_puts_color(7, 0, "0:DECIDE", 255, 0, 255);
 }
 
@@ -1222,6 +1277,254 @@ void draw_result_squash_2p(int p1, int p2) {
     lcd_clear_vbuf();
     lcd_puts_color(0, 0, "============", 255, 255, 255);
     if (p1 >= WINNING_SCORE) {
+        lcd_puts_color(2, 1, " P1  WIN! ", 0, 255, 0);
+    } else {
+        lcd_puts_color(2, 1, " P2  WIN! ", 255, 128, 0);
+    }
+    lcd_puts_color(3, 0, "============", 255, 255, 255);
+
+    /* スコア表示 */
+    lcd_puts_color(5, 1, "P1:", 0, 255, 0);
+    lcd_putc_color(5, 4, '0' + p1, 0, 255, 0);
+    lcd_putc_color(5, 5, '-', 255, 255, 255);
+    lcd_puts_color(5, 6, "P2:", 255, 128, 0);
+    lcd_putc_color(5, 9, '0' + p2, 255, 128, 0);
+
+    lcd_puts_color(7, 0, "0+1:RESET", 0, 255, 255);
+}
+
+/*
+ * サッカーモード関数
+ */
+
+/* プレイヤー描画（点滅対応） */
+void draw_soccer_player(int x, int y, int r, int g, int b, int blink) {
+    if (blink && (frame_counter % 2 == 0)) {
+        return;  /* 点滅中は描画しない */
+    }
+    for (int dy = 0; dy < PLAYER_SIZE; dy++) {
+        for (int dx = 0; dx < PLAYER_SIZE; dx++) {
+            int py = y + dy;
+            int px = x + dx;
+            if (px >= 0 && px < 96 && py >= 0 && py < 56) {
+                int type = PLAYER_PATTERN[dy][dx];
+                if (type == 1) {
+                    lcd_set_vbuf_pixel(py, px, r, g, b);
+                }
+            }
+        }
+    }
+}
+
+/* ボール描画 */
+void draw_soccer_ball(int x, int y) {
+    for (int dy = 0; dy < BALL_SIZE; dy++) {
+        for (int dx = 0; dx < BALL_SIZE; dx++) {
+            int py = y + dy;
+            int px = x + dx;
+            if (px >= 0 && px < 96 && py >= 0 && py < 56) {
+                lcd_set_vbuf_pixel(py, px, 255, 255, 255);  /* 白色 */
+            }
+        }
+    }
+}
+
+/* サッカー画面全体描画 */
+void draw_soccer_game() {
+    lcd_clear_vbuf();
+
+    /* 背景（緑のフィールド） */
+    for (int y = 0; y < 56; y++) {
+        for (int x = 0; x < 96; x++) {
+            lcd_set_vbuf_pixel(y, x, 0, 80, 0);
+        }
+    }
+
+    /* フィールドライン */
+    /* 中央線 */
+    for (int y = 0; y < 56; y++) {
+        lcd_set_vbuf_pixel(y, 48, 255, 255, 255);
+    }
+    /* センターサークル（簡易表示） */
+    for (int i = 0; i < 8; i++) {
+        int cx = 48;
+        int cy = 28;
+        if (i == 0) { lcd_set_vbuf_pixel(cy - 8, cx, 255, 255, 255); }
+        if (i == 1) { lcd_set_vbuf_pixel(cy + 8, cx, 255, 255, 255); }
+        if (i == 2) { lcd_set_vbuf_pixel(cy, cx - 8, 255, 255, 255); }
+        if (i == 3) { lcd_set_vbuf_pixel(cy, cx + 8, 255, 255, 255); }
+        if (i == 4) { lcd_set_vbuf_pixel(cy - 6, cx - 6, 255, 255, 255); }
+        if (i == 5) { lcd_set_vbuf_pixel(cy - 6, cx + 6, 255, 255, 255); }
+        if (i == 6) { lcd_set_vbuf_pixel(cy + 6, cx - 6, 255, 255, 255); }
+        if (i == 7) { lcd_set_vbuf_pixel(cy + 6, cx + 6, 255, 255, 255); }
+    }
+    /* ゴールエリア（左右） */
+    for (int y = 16; y < 40; y++) {
+        lcd_set_vbuf_pixel(y, 0, 255, 255, 0);   /* 左ゴール */
+        lcd_set_vbuf_pixel(y, 95, 255, 255, 0);  /* 右ゴール */
+    }
+
+    /* プレイヤー描画 */
+    int p1_blink = (soccer_invincible_timer > 0 && soccer_ball_owner != OWNER_P1);
+    int p2_blink = (soccer_invincible_timer > 0 && soccer_ball_owner != OWNER_P2);
+    draw_soccer_player(soccer_p1_x, soccer_p1_y, 0, 255, 0, p1_blink);     /* P1: 緑 */
+    draw_soccer_player(soccer_p2_x, soccer_p2_y, 255, 128, 0, p2_blink);   /* P2: オレンジ */
+
+    /* ボール描画（所有者に追従または中央） */
+    int ball_draw_x, ball_draw_y;
+    if (soccer_ball_owner == OWNER_P1) {
+        ball_draw_x = soccer_p1_x + PLAYER_SIZE;
+        ball_draw_y = soccer_p1_y + (PLAYER_SIZE - BALL_SIZE) / 2;
+    } else if (soccer_ball_owner == OWNER_P2) {
+        ball_draw_x = soccer_p2_x - BALL_SIZE;
+        ball_draw_y = soccer_p2_y + (PLAYER_SIZE - BALL_SIZE) / 2;
+    } else {
+        ball_draw_x = soccer_ball_x;
+        ball_draw_y = soccer_ball_y;
+    }
+    draw_soccer_ball(ball_draw_x, ball_draw_y);
+
+    /* スコア表示 */
+    lcd_puts_color(7, 0, "P1:", 0, 255, 0);
+    lcd_putc_color(7, 3, '0' + soccer_p1_score, 0, 255, 0);
+    lcd_putc_color(7, 4, '-', 255, 255, 255);
+    lcd_puts_color(7, 5, "P2:", 255, 128, 0);
+    lcd_putc_color(7, 8, '0' + soccer_p2_score, 255, 128, 0);
+}
+
+/* ポジションリセット */
+void soccer_reset_positions() {
+    soccer_p1_x = 10;
+    soccer_p1_y = 24;
+    soccer_p2_x = 78;
+    soccer_p2_y = 24;
+    soccer_ball_x = 44;
+    soccer_ball_y = 24;
+    soccer_ball_owner = NO_OWNER;
+    soccer_invincible_timer = 0;
+}
+
+/* サッカーゲームロジック更新 */
+void soccer_update() {
+    /* 無敵時間カウントダウン */
+    if (soccer_invincible_timer > 0) {
+        soccer_invincible_timer--;
+    }
+
+    /* プレイヤー移動 */
+    int p1_speed = (soccer_ball_owner == OWNER_P1) ? SOCCER_HOLDER_SPEED : SOCCER_NORMAL_SPEED;
+    int p2_speed = (soccer_ball_owner == OWNER_P2) ? SOCCER_HOLDER_SPEED : SOCCER_NORMAL_SPEED;
+
+    /* P1移動 */
+    if (input_p1_dir == 1) {  /* 上 */
+        if (soccer_p1_y > 0) soccer_p1_y -= p1_speed;
+        if (soccer_p1_y < 0) soccer_p1_y = 0;
+    }
+    if (input_p1_dir == 7) {  /* 下 */
+        if (soccer_p1_y < SOCCER_FIELD_BOTTOM) soccer_p1_y += p1_speed;
+        if (soccer_p1_y > SOCCER_FIELD_BOTTOM) soccer_p1_y = SOCCER_FIELD_BOTTOM;
+    }
+    if (input_p1_dir == 4) {  /* 左 */
+        if (soccer_p1_x > 0) soccer_p1_x -= p1_speed;
+        if (soccer_p1_x < 0) soccer_p1_x = 0;
+    }
+    if (input_p1_dir == 5) {  /* 右 */
+        if (soccer_p1_x < 88) soccer_p1_x += p1_speed;
+        if (soccer_p1_x > 88) soccer_p1_x = 88;
+    }
+
+    /* P2移動 */
+    if (input_p2_dir == 0xa) {  /* 上 */
+        if (soccer_p2_y > 0) soccer_p2_y -= p2_speed;
+        if (soccer_p2_y < 0) soccer_p2_y = 0;
+    }
+    if (input_p2_dir == 0xc) {  /* 下 */
+        if (soccer_p2_y < SOCCER_FIELD_BOTTOM) soccer_p2_y += p2_speed;
+        if (soccer_p2_y > SOCCER_FIELD_BOTTOM) soccer_p2_y = SOCCER_FIELD_BOTTOM;
+    }
+    if (input_p2_dir == 6) {    /* 左 */
+        if (soccer_p2_x > 0) soccer_p2_x -= p2_speed;
+        if (soccer_p2_x < 0) soccer_p2_x = 0;
+    }
+    if (input_p2_dir == 0xb) {  /* 右 */
+        if (soccer_p2_x < 88) soccer_p2_x += p2_speed;
+        if (soccer_p2_x > 88) soccer_p2_x = 88;
+    }
+
+    /* ボール取得判定（所有者なしの場合） */
+    if (soccer_ball_owner == NO_OWNER) {
+        /* P1がボールに触れたか */
+        int dx1 = soccer_p1_x - soccer_ball_x;
+        int dy1 = soccer_p1_y - soccer_ball_y;
+        if (dx1 < 0) dx1 = -dx1;
+        if (dy1 < 0) dy1 = -dy1;
+        if (dx1 < SOCCER_COLLISION_THRESHOLD && dy1 < SOCCER_COLLISION_THRESHOLD) {
+            soccer_ball_owner = OWNER_P1;
+            buzzer_play(TONE_HIT);
+            buzzer_timer = BUZZER_SHORT;
+        }
+
+        /* P2がボールに触れたか */
+        int dx2 = soccer_p2_x - soccer_ball_x;
+        int dy2 = soccer_p2_y - soccer_ball_y;
+        if (dx2 < 0) dx2 = -dx2;
+        if (dy2 < 0) dy2 = -dy2;
+        if (dx2 < SOCCER_COLLISION_THRESHOLD && dy2 < SOCCER_COLLISION_THRESHOLD) {
+            soccer_ball_owner = OWNER_P2;
+            buzzer_play(TONE_HIT);
+            buzzer_timer = BUZZER_SHORT;
+        }
+    }
+
+    /* 衝突判定（ボール奪取） */
+    if (soccer_invincible_timer <= 0 && soccer_ball_owner != NO_OWNER) {
+        int dx = soccer_p1_x - soccer_p2_x;
+        int dy = soccer_p1_y - soccer_p2_y;
+        if (dx < 0) dx = -dx;
+        if (dy < 0) dy = -dy;
+
+        if (dx < SOCCER_COLLISION_THRESHOLD && dy < SOCCER_COLLISION_THRESHOLD) {
+            /* ボール所有権が相手に移る */
+            soccer_ball_owner = (soccer_ball_owner == OWNER_P1) ? OWNER_P2 : OWNER_P1;
+            soccer_invincible_timer = SOCCER_INVINCIBLE_DURATION;
+            buzzer_play(TONE_HIT);
+            buzzer_timer = BUZZER_SHORT;
+        }
+    }
+
+    /* ゴール判定 */
+    /* P1が右端に到達（P1のゴール） */
+    if (soccer_ball_owner == OWNER_P1 && soccer_p1_x >= 88) {
+        soccer_p1_score++;
+        buzzer_play(TONE_SCORE);
+        buzzer_timer = BUZZER_LONG;
+        if (soccer_p1_score >= SOCCER_WINNING_SCORE) {
+            game_state = STATE_RESULT;
+        } else {
+            soccer_reset_positions();
+        }
+    }
+    /* P2が左端に到達（P2のゴール） */
+    if (soccer_ball_owner == OWNER_P2 && soccer_p2_x <= 0) {
+        soccer_p2_score++;
+        buzzer_play(TONE_SCORE);
+        buzzer_timer = BUZZER_LONG;
+        if (soccer_p2_score >= SOCCER_WINNING_SCORE) {
+            game_state = STATE_RESULT;
+        } else {
+            soccer_reset_positions();
+        }
+    }
+
+    /* 描画 */
+    draw_soccer_game();
+}
+
+/* サッカー結果画面 */
+void draw_result_soccer(int p1, int p2) {
+    lcd_clear_vbuf();
+    lcd_puts_color(0, 0, "============", 255, 255, 255);
+    if (p1 >= SOCCER_WINNING_SCORE) {
         lcd_puts_color(2, 1, " P1  WIN! ", 0, 255, 0);
     } else {
         lcd_puts_color(2, 1, " P2  WIN! ", 255, 128, 0);
